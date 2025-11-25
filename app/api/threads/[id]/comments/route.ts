@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createCommentSchema } from "@/lib/validations";
+import {
+  getProfilesMap,
+  extractUserIds,
+  requireAuth,
+  handleApiError,
+} from "@/lib/api-helpers";
 
 export async function GET(
   request: Request,
@@ -48,23 +54,9 @@ export async function GET(
 
     if (commentsError) throw commentsError;
 
-    // Get unique user IDs from comments
-    const userIds = [...new Set((comments || []).map((c: any) => c.user_id).filter(Boolean))];
-    
-    // Get profiles for these users
-    let profilesMap: Record<string, { username: string }> = {};
-    if (userIds.length > 0) {
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .in("id", userIds);
-
-      if (!profilesError && profiles) {
-        profiles.forEach((profile: any) => {
-          profilesMap[profile.id] = { username: profile.username };
-        });
-      }
-    }
+    // Get profiles using helper function
+    const userIds = extractUserIds(comments || []);
+    const profilesMap = await getProfilesMap(userIds);
 
     // Transform comments with profiles (include user_id for ownership checks)
     const commentsWithProfiles = (comments || []).map((comment: any) => ({
@@ -101,22 +93,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
     const { id } = await params;
     const body = await request.json();
     const validatedData = createCommentSchema.parse(body);
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Verify thread exists
     const { data: thread, error: threadError } = await supabase
@@ -146,31 +128,12 @@ export async function POST(
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {
-    console.error("Error creating comment:", error);
-
-    // Handle Zod validation errors
-    if (error instanceof Error && "issues" in error) {
-      const zodError = error as any;
-      const firstIssue = zodError.issues?.[0];
-      const errorMessage = firstIssue?.message || "Error de validación";
+    if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json(
-        { error: errorMessage, details: zodError.issues },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
-
-    // Handle Supabase errors
-    if (error && typeof error === "object" && "message" in error) {
-      const supabaseError = error as any;
-      return NextResponse.json(
-        { error: supabaseError.message || "Error al crear el comentario" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: "Error al crear el comentario. Por favor intenta de nuevo." },
-      { status: 500 }
-    );
+    return handleApiError(error, "Error al crear el comentario. Por favor intenta de nuevo.");
   }
 }

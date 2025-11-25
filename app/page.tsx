@@ -3,6 +3,14 @@ import TrendingPanel from "@/components/TrendingPanel";
 import ThreadCard from "@/components/ThreadCard";
 import ForumCard from "@/components/ForumCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import {
+  getProfilesMap,
+  getCommentCountsMap,
+  getThreadCountsMap,
+  extractUserIds,
+  extractThreadIds,
+  extractForumIds,
+} from "@/lib/api-helpers";
 
 interface Thread {
   id: string;
@@ -44,33 +52,16 @@ async function getRecentThreads(): Promise<Thread[]> {
     return [];
   }
 
-  // Get unique user IDs
-  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
-  
-  // Fetch profiles separately
-  const profilesMap: Record<string, { username: string }> = {};
-  if (userIds.length > 0) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, username")
-      .in("id", userIds);
-    
-    profiles?.forEach((profile) => {
-      profilesMap[profile.id] = { username: profile.username };
-    });
-  }
+  // Get profiles and comment counts using helper functions
+  const userIds = extractUserIds(threads);
+  const threadIds = extractThreadIds(
+    threads.map((t) => ({ thread_id: t.id }))
+  );
 
-  // Get comment counts
-  const threadIds = threads.map((t) => t.id);
-  const { data: commentCounts } = await supabase
-    .from("comments")
-    .select("thread_id")
-    .in("thread_id", threadIds);
-
-  const countsMap: Record<string, number> = {};
-  commentCounts?.forEach((c) => {
-    countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
-  });
+  const [profilesMap, countsMap] = await Promise.all([
+    getProfilesMap(userIds),
+    getCommentCountsMap(threadIds),
+  ]);
 
   return threads.map((thread) => ({
     ...thread,
@@ -100,32 +91,16 @@ async function getFeaturedThreads(): Promise<Thread[]> {
 
   if (!threads || threads.length === 0) return [];
 
-  // Get unique user IDs
-  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
-  
-  // Fetch profiles separately
-  const profilesMap: Record<string, { username: string }> = {};
-  if (userIds.length > 0) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, username")
-      .in("id", userIds);
-    
-    profiles?.forEach((profile) => {
-      profilesMap[profile.id] = { username: profile.username };
-    });
-  }
+  // Get profiles and comment counts using helper functions
+  const userIds = extractUserIds(threads);
+  const threadIds = extractThreadIds(
+    threads.map((t) => ({ thread_id: t.id }))
+  );
 
-  const threadIds = threads.map((t) => t.id);
-  const { data: commentCounts } = await supabase
-    .from("comments")
-    .select("thread_id")
-    .in("thread_id", threadIds);
-
-  const countsMap: Record<string, number> = {};
-  commentCounts?.forEach((c) => {
-    countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
-  });
+  const [profilesMap, countsMap] = await Promise.all([
+    getProfilesMap(userIds),
+    getCommentCountsMap(threadIds),
+  ]);
 
   return threads
     .map((thread) => ({
@@ -163,17 +138,9 @@ async function getForums(): Promise<Forum[]> {
     return [];
   }
 
-  // Get thread counts for each forum
+  // Get thread counts using helper function
   const forumIds = forums.map((f) => f.id);
-  const { data: threads } = await supabase
-    .from("threads")
-    .select("forum_id")
-    .in("forum_id", forumIds);
-
-  const countsMap: Record<string, number> = {};
-  threads?.forEach((thread) => {
-    countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
-  });
+  const countsMap = await getThreadCountsMap(forumIds);
 
   return forums.map((forum) => ({
     id: forum.id,

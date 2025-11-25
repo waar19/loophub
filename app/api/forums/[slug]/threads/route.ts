@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createThreadSchema } from "@/lib/validations";
+import {
+  getProfilesMap,
+  getCommentCountsMap,
+  extractUserIds,
+  extractThreadIds,
+  requireAuth,
+  handleApiError,
+} from "@/lib/api-helpers";
+import { cache, CACHE_KEYS, CACHE_TTL } from "@/lib/cache";
 
 export async function GET(
   request: Request,
@@ -75,42 +84,16 @@ export async function GET(
       throw threadsError;
     }
 
-    // Get unique user IDs from threads
-    const userIds = [...new Set((threads || []).map((t: any) => t.user_id).filter(Boolean))];
-    
-    // Get profiles for these users
-    let profilesMap: Record<string, { username: string }> = {};
-    if (userIds.length > 0) {
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .in("id", userIds);
+    // Get profiles and comment counts using helper functions
+    const userIds = extractUserIds(threads || []);
+    const threadIds = extractThreadIds(
+      (threads || []).map((t: any) => ({ thread_id: t.id }))
+    );
 
-      if (!profilesError && profiles) {
-        profiles.forEach((profile: any) => {
-          profilesMap[profile.id] = { username: profile.username };
-        });
-      }
-    }
-
-    // Get thread IDs to fetch comment counts
-    const threadIds = (threads || []).map((t: any) => t.id);
-    
-    // Get comment counts for all threads at once using a single query
-    let commentCountsMap: Record<string, number> = {};
-    if (threadIds.length > 0) {
-      const { data: commentCounts, error: commentCountsError } = await supabase
-        .from("comments")
-        .select("thread_id")
-        .in("thread_id", threadIds);
-
-      if (!commentCountsError && commentCounts) {
-        // Count comments per thread
-        commentCounts.forEach((comment: any) => {
-          commentCountsMap[comment.thread_id] = (commentCountsMap[comment.thread_id] || 0) + 1;
-        });
-      }
-    }
+    const [profilesMap, commentCountsMap] = await Promise.all([
+      getProfilesMap(userIds),
+      getCommentCountsMap(threadIds),
+    ]);
 
     // Transform threads with comment counts and profiles
     let threadsWithCount = (threads || []).map((thread: any) => ({
@@ -182,22 +165,12 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const supabase = await createClient();
     const { slug } = await params;
     const body = await request.json();
     const validatedData = createThreadSchema.parse(body);
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase
@@ -225,33 +198,17 @@ export async function POST(
 
     if (threadError) throw threadError;
 
+    // Invalidate cache
+    cache.delete(CACHE_KEYS.forumThreads(slug, 1, "newest"));
+
     return NextResponse.json(thread, { status: 201 });
   } catch (error) {
-    console.error("Error creating thread:", error);
-
-    // Handle Zod validation errors
-    if (error instanceof Error && "issues" in error) {
-      const zodError = error as any;
-      const firstIssue = zodError.issues?.[0];
-      const errorMessage = firstIssue?.message || "Error de validación";
+    if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json(
-        { error: errorMessage, details: zodError.issues },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
-
-    // Handle Supabase errors
-    if (error && typeof error === "object" && "message" in error) {
-      const supabaseError = error as any;
-      return NextResponse.json(
-        { error: supabaseError.message || "Error al crear el hilo" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: "Error al crear el hilo. Por favor intenta de nuevo." },
-      { status: 500 }
-    );
+    return handleApiError(error, "Error al crear el hilo. Por favor intenta de nuevo.");
   }
 }

@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createForumSchema } from "@/lib/validations";
+import { getThreadCountsMap, extractForumIds } from "@/lib/api-helpers";
+import { cache, CACHE_KEYS, CACHE_TTL } from "@/lib/cache";
 
 export async function GET() {
   try {
+    // Check cache first
+    const cacheKey = CACHE_KEYS.forums();
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached);
+    }
+
     const supabase = await createClient();
     const { data: forums, error } = await supabase
       .from("forums")
@@ -12,7 +21,6 @@ export async function GET() {
 
     if (error) {
       console.error("Supabase error fetching forums:", error);
-      // Return empty array instead of error if it's just a query issue
       return NextResponse.json([]);
     }
 
@@ -20,32 +28,23 @@ export async function GET() {
       return NextResponse.json([]);
     }
 
-    // Get thread counts separately
+    // Get thread counts using helper function
     const forumIds = forums.map((f) => f.id);
-    const countsMap: Record<string, number> = {};
-    
-    if (forumIds.length > 0) {
-      const { data: threads, error: threadsError } = await supabase
-        .from("threads")
-        .select("forum_id")
-        .in("forum_id", forumIds);
-      
-      if (!threadsError && threads) {
-        threads.forEach((thread) => {
-          countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
-        });
-      }
-    }
+    const countsMap = await getThreadCountsMap(forumIds);
 
     // Transform the count data and return simplified structure
     const forumsWithCount = forums.map((forum) => ({
       id: forum.id,
       name: forum.name,
       slug: forum.slug,
+      created_at: forum.created_at,
       _count: {
         threads: countsMap[forum.id] || 0,
       },
     }));
+
+    // Cache the result
+    cache.set(cacheKey, forumsWithCount, CACHE_TTL.forums);
 
     return NextResponse.json(forumsWithCount);
   } catch (error) {

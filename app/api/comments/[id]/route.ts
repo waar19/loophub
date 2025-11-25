@@ -1,28 +1,19 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createCommentSchema } from "@/lib/validations";
+import { requireAuth, handleApiError } from "@/lib/api-helpers";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
     const { id } = await params;
     const body = await request.json();
     const validatedData = createCommentSchema.parse(body);
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Verify comment exists and user owns it
     const { data: comment, error: commentError } = await supabase
@@ -57,19 +48,13 @@ export async function PUT(
 
     return NextResponse.json(updatedComment);
   } catch (error) {
-    console.error("Error updating comment:", error);
-
-    if (error instanceof Error && "issues" in error) {
+    if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json(
-        { error: "Validation failed", details: error },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
-
-    return NextResponse.json(
-      { error: "Failed to update comment" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Error al actualizar el comentario");
   }
 }
 
@@ -78,20 +63,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
     const { id } = await params;
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Verify comment exists and user owns it
     const { data: comment, error: commentError } = await supabase
@@ -121,11 +96,13 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting comment:", error);
-    return NextResponse.json(
-      { error: "Failed to delete comment" },
-      { status: 500 }
-    );
+    if (error instanceof Error && error.message === "Authentication required") {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+    return handleApiError(error, "Error al eliminar el comentario");
   }
 }
 

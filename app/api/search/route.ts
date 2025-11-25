@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
+import {
+  getProfilesMap,
+  getCommentCountsMap,
+  getThreadCountsMap,
+  extractUserIds,
+  extractThreadIds,
+  extractForumIds,
+} from "@/lib/api-helpers";
 
 export async function GET(request: Request) {
   try {
@@ -57,55 +65,29 @@ export async function GET(request: Request) {
         .range(offset, offset + limit - 1);
 
       if (!threadsError && threads) {
-        // Get unique user IDs
-        const userIds = [...new Set(threads.map((t: any) => t.user_id).filter(Boolean))];
-        
-        // Get profiles
-        let profilesMap: Record<string, { username: string }> = {};
-        if (userIds.length > 0) {
-          const { data: profiles } = await supabase
-            .from("profiles")
-            .select("id, username")
-            .in("id", userIds);
+        // Get all data in parallel using helper functions
+        const userIds = extractUserIds(threads);
+        const forumIds = extractForumIds(threads);
+        const threadIds = extractThreadIds(
+          threads.map((t: any) => ({ thread_id: t.id }))
+        );
 
-          if (profiles) {
-            profiles.forEach((profile: any) => {
-              profilesMap[profile.id] = { username: profile.username };
-            });
-          }
-        }
+        const [profilesMap, commentCountsMap, forumsData] = await Promise.all([
+          getProfilesMap(userIds),
+          getCommentCountsMap(threadIds),
+          forumIds.length > 0
+            ? supabase
+                .from("forums")
+                .select("id, name, slug")
+                .in("id", forumIds)
+            : Promise.resolve({ data: [] }),
+        ]);
 
-        // Get forum info
-        const forumIds = [...new Set(threads.map((t: any) => t.forum_id).filter(Boolean))];
-        let forumsMap: Record<string, { name: string; slug: string }> = {};
-        if (forumIds.length > 0) {
-          const { data: forums } = await supabase
-            .from("forums")
-            .select("id, name, slug")
-            .in("id", forumIds);
-
-          if (forums) {
-            forums.forEach((forum: any) => {
-              forumsMap[forum.id] = { name: forum.name, slug: forum.slug };
-            });
-          }
-        }
-
-        // Get comment counts
-        const threadIds = threads.map((t: any) => t.id);
-        let commentCountsMap: Record<string, number> = {};
-        if (threadIds.length > 0) {
-          const { data: comments } = await supabase
-            .from("comments")
-            .select("thread_id")
-            .in("thread_id", threadIds);
-
-          if (comments) {
-            comments.forEach((comment: any) => {
-              commentCountsMap[comment.thread_id] = (commentCountsMap[comment.thread_id] || 0) + 1;
-            });
-          }
-        }
+        // Build forums map
+        const forumsMap: Record<string, { name: string; slug: string }> = {};
+        forumsData.data?.forEach((forum: any) => {
+          forumsMap[forum.id] = { name: forum.name, slug: forum.slug };
+        });
 
         results.threads = threads.map((thread: any) => ({
           ...thread,
@@ -136,22 +118,9 @@ export async function GET(request: Request) {
         .limit(10);
 
       if (!forumsError && forums) {
-        // Get thread counts
+        // Get thread counts using helper function
         const forumIds = forums.map((f: any) => f.id);
-        const countsMap: Record<string, number> = {};
-        
-        if (forumIds.length > 0) {
-          const { data: threads } = await supabase
-            .from("threads")
-            .select("forum_id")
-            .in("forum_id", forumIds);
-          
-          if (threads) {
-            threads.forEach((thread: any) => {
-              countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
-            });
-          }
-        }
+        const countsMap = await getThreadCountsMap(forumIds);
 
         results.forums = forums.map((forum: any) => ({
           ...forum,
