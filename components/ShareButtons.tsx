@@ -16,19 +16,56 @@ export default function ShareButtons({
   description = "",
   className = "",
 }: ShareButtonsProps) {
-  const [currentUrl, setCurrentUrl] = useState(url);
+  const [currentUrl, setCurrentUrl] = useState(() => {
+    // Initialize with the correct URL immediately
+    if (!url.startsWith("http")) {
+      return getFullUrl(url);
+    }
+    return url;
+  });
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Ensure we have the full URL using the helper function
-    // This ensures we use NEXT_PUBLIC_BASE_URL if set, otherwise window.location.origin
     if (!url.startsWith("http")) {
       // Use getFullUrl helper to ensure correct production URL
-      // It will use NEXT_PUBLIC_BASE_URL if available, otherwise window.location.origin
       const fullUrl = getFullUrl(url);
+      
+      // Double-check: if we're in production (not localhost) and got localhost, use production URL
+      if (typeof window !== "undefined") {
+        const isLocalhost = fullUrl.includes("localhost") || fullUrl.includes("127.0.0.1");
+        const isProduction = window.location.hostname !== "localhost" &&
+                            window.location.hostname !== "127.0.0.1" &&
+                            !window.location.hostname.startsWith("192.168.");
+        
+        if (isLocalhost && isProduction) {
+          // We're in production but got localhost URL - use current origin
+          const productionUrl = `${window.location.origin}${url}`;
+          setCurrentUrl(productionUrl);
+          return;
+        }
+      }
+      
       setCurrentUrl(fullUrl);
     } else {
-      // Already a full URL, use as-is
+      // Already a full URL, but verify it's not localhost in production
+      if (typeof window !== "undefined") {
+        const isLocalhost = url.includes("localhost") || url.includes("127.0.0.1");
+        const isProduction = window.location.hostname !== "localhost" &&
+                            window.location.hostname !== "127.0.0.1" &&
+                            !window.location.hostname.startsWith("192.168.");
+        
+        if (isLocalhost && isProduction) {
+          // Replace localhost with production URL
+          const productionUrl = url.replace(
+            /^https?:\/\/[^/]+/,
+            window.location.origin
+          );
+          setCurrentUrl(productionUrl);
+          return;
+        }
+      }
+      
       setCurrentUrl(url);
     }
   }, [url]);
