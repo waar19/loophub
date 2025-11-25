@@ -1,6 +1,6 @@
 # Instrucciones para Poblar la Base de Datos
 
-Esta guía te ayudará a poblar la base de datos con los foros, hilos y comentarios iniciales de Minimalist Hub.
+Esta guía te ayudará a poblar la base de datos con los foros, hilos y comentarios iniciales de LoopHub.
 
 ## Paso 1: Ejecutar Migraciones
 

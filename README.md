@@ -1,4 +1,4 @@
-# Minimalist Hub
+# LoopHub
 
 Plataforma de comunidad enfocada en **Minimalismo Digital** y **Organización Personal**. Construida con Next.js 15, Supabase y Tailwind CSS.
 
