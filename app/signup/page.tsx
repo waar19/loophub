@@ -56,7 +56,7 @@ export default function SignupPage() {
   return (
     <div className="max-w-md mx-auto mt-16">
       <div className="card">
-        <h1 className="text-3xl font-bold mb-6">Únete a Minimalist Hub</h1>
+        <h1 className="text-3xl font-bold mb-6">Únete a LoopHub</h1>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>

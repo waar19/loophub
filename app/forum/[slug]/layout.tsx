@@ -27,7 +27,7 @@ export async function generateMetadata({
       };
       
       return {
-        title: `${forum.name} - Minimalist Hub`,
+        title: `${forum.name} - LoopHub`,
         description: descriptions[slug] || `Discusiones sobre ${forum.name}`,
       };
     }
@@ -36,7 +36,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: "Foro - Minimalist Hub",
+    title: "Foro - LoopHub",
     description: "Comunidad de minimalismo digital y organización personal",
   };
 }

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Minimalist Hub - Minimalismo Digital y Organización Personal",
+  title: "LoopHub - Minimalismo Digital y Organización Personal",
   description: "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
   keywords: [
     "minimalismo digital",
@@ -48,7 +48,7 @@ export default function RootLayout({
               className="text-2xl font-bold"
               style={{ color: "var(--foreground)" }}
             >
-              Minimalist Hub
+              LoopHub
             </Link>
             <div className="flex items-center gap-4">
               <DarkModeToggle />
@@ -65,7 +65,7 @@ export default function RootLayout({
             className="max-w-5xl mx-auto px-4 py-8 text-center"
             style={{ color: "var(--muted)" }}
           >
-            <p className="text-sm mb-2">Minimalist Hub</p>
+            <p className="text-sm mb-2">LoopHub</p>
             <p className="text-xs" style={{ color: "var(--muted)" }}>
               Minimalismo Digital • Organización Personal • Productividad Realista
             </p>
