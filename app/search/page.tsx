@@ -100,10 +100,10 @@ export default function SearchPage() {
               className="text-2xl font-bold mb-3"
               style={{ color: "var(--foreground)" }}
             >
-              Buscar en LoopHub
+              {t("common.search")} en LoopHub
             </h2>
             <p style={{ color: "var(--muted)" }} className="text-lg">
-              Ingresa un término de búsqueda para encontrar hilos y foros
+              {t("common.searchPrompt")}
             </p>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function SearchPage() {
   return (
     <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <Breadcrumbs items={[{ label: "Búsqueda", href: "/search" }]} />
+        <Breadcrumbs items={[{ label: t("common.search"), href: "/search" }]} />
 
         {/* Header */}
         <div className="mb-8">
@@ -139,11 +139,11 @@ export default function SearchPage() {
                 backgroundClip: "text",
               }}
             >
-              Resultados de búsqueda
+              {t("common.searchResults") || "Resultados de búsqueda"}
             </h1>
           </div>
           <p className="text-lg" style={{ color: "var(--muted)" }}>
-            Buscando:{" "}
+            {t("common.search")}:{" "}
             <span
               className="font-semibold"
               style={{ color: "var(--foreground)" }}
@@ -205,7 +205,8 @@ export default function SearchPage() {
                 {results?.threads.length === 0 ? (
                   <div className="card text-center py-12">
                     <p style={{ color: "var(--muted)" }}>
-                      No se encontraron hilos para {'"'}
+                      {t("common.noResultsFor")}{" "}
+                      {t("forums.forums").toLowerCase()} {'"'}
                       {query}
                       {'"'}
                     </p>
@@ -238,7 +239,8 @@ export default function SearchPage() {
                 {results?.forums.length === 0 ? (
                   <div className="card text-center py-12">
                     <p style={{ color: "var(--muted)" }}>
-                      No se encontraron foros para {'"'}
+                      {t("common.noResultsFor")}{" "}
+                      {t("forums.forums").toLowerCase()} {'"'}
                       {query}
                       {'"'}
                     </p>

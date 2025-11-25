@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 interface Notification {
   id: string;
@@ -25,6 +26,7 @@ export default function NotificationsPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { showError, showSuccess } = useToast();
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (user) {
@@ -34,14 +36,19 @@ export default function NotificationsPage() {
     }
   }, [user]);
 
-  const fetchNotifications = async (pageNum: number = 1, append: boolean = false) => {
+  const fetchNotifications = async (
+    pageNum: number = 1,
+    append: boolean = false
+  ) => {
     if (!user) return;
 
     try {
       if (!append) setIsLoading(true);
       else setIsLoadingMore(true);
 
-      const res = await fetch(`/api/notifications?limit=20&offset=${(pageNum - 1) * 20}`);
+      const res = await fetch(
+        `/api/notifications?limit=20&offset=${(pageNum - 1) * 20}`
+      );
       if (!res.ok) throw new Error("Failed to fetch notifications");
       const data = await res.json();
 
@@ -144,8 +151,8 @@ export default function NotificationsPage() {
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Breadcrumbs
           items={[
-            { label: "Inicio", href: "/" },
-            { label: "Notificaciones" },
+            { label: t("common.home"), href: "/" },
+            { label: t("notifications.title") },
           ]}
         />
 
@@ -232,10 +239,7 @@ export default function NotificationsPage() {
               </div>
             }
             endMessage={
-              <p
-                className="text-center py-4"
-                style={{ color: "var(--muted)" }}
-              >
+              <p className="text-center py-4" style={{ color: "var(--muted)" }}>
                 No hay más notificaciones
               </p>
             }
@@ -251,9 +255,7 @@ export default function NotificationsPage() {
                     }
                   }}
                   className={`card block transition-all hover:scale-[1.01] ${
-                    !notification.read
-                      ? "border-l-4"
-                      : "opacity-75"
+                    !notification.read ? "border-l-4" : "opacity-75"
                   }`}
                   style={{
                     borderLeftColor: notification.read
@@ -310,7 +312,9 @@ function formatTimeAgo(dateString: string): string {
 
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) {
-    return `Hace ${diffInMinutes} ${diffInMinutes === 1 ? "minuto" : "minutos"}`;
+    return `Hace ${diffInMinutes} ${
+      diffInMinutes === 1 ? "minuto" : "minutos"
+    }`;
   }
 
   const diffInHours = Math.floor(diffInMinutes / 60);
@@ -334,4 +338,3 @@ function formatTimeAgo(dateString: string): string {
     year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
   });
 }
-

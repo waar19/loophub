@@ -249,7 +249,7 @@ export default function TrendingPanel() {
                   </p>
                   <div className="flex items-center gap-2 text-xs">
                     <span style={{ color: "var(--foreground)" }}>
-                      {comment.profiles?.username || "Anónimo"}
+                      {comment.profiles?.username || t("common.anonymous")}
                     </span>
                     <span style={{ color: "var(--muted)" }}>•</span>
                     <span style={{ color: "var(--muted)" }}>
