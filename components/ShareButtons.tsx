@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getFullUrl } from "@/lib/url-helpers";
 
 interface ShareButtonsProps {
   title: string;
@@ -19,13 +20,16 @@ export default function ShareButtons({
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Ensure we have the full URL
-    if (typeof window !== "undefined") {
-      if (!url.startsWith("http")) {
-        setCurrentUrl(`${window.location.origin}${url}`);
-      } else {
-        setCurrentUrl(url);
-      }
+    // Ensure we have the full URL using the helper function
+    // This ensures we use NEXT_PUBLIC_BASE_URL if set, otherwise window.location.origin
+    if (!url.startsWith("http")) {
+      // Use getFullUrl helper to ensure correct production URL
+      // It will use NEXT_PUBLIC_BASE_URL if available, otherwise window.location.origin
+      const fullUrl = getFullUrl(url);
+      setCurrentUrl(fullUrl);
+    } else {
+      // Already a full URL, use as-is
+      setCurrentUrl(url);
     }
   }, [url]);
 
