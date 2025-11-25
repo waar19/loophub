@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 interface Notification {
   id: string;
@@ -17,6 +18,7 @@ interface Notification {
 
 export default function NotificationBell() {
   const { user } = useAuth();
+  const { t } = useTranslations();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -89,8 +91,8 @@ export default function NotificationBell() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-lg transition-colors hover:bg-[var(--card-hover)]"
-        aria-label="Notificaciones"
-        title="Notificaciones"
+        aria-label={t("notifications.title")}
+        title={t("notifications.title")}
       >
         <svg
           className="w-6 h-6"
@@ -141,7 +143,7 @@ export default function NotificationBell() {
                 className="text-lg font-bold"
                 style={{ color: "var(--foreground)" }}
               >
-                Notificaciones
+                {t("notifications.title")}
               </h3>
               {unreadCount > 0 && (
                 <button
@@ -149,7 +151,7 @@ export default function NotificationBell() {
                   className="text-sm font-medium transition-colors hover:opacity-80"
                   style={{ color: "var(--brand)" }}
                 >
-                  Marcar todas como leídas
+                  {t("notifications.markAllRead")}
                 </button>
               )}
             </div>
@@ -165,7 +167,7 @@ export default function NotificationBell() {
                     🔔
                   </div>
                   <p style={{ color: "var(--muted)" }}>
-                    No tienes notificaciones
+                    {t("notifications.noNotifications")}
                   </p>
                 </div>
               ) : (
@@ -230,7 +232,7 @@ export default function NotificationBell() {
                   className="text-sm font-medium transition-colors hover:opacity-80"
                   style={{ color: "var(--brand)" }}
                 >
-                  Ver todas las notificaciones
+                  {t("notifications.viewAll")}
                 </Link>
               </div>
             )}
