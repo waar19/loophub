@@ -58,7 +58,12 @@ export async function generateMetadata({
           card: "summary_large_image",
           title: `${forum.name} - LoopHub`,
           description: description,
-          images: [ogImageUrl],
+          images: [
+            {
+              url: ogImageUrl,
+              alt: forum.name,
+            },
+          ],
         },
       };
     }

@@ -71,7 +71,12 @@ export async function generateMetadata({
           card: "summary_large_image",
           title: thread.title,
           description: preview,
-          images: [ogImageUrl],
+          images: [
+            {
+              url: ogImageUrl,
+              alt: thread.title,
+            },
+          ],
           creator: "@loophub",
         },
         other: {

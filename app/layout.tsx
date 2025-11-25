@@ -57,7 +57,12 @@ export const metadata: Metadata = {
     title: "LoopHub - Minimalismo Digital y Organización Personal",
     description: "Comunidad enfocada en minimalismo digital, organización personal, productividad realista",
     creator: "@loophub",
-    images: [`${baseUrl}/og-image.png`],
+    images: [
+      {
+        url: `${baseUrl}/api/og?title=LoopHub`,
+        alt: "LoopHub - Minimalismo Digital y Organización Personal",
+      },
+    ],
   },
   robots: {
     index: true,
