@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import SimpleForm from "@/components/SimpleForm";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { createClient } from "@/lib/supabase-browser";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function NewThreadPage({
   params,
@@ -15,6 +16,7 @@ export default function NewThreadPage({
   const { slug } = use(params);
   const router = useRouter();
   const [forumName, setForumName] = useState("");
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     async function fetchForum() {
@@ -30,19 +32,26 @@ export default function NewThreadPage({
   }, [slug]);
 
   const handleSubmit = async (data: Record<string, string>) => {
-    const res = await fetch(`/api/forums/${slug}/threads`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch(`/api/forums/${slug}/threads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Failed to create thread");
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al crear el hilo");
+      }
+
+      const thread = await res.json();
+      showSuccess("¡Hilo creado exitosamente!");
+      router.push(`/thread/${thread.id}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error al crear el hilo";
+      showError(errorMessage);
+      throw error;
     }
-
-    const thread = await res.json();
-    router.push(`/thread/${thread.id}`);
   };
 
   return (

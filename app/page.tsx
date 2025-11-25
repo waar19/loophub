@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import TrendingPanel from "@/components/TrendingPanel";
 import ThreadCard from "@/components/ThreadCard";
+import ForumCard from "@/components/ForumCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface Thread {
@@ -139,10 +140,57 @@ async function getFeaturedThreads(): Promise<Thread[]> {
     .slice(0, 5);
 }
 
+interface Forum {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  createdAt: string;
+  _count: {
+    threads: number;
+  };
+}
+
+async function getForums(): Promise<Forum[]> {
+  const supabase = await createClient();
+  
+  const { data: forums, error } = await supabase
+    .from("forums")
+    .select("id, name, slug, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error || !forums || forums.length === 0) {
+    return [];
+  }
+
+  // Get thread counts for each forum
+  const forumIds = forums.map((f) => f.id);
+  const { data: threads } = await supabase
+    .from("threads")
+    .select("forum_id")
+    .in("forum_id", forumIds);
+
+  const countsMap: Record<string, number> = {};
+  threads?.forEach((thread) => {
+    countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
+  });
+
+  return forums.map((forum) => ({
+    id: forum.id,
+    name: forum.name,
+    slug: forum.slug,
+    createdAt: forum.created_at,
+    _count: {
+      threads: countsMap[forum.id] || 0,
+    },
+  }));
+}
+
 export default async function HomePage() {
-  const [recentThreads, featuredThreads] = await Promise.all([
+  const [recentThreads, featuredThreads, forums] = await Promise.all([
     getRecentThreads(),
     getFeaturedThreads(),
+    getForums(),
   ]);
 
   return (
@@ -165,6 +213,25 @@ export default async function HomePage() {
             productividad realista
           </p>
         </div>
+
+        {/* Forums List */}
+        {forums.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2
+                className="text-2xl font-semibold"
+                style={{ color: "var(--foreground)" }}
+              >
+                Foros
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {forums.map((forum) => (
+                <ForumCard key={forum.id} forum={forum} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Featured Threads */}
         {featuredThreads.length > 0 && (

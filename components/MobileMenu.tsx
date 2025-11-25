@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Tooltip from "./Tooltip";
 
 interface Forum {
   id: string;
@@ -20,20 +21,64 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    console.log("MobileMenu forums:", forums?.length || 0, forums);
+  }, [forums]);
+
   const isActive = (slug: string) => {
     return pathname === `/forum/${slug}`;
   };
 
+  const handleToggle = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setIsOpen((prev) => {
+      const newState = !prev;
+      console.log("Menu toggle:", newState);
+      return newState;
+    });
+  };
+
+  const handleClose = () => {
+    console.log("Closing menu");
+    setIsOpen(false);
+  };
+
+  // Close menu on escape key and prevent body scroll when open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Visible solo en pantallas < 1024px (móviles y tablets pequeñas) */}
+      {/* En pantallas grandes (>= 1024px), el sidebar fijo se muestra automáticamente y este botón se oculta */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         className="lg:hidden btn btn-ghost p-2"
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         aria-expanded={isOpen}
         aria-controls="mobile-menu"
         style={{ minWidth: "auto" }}
+        type="button"
       >
         <svg
           className="w-6 h-6"
@@ -59,30 +104,38 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
         </svg>
       </button>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Solo visible en pantallas < 1024px */}
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/50 lg:hidden"
+            onClick={handleClose}
+            style={{ 
+              top: "var(--header-height)",
+              zIndex: 1000,
+            }}
+            aria-hidden={!isOpen}
           />
           <aside
             id="mobile-menu"
-            className="fixed left-0 top-0 bottom-0 w-80 z-50 overflow-y-auto lg:hidden"
+            className="fixed left-0 top-0 bottom-0 w-80 overflow-y-auto lg:hidden"
             role="navigation"
             aria-label="Menú de navegación principal"
+            aria-hidden={!isOpen}
             style={{
-              marginTop: "var(--header-height)",
+              top: "var(--header-height)",
               background: "var(--card-bg)",
               borderRight: "1px solid var(--border)",
               boxShadow: "var(--shadow-lg)",
+              zIndex: 1001,
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <nav className="p-6 space-y-1">
               <div className="mb-6">
                 <Link
                   href="/"
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleClose}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     pathname === "/" ? "" : ""
                   }`}
@@ -134,57 +187,68 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                   Foros
                 </h3>
                 <div className="space-y-1">
-                  {forums.map((forum) => {
-                    const active = isActive(forum.slug);
-                    const count = threadCounts[forum.id] || 0;
-                    return (
-                      <Link
-                        key={forum.id}
-                        href={`/forum/${forum.slug}`}
-                        onClick={() => setIsOpen(false)}
-                        className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                          active ? "" : ""
-                        }`}
-                        style={
-                          active
-                            ? {
-                                background: "var(--brand-light)",
-                                color: "var(--brand-dark)",
-                              }
-                            : {
-                                color: "var(--muted)",
-                              }
-                        }
-                        onMouseEnter={(e) => {
-                          if (!active) {
-                            e.currentTarget.style.background = "var(--card-hover)";
-                            e.currentTarget.style.color = "var(--foreground)";
+                  {forums.length === 0 ? (
+                    <p className="px-3 text-sm" style={{ color: "var(--muted)" }}>
+                      Cargando foros...
+                    </p>
+                  ) : (
+                    forums.map((forum) => {
+                      const active = isActive(forum.slug);
+                      const count = threadCounts[forum.id] || 0;
+                      return (
+                        <Link
+                          key={forum.id}
+                          href={`/forum/${forum.slug}`}
+                          onClick={handleClose}
+                          className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                            active ? "" : ""
+                          }`}
+                          style={
+                            active
+                              ? {
+                                  background: "var(--brand-light)",
+                                  color: "var(--brand-dark)",
+                                }
+                              : {
+                                  color: "var(--muted)",
+                                }
                           }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!active) {
-                            e.currentTarget.style.background = "transparent";
-                            e.currentTarget.style.color = "var(--muted)";
-                          }
-                        }}
-                      >
-                        <span className="font-medium">{forum.name}</span>
-                        {count > 0 && (
-                          <span
-                            className="text-xs px-1.5 py-0.5 rounded"
-                            style={{
-                              background: active
-                                ? "var(--brand)"
-                                : "var(--border-light)",
-                              color: active ? "white" : "var(--muted)",
-                            }}
-                          >
-                            {count}
-                          </span>
-                        )}
-                      </Link>
-                    );
-                  })}
+                          onMouseEnter={(e) => {
+                            if (!active) {
+                              e.currentTarget.style.background = "var(--card-hover)";
+                              e.currentTarget.style.color = "var(--foreground)";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!active) {
+                              e.currentTarget.style.background = "transparent";
+                              e.currentTarget.style.color = "var(--muted)";
+                            }
+                          }}
+                        >
+                          <span className="font-medium">{forum.name}</span>
+                          {count > 0 && (
+                            <Tooltip
+                              content={`${count} ${count === 1 ? "hilo" : "hilos"} en este foro`}
+                              position="right"
+                            >
+                              <span
+                                className="text-xs px-1.5 py-0.5 rounded"
+                                style={{
+                                  background: active
+                                    ? "var(--brand)"
+                                    : "var(--border-light)",
+                                  color: active ? "white" : "var(--muted)",
+                                }}
+                              >
+                                {count}
+                              </span>
+                            </Tooltip>
+                          )}
+                        </Link>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             </nav>

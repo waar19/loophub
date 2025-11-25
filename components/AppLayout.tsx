@@ -9,10 +9,14 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const { data: forums } = await supabase
+  const { data: forums, error } = await supabase
     .from("forums")
-    .select("id, name, slug, description")
+    .select("id, name, slug")
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching forums in AppLayout:", error);
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--background)" }}>

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Thread } from "@/lib/supabase";
+import Tooltip from "./Tooltip";
 
 interface ThreadCardProps {
   thread: Thread & {
@@ -89,15 +92,17 @@ export default function ThreadCard({
 
             {/* Forum badge */}
             {thread.forum && (
-              <span
-                className="badge text-xs"
-                style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand-dark)",
-                }}
-              >
-                {thread.forum.name}
-              </span>
+              <Tooltip content={`Ver todos los hilos de ${thread.forum.name}`} position="top">
+                <span
+                  className="badge text-xs"
+                  style={{
+                    background: "var(--brand-light)",
+                    color: "var(--brand-dark)",
+                  }}
+                >
+                  {thread.forum.name}
+                </span>
+              </Tooltip>
             )}
 
             {/* Date */}
@@ -107,25 +112,30 @@ export default function ThreadCard({
 
             {/* Comment count */}
             {thread._count && thread._count.comments > 0 && (
-              <div className="flex items-center gap-1 text-sm">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  style={{ color: "var(--muted)" }}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-                <span style={{ color: "var(--muted)" }}>
-                  {thread._count.comments}
-                </span>
-              </div>
+              <Tooltip
+                content={`${thread._count.comments} ${thread._count.comments === 1 ? "comentario" : "comentarios"}`}
+                position="top"
+              >
+                <div className="flex items-center gap-1 text-sm">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style={{ color: "var(--muted)" }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
+                  </svg>
+                  <span style={{ color: "var(--muted)" }}>
+                    {thread._count.comments}
+                  </span>
+                </div>
+              </Tooltip>
             )}
           </div>
         </div>

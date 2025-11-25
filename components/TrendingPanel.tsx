@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Tooltip from "./Tooltip";
 import { createClient } from "@/lib/supabase-browser";
 
 interface TrendingThread {

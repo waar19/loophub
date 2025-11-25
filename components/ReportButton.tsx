@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase-browser";
+import { useToast } from "@/contexts/ToastContext";
+import Tooltip from "./Tooltip";
 
 interface ReportButtonProps {
   contentType: "thread" | "comment";
@@ -17,6 +19,7 @@ export default function ReportButton({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const supabase = createClient();
+  const { showSuccess, showError } = useToast();
 
   const handleReport = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +35,7 @@ export default function ReportButton({
       if (error) throw error;
 
       setSuccess(true);
+      showSuccess("Reporte enviado correctamente. Gracias por tu contribución.");
       setTimeout(() => {
         setIsOpen(false);
         setSuccess(false);
@@ -39,7 +43,7 @@ export default function ReportButton({
       }, 2000);
     } catch (error) {
       console.error("Error reporting:", error);
-      alert("Failed to submit report");
+      showError("Error al enviar el reporte. Por favor intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -47,15 +51,17 @@ export default function ReportButton({
 
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="text-xs transition-colors"
-        style={{ color: "var(--muted)" }}
-        onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
-        onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
-      >
-        Report
-      </button>
+      <Tooltip content="Reportar contenido" position="top">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="text-xs transition-colors"
+          style={{ color: "var(--muted)" }}
+          onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
+          onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
+        >
+          Report
+        </button>
+      </Tooltip>
     );
   }
 

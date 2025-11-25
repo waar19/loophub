@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Tooltip from "./Tooltip";
 
 interface DeleteButtonProps {
   id: string;
@@ -33,15 +34,17 @@ export default function DeleteButton({ id, type }: DeleteButtonProps) {
   };
 
   return (
-    <button
-      onClick={handleDelete}
-      disabled={loading}
-      className="text-xs font-medium disabled:opacity-50 transition-colors"
-      style={{ color: "#ef4444" }}
-      onMouseEnter={(e) => !loading && (e.currentTarget.style.color = "#dc2626")}
-      onMouseLeave={(e) => !loading && (e.currentTarget.style.color = "#ef4444")}
-    >
-      {loading ? "Deleting..." : "Delete"}
-    </button>
+    <Tooltip content="Eliminar permanentemente" position="top" disabled={loading}>
+      <button
+        onClick={handleDelete}
+        disabled={loading}
+        className="text-xs font-medium disabled:opacity-50 transition-colors"
+        style={{ color: "#ef4444" }}
+        onMouseEnter={(e) => !loading && (e.currentTarget.style.color = "#dc2626")}
+        onMouseLeave={(e) => !loading && (e.currentTarget.style.color = "#ef4444")}
+      >
+        {loading ? "Deleting..." : "Delete"}
+      </button>
+    </Tooltip>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import Tooltip from "./Tooltip";
 
 interface User {
   id: string;
@@ -78,30 +79,36 @@ export default function AuthButton() {
   return (
     <div className="flex items-center gap-3">
       {profile?.is_admin && (
-        <Link
-          href="/admin"
-          className="text-sm font-medium transition-colors"
-          style={{ color: "var(--brand)" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.textDecoration = "underline";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.textDecoration = "none";
-          }}
-        >
-          Admin
-        </Link>
+        <Tooltip content="Panel de administración" position="bottom">
+          <Link
+            href="/admin"
+            className="text-sm font-medium transition-colors"
+            style={{ color: "var(--brand)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.textDecoration = "underline";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.textDecoration = "none";
+            }}
+          >
+            Admin
+          </Link>
+        </Tooltip>
       )}
-      <span
-        className="text-sm font-medium hidden sm:inline"
-        style={{ color: "var(--foreground)" }}
-      >
-        {profile?.username || user.email}
-      </span>
+      <Tooltip content={`Usuario: ${profile?.username || user.email}`} position="bottom">
+        <span
+          className="text-sm font-medium hidden sm:inline"
+          style={{ color: "var(--foreground)" }}
+        >
+          {profile?.username || user.email}
+        </span>
+      </Tooltip>
       <form action="/auth/signout" method="post">
-        <button type="submit" className="btn btn-ghost text-sm">
-          Salir
-        </button>
+        <Tooltip content="Cerrar sesión" position="bottom">
+          <button type="submit" className="btn btn-ghost text-sm">
+            Salir
+          </button>
+        </Tooltip>
       </form>
     </div>
   );

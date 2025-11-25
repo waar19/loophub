@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Tooltip from "./Tooltip";
 
 interface Forum {
   id: string;
@@ -20,6 +21,7 @@ export default function Sidebar({ forums }: SidebarProps) {
   const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    console.log("Sidebar received forums:", forums?.length || 0);
     async function fetchCounts() {
       try {
         const response = await fetch("/api/forums/stats");
@@ -32,7 +34,7 @@ export default function Sidebar({ forums }: SidebarProps) {
       }
     }
     fetchCounts();
-  }, []);
+  }, [forums]);
 
   const isActive = (slug: string) => {
     return pathname === `/forum/${slug}`;
@@ -47,6 +49,7 @@ export default function Sidebar({ forums }: SidebarProps) {
         background: "var(--card-bg)",
         borderColor: "var(--border)",
       }}
+      aria-label="Navegación principal de foros"
     >
       <nav className="p-6 space-y-1">
         <div className="mb-6">
@@ -103,56 +106,67 @@ export default function Sidebar({ forums }: SidebarProps) {
             Foros
           </h3>
           <div className="space-y-1">
-            {forums.map((forum) => {
-              const active = isActive(forum.slug);
-              const count = threadCounts[forum.id] || 0;
-              return (
-                <Link
-                  key={forum.id}
-                  href={`/forum/${forum.slug}`}
-                  className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                    active ? "" : ""
-                  }`}
-                  style={
-                    active
-                      ? {
-                          background: "var(--brand-light)",
-                          color: "var(--brand-dark)",
-                        }
-                      : {
-                          color: "var(--muted)",
-                        }
-                  }
-                  onMouseEnter={(e) => {
-                    if (!active) {
-                      e.currentTarget.style.background = "var(--card-hover)";
-                      e.currentTarget.style.color = "var(--foreground)";
+            {forums.length === 0 ? (
+              <p className="px-3 text-sm" style={{ color: "var(--muted)" }}>
+                No hay foros disponibles
+              </p>
+            ) : (
+              forums.map((forum) => {
+                const active = isActive(forum.slug);
+                const count = threadCounts[forum.id] || 0;
+                return (
+                  <Link
+                    key={forum.id}
+                    href={`/forum/${forum.slug}`}
+                    className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      active ? "" : ""
+                    }`}
+                    style={
+                      active
+                        ? {
+                            background: "var(--brand-light)",
+                            color: "var(--brand-dark)",
+                          }
+                        : {
+                            color: "var(--muted)",
+                          }
                     }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!active) {
-                      e.currentTarget.style.background = "transparent";
-                      e.currentTarget.style.color = "var(--muted)";
-                    }
-                  }}
-                >
-                  <span className="font-medium">{forum.name}</span>
-                  {count > 0 && (
-                    <span
-                      className="text-xs px-1.5 py-0.5 rounded"
-                      style={{
-                        background: active
-                          ? "var(--brand)"
-                          : "var(--border-light)",
-                        color: active ? "white" : "var(--muted)",
-                      }}
-                    >
-                      {count}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
+                    onMouseEnter={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.background = "var(--card-hover)";
+                        e.currentTarget.style.color = "var(--foreground)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "var(--muted)";
+                      }
+                    }}
+                  >
+                    <span className="font-medium">{forum.name}</span>
+                    {count > 0 && (
+                      <Tooltip
+                        content={`${count} ${count === 1 ? "hilo" : "hilos"} en este foro`}
+                        position="right"
+                      >
+                        <span
+                          className="text-xs px-1.5 py-0.5 rounded"
+                          style={{
+                            background: active
+                              ? "var(--brand)"
+                              : "var(--border-light)",
+                            color: active ? "white" : "var(--muted)",
+                          }}
+                        >
+                          {count}
+                        </span>
+                      </Tooltip>
+                    )}
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
       </nav>

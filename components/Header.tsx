@@ -30,7 +30,12 @@ export default function Header() {
 
         if (forumsRes.ok) {
           const forumsData = await forumsRes.json();
+          console.log("Header fetched forums:", forumsData?.length || 0);
           setForums(forumsData || []);
+        } else {
+          console.error("Failed to fetch forums:", forumsRes.status);
+          const errorText = await forumsRes.text();
+          console.error("Error response:", errorText);
         }
 
         if (statsRes.ok) {
@@ -55,9 +60,9 @@ export default function Header() {
         boxShadow: "var(--shadow-sm)",
       }}
     >
-      <div className="h-full flex items-center justify-between px-4 sm:px-6">
+      <div className="h-full flex items-center justify-between px-4 sm:px-6 relative">
         {/* Left side: Mobile menu + Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 relative z-10">
           <MobileMenu forums={forums} threadCounts={threadCounts} />
           <Link
             href="/"
