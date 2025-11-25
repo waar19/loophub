@@ -29,8 +29,7 @@ async function getRecentThreads(): Promise<Thread[]> {
     .from("threads")
     .select(`
       *,
-      forums!inner(name, slug),
-      profiles(username)
+      forums!inner(name, slug)
     `)
     .order("created_at", { ascending: false })
     .limit(20);
@@ -40,8 +39,28 @@ async function getRecentThreads(): Promise<Thread[]> {
     return [];
   }
 
+  if (!threads || threads.length === 0) {
+    return [];
+  }
+
+  // Get unique user IDs
+  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
+  
+  // Fetch profiles separately
+  const profilesMap: Record<string, { username: string }> = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+    
+    profiles?.forEach((profile) => {
+      profilesMap[profile.id] = { username: profile.username };
+    });
+  }
+
   // Get comment counts
-  const threadIds = threads?.map((t) => t.id) || [];
+  const threadIds = threads.map((t) => t.id);
   const { data: commentCounts } = await supabase
     .from("comments")
     .select("thread_id")
@@ -52,14 +71,13 @@ async function getRecentThreads(): Promise<Thread[]> {
     countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
   });
 
-  return (
-    threads?.map((thread) => ({
-      ...thread,
-      _count: {
-        comments: countsMap[thread.id] || 0,
-      },
-    })) || []
-  );
+  return threads.map((thread) => ({
+    ...thread,
+    profile: thread.user_id ? profilesMap[thread.user_id] : undefined,
+    _count: {
+      comments: countsMap[thread.id] || 0,
+    },
+  }));
 }
 
 async function getFeaturedThreads(): Promise<Thread[]> {
@@ -73,14 +91,29 @@ async function getFeaturedThreads(): Promise<Thread[]> {
     .from("threads")
     .select(`
       *,
-      forums!inner(name, slug),
-      profiles(username)
+      forums!inner(name, slug)
     `)
     .gte("created_at", sevenDaysAgo.toISOString())
     .order("created_at", { ascending: false })
     .limit(10);
 
-  if (!threads) return [];
+  if (!threads || threads.length === 0) return [];
+
+  // Get unique user IDs
+  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
+  
+  // Fetch profiles separately
+  const profilesMap: Record<string, { username: string }> = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+    
+    profiles?.forEach((profile) => {
+      profilesMap[profile.id] = { username: profile.username };
+    });
+  }
 
   const threadIds = threads.map((t) => t.id);
   const { data: commentCounts } = await supabase
@@ -96,6 +129,7 @@ async function getFeaturedThreads(): Promise<Thread[]> {
   return threads
     .map((thread) => ({
       ...thread,
+      profile: thread.user_id ? profilesMap[thread.user_id] : undefined,
       _count: {
         comments: countsMap[thread.id] || 0,
       },
