@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 export default function SignupPage() {
+  const { t } = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -22,7 +24,9 @@ export default function SignupPage() {
     try {
       // Validate username
       if (username.length < 3) {
-        throw new Error("El nombre de usuario debe tener al menos 3 caracteres");
+        throw new Error(
+          "El nombre de usuario debe tener al menos 3 caracteres"
+        );
       }
 
       if (!/^[a-zA-Z0-9_]+$/.test(username)) {
@@ -55,9 +59,12 @@ export default function SignupPage() {
 
   return (
     <div className="max-w-md mx-auto mt-16">
-      <div className="card" style={{
-        borderLeft: "4px solid var(--brand)",
-      }}>
+      <div
+        className="card"
+        style={{
+          borderLeft: "4px solid var(--brand)",
+        }}
+      >
         <div className="flex items-center gap-3 mb-8">
           <div
             className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
@@ -68,16 +75,17 @@ export default function SignupPage() {
           >
             ✨
           </div>
-          <h1 
+          <h1
             className="text-4xl font-extrabold"
             style={{
-              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+              background:
+                "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
             }}
           >
-            Únete a LoopHub
+            {t("auth.signup")}
           </h1>
         </div>
 
@@ -87,7 +95,7 @@ export default function SignupPage() {
               htmlFor="username"
               className="block text-sm font-medium mb-2"
             >
-              Username
+              {t("auth.username")}
             </label>
             <input
               id="username"
@@ -106,7 +114,7 @@ export default function SignupPage() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -124,7 +132,7 @@ export default function SignupPage() {
               htmlFor="password"
               className="block text-sm font-medium mb-2"
             >
-              Contraseña
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -144,10 +152,10 @@ export default function SignupPage() {
           {error && (
             <div
               className="p-3 rounded border"
-              style={{ 
-                backgroundColor: "rgba(239, 68, 68, 0.1)", 
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
                 color: "#ef4444",
-                borderColor: "rgba(239, 68, 68, 0.3)"
+                borderColor: "rgba(239, 68, 68, 0.3)",
               }}
             >
               {error}
@@ -159,7 +167,7 @@ export default function SignupPage() {
             className="btn btn-primary w-full"
             disabled={loading}
           >
-            {loading ? "Creando cuenta..." : "Registrarse"}
+            {loading ? t("common.loading") : t("auth.signup")}
           </button>
         </form>
 
@@ -167,9 +175,9 @@ export default function SignupPage() {
           className="mt-6 text-center text-sm"
           style={{ color: "var(--muted)" }}
         >
-          ¿Ya tienes una cuenta?{" "}
+          {t("auth.haveAccount")}{" "}
           <Link href="/login" style={{ color: "var(--accent)" }}>
-            Inicia sesión
+            {t("auth.loginHere")}
           </Link>
         </p>
       </div>

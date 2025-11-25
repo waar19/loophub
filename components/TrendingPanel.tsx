@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "@/components/TranslationsProvider";
 import Tooltip from "./Tooltip";
 import { createClient } from "@/lib/supabase-browser";
 
@@ -13,63 +14,93 @@ interface TrendingThread {
   comment_count: number;
 }
 
+interface RecentComment {
+  id: string;
+  content: string;
+  created_at: string;
+  threads: {
+    id: string;
+    title: string;
+    forum_id: string;
+  };
+  profiles: {
+    username: string;
+  } | null;
+}
+
+interface ThreadWithRelations {
+  id: string;
+  title: string;
+  forum_id: string;
+  forums: Array<{
+    slug: string;
+    name: string;
+  }>;
+  comments: Array<{ count: number }>;
+}
+
 export default function TrendingPanel() {
+  const { t } = useTranslations();
   const [trending, setTrending] = useState<TrendingThread[]>([]);
-  const [recentComments, setRecentComments] = useState<any[]>([]);
+  const [recentComments, setRecentComments] = useState<RecentComment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const supabase = createClient();
-      
+
       // Fetch trending threads (most commented in last 7 days)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
+
       const { data: threads } = await supabase
         .from("threads")
-        .select(`
+        .select(
+          `
           id,
           title,
           forum_id,
           forums!inner(slug, name),
           comments(count)
-        `)
+        `
+        )
         .gte("created_at", sevenDaysAgo.toISOString())
         .order("created_at", { ascending: false })
         .limit(10);
 
       if (threads) {
         const trendingData = threads
-          .map((thread: any) => ({
+          .map((thread: ThreadWithRelations) => ({
             id: thread.id,
             title: thread.title,
-            forum_slug: thread.forums.slug,
-            forum_name: thread.forums.name,
+            forum_slug: thread.forums[0]?.slug || "",
+            forum_name: thread.forums[0]?.name || "",
             comment_count: thread.comments?.[0]?.count || 0,
           }))
           .filter((t) => t.comment_count > 0)
           .sort((a, b) => b.comment_count - a.comment_count)
           .slice(0, 5);
-        
+
         setTrending(trendingData);
       }
 
       // Fetch recent comments
       const { data: comments } = await supabase
         .from("comments")
-        .select(`
+        .select(
+          `
           id,
           content,
           created_at,
           threads!inner(id, title, forum_id),
           profiles(username)
-        `)
+        `
+        )
         .order("created_at", { ascending: false })
         .limit(5);
 
       if (comments) {
-        setRecentComments(comments);
+        setRecentComments(comments as unknown as RecentComment[]);
       }
 
       setLoading(false);
@@ -106,7 +137,7 @@ export default function TrendingPanel() {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          Crear Hilo
+          {t("threads.createThread")}
         </Link>
 
         {/* Trending Threads */}
@@ -115,7 +146,7 @@ export default function TrendingPanel() {
             className="text-sm font-semibold mb-4"
             style={{ color: "var(--foreground)" }}
           >
-            Hilos Destacados
+            {t("home.featuredThreads")}
           </h3>
           {loading ? (
             <div className="space-y-3">
@@ -160,7 +191,10 @@ export default function TrendingPanel() {
                       {thread.forum_name}
                     </span>
                     <span style={{ color: "var(--muted)" }}>
-                      {thread.comment_count} comentarios
+                      {thread.comment_count}{" "}
+                      {thread.comment_count === 1
+                        ? t("threads.comment")
+                        : t("threads.comments")}
                     </span>
                   </div>
                 </Link>
@@ -168,7 +202,7 @@ export default function TrendingPanel() {
             </div>
           ) : (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              No hay hilos destacados aún
+              {t("home.noThreads")}
             </p>
           )}
         </div>
@@ -179,7 +213,7 @@ export default function TrendingPanel() {
             className="text-sm font-semibold mb-4"
             style={{ color: "var(--foreground)" }}
           >
-            Últimos Comentarios
+            {t("notifications.title")}
           </h3>
           {loading ? (
             <div className="space-y-3">
@@ -219,10 +253,13 @@ export default function TrendingPanel() {
                     </span>
                     <span style={{ color: "var(--muted)" }}>•</span>
                     <span style={{ color: "var(--muted)" }}>
-                      {new Date(comment.created_at).toLocaleDateString("es-ES", {
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(comment.created_at).toLocaleDateString(
+                        "es-ES",
+                        {
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </span>
                   </div>
                 </Link>
@@ -230,7 +267,7 @@ export default function TrendingPanel() {
             </div>
           ) : (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              No hay comentarios recientes
+              {t("threads.noComments")}
             </p>
           )}
         </div>
@@ -238,4 +275,3 @@ export default function TrendingPanel() {
     </aside>
   );
 }
-

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import { useTranslations } from "@/components/TranslationsProvider";
 import Tooltip from "./Tooltip";
 
 interface User {
@@ -16,6 +17,7 @@ interface Profile {
 }
 
 export default function AuthButton() {
+  const { t } = useTranslations();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -67,10 +69,10 @@ export default function AuthButton() {
     return (
       <div className="flex items-center gap-2">
         <Link href="/login" className="btn btn-ghost text-sm">
-          Iniciar sesión
+          {t("nav.login")}
         </Link>
         <Link href="/signup" className="btn btn-primary text-sm">
-          Registrarse
+          {t("nav.signup")}
         </Link>
       </div>
     );
@@ -79,7 +81,7 @@ export default function AuthButton() {
   return (
     <div className="flex items-center gap-3">
       {profile?.is_admin && (
-        <Tooltip content="Panel de administración" position="bottom">
+        <Tooltip content={t("nav.admin")} position="bottom">
           <Link
             href="/admin"
             className="text-sm font-medium transition-colors"
@@ -91,11 +93,11 @@ export default function AuthButton() {
               e.currentTarget.style.textDecoration = "none";
             }}
           >
-            Admin
+            {t("nav.admin")}
           </Link>
         </Tooltip>
       )}
-      <Tooltip content={`Usuario: ${profile?.username || user.email}`} position="bottom">
+      <Tooltip content={`${profile?.username || user.email}`} position="bottom">
         <span
           className="text-sm font-medium hidden sm:inline"
           style={{ color: "var(--foreground)" }}
@@ -104,9 +106,9 @@ export default function AuthButton() {
         </span>
       </Tooltip>
       <form action="/auth/signout" method="post">
-        <Tooltip content="Cerrar sesión" position="bottom">
+        <Tooltip content={t("nav.logout")} position="bottom">
           <button type="submit" className="btn btn-ghost text-sm">
-            Salir
+            {t("nav.logout")}
           </button>
         </Tooltip>
       </form>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Thread } from "@/lib/supabase";
+import { useTranslations } from "@/components/TranslationsProvider";
 import Tooltip from "./Tooltip";
 
 interface ThreadCardProps {
@@ -20,6 +21,7 @@ export default function ThreadCard({
   forumSlug,
   featured = false,
 }: ThreadCardProps) {
+  const { t } = useTranslations();
   const date = new Date(thread.created_at).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "short",
@@ -27,18 +29,17 @@ export default function ThreadCard({
   });
 
   // Extract preview from content (remove markdown)
-  const preview = thread.content
-    .replace(/[#*`_~\[\]()]/g, "")
-    .replace(/\n/g, " ")
-    .substring(0, 150)
-    .trim() + "...";
+  const preview =
+    thread.content
+      .replace(/[#*`_~\[\]()]/g, "")
+      .replace(/\n/g, " ")
+      .substring(0, 150)
+      .trim() + "...";
 
   return (
     <Link
       href={`/thread/${thread.id}`}
-      className={`card card-interactive block ${
-        featured ? "border-2" : ""
-      }`}
+      className={`card card-interactive block ${featured ? "border-2" : ""}`}
       style={
         featured
           ? {
@@ -90,9 +91,8 @@ export default function ThreadCard({
               </div>
             )}
 
-            {/* Forum badge */}
             {thread.forum && (
-              <Tooltip content={`Ver todos los hilos de ${thread.forum.name}`} position="top">
+              <Tooltip content={t("common.inThisForum")} position="top">
                 <span
                   className="badge text-xs"
                   style={{
@@ -113,7 +113,11 @@ export default function ThreadCard({
             {/* Comment count */}
             {thread._count && thread._count.comments > 0 && (
               <Tooltip
-                content={`${thread._count.comments} ${thread._count.comments === 1 ? "comentario" : "comentarios"}`}
+                content={`${thread._count.comments} ${
+                  thread._count.comments === 1
+                    ? t("threads.comment")
+                    : t("threads.comments")
+                }`}
                 position="top"
               >
                 <div className="flex items-center gap-1 text-sm">
