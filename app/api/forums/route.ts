@@ -1,20 +1,31 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase-server";
 import { createForumSchema } from "@/lib/validations";
 
 export async function GET() {
   try {
+    const supabase = await createClient();
     const { data: forums, error } = await supabase
       .from("forums")
-      .select(
-        `
-        *,
-        threads:threads(count)
-      `
-      )
+      .select("id, name, slug, description, created_at")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
+
+    // Get thread counts separately
+    const forumIds = forums?.map((f) => f.id) || [];
+    const countsMap: Record<string, number> = {};
+    
+    if (forumIds.length > 0) {
+      const { data: threads } = await supabase
+        .from("threads")
+        .select("forum_id")
+        .in("forum_id", forumIds);
+      
+      threads?.forEach((thread) => {
+        countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
+      });
+    }
 
     // Transform the count data and return simplified structure
     const forumsWithCount = forums?.map((forum) => ({
@@ -23,7 +34,7 @@ export async function GET() {
       slug: forum.slug,
       description: forum.description,
       _count: {
-        threads: forum.threads[0]?.count || 0,
+        threads: countsMap[forum.id] || 0,
       },
     }));
 
@@ -39,6 +50,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const supabase = await createClient();
     const body = await request.json();
     const validatedData = createForumSchema.parse(body);
 

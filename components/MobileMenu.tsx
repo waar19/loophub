@@ -28,12 +28,15 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
     <>
       {/* Mobile Menu Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         className="lg:hidden btn btn-ghost p-2"
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         aria-expanded={isOpen}
         aria-controls="mobile-menu"
-        style={{ minWidth: "auto" }}
+        style={{ minWidth: "auto", zIndex: 100 }}
       >
         <svg
           className="w-6 h-6"
@@ -63,12 +66,13 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-[60] lg:hidden"
             onClick={() => setIsOpen(false)}
+            style={{ marginTop: "var(--header-height)" }}
           />
           <aside
             id="mobile-menu"
-            className="fixed left-0 top-0 bottom-0 w-80 z-50 overflow-y-auto lg:hidden"
+            className="fixed left-0 top-0 bottom-0 w-80 z-[70] overflow-y-auto lg:hidden"
             role="navigation"
             aria-label="Menú de navegación principal"
             style={{
@@ -77,6 +81,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
               borderRight: "1px solid var(--border)",
               boxShadow: "var(--shadow-lg)",
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <nav className="p-6 space-y-1">
               <div className="mb-6">
@@ -134,57 +139,63 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                   Foros
                 </h3>
                 <div className="space-y-1">
-                  {forums.map((forum) => {
-                    const active = isActive(forum.slug);
-                    const count = threadCounts[forum.id] || 0;
-                    return (
-                      <Link
-                        key={forum.id}
-                        href={`/forum/${forum.slug}`}
-                        onClick={() => setIsOpen(false)}
-                        className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                          active ? "" : ""
-                        }`}
-                        style={
-                          active
-                            ? {
-                                background: "var(--brand-light)",
-                                color: "var(--brand-dark)",
-                              }
-                            : {
-                                color: "var(--muted)",
-                              }
-                        }
-                        onMouseEnter={(e) => {
-                          if (!active) {
-                            e.currentTarget.style.background = "var(--card-hover)";
-                            e.currentTarget.style.color = "var(--foreground)";
+                  {forums.length === 0 ? (
+                    <p className="px-3 text-sm" style={{ color: "var(--muted)" }}>
+                      Cargando foros...
+                    </p>
+                  ) : (
+                    forums.map((forum) => {
+                      const active = isActive(forum.slug);
+                      const count = threadCounts[forum.id] || 0;
+                      return (
+                        <Link
+                          key={forum.id}
+                          href={`/forum/${forum.slug}`}
+                          onClick={() => setIsOpen(false)}
+                          className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                            active ? "" : ""
+                          }`}
+                          style={
+                            active
+                              ? {
+                                  background: "var(--brand-light)",
+                                  color: "var(--brand-dark)",
+                                }
+                              : {
+                                  color: "var(--muted)",
+                                }
                           }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!active) {
-                            e.currentTarget.style.background = "transparent";
-                            e.currentTarget.style.color = "var(--muted)";
-                          }
-                        }}
-                      >
-                        <span className="font-medium">{forum.name}</span>
-                        {count > 0 && (
-                          <span
-                            className="text-xs px-1.5 py-0.5 rounded"
-                            style={{
-                              background: active
-                                ? "var(--brand)"
-                                : "var(--border-light)",
-                              color: active ? "white" : "var(--muted)",
-                            }}
-                          >
-                            {count}
-                          </span>
-                        )}
-                      </Link>
-                    );
-                  })}
+                          onMouseEnter={(e) => {
+                            if (!active) {
+                              e.currentTarget.style.background = "var(--card-hover)";
+                              e.currentTarget.style.color = "var(--foreground)";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!active) {
+                              e.currentTarget.style.background = "transparent";
+                              e.currentTarget.style.color = "var(--muted)";
+                            }
+                          }}
+                        >
+                          <span className="font-medium">{forum.name}</span>
+                          {count > 0 && (
+                            <span
+                              className="text-xs px-1.5 py-0.5 rounded"
+                              style={{
+                                background: active
+                                  ? "var(--brand)"
+                                  : "var(--border-light)",
+                                color: active ? "white" : "var(--muted)",
+                              }}
+                            >
+                              {count}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             </nav>

@@ -31,6 +31,8 @@ export default function Header() {
         if (forumsRes.ok) {
           const forumsData = await forumsRes.json();
           setForums(forumsData || []);
+        } else {
+          console.error("Failed to fetch forums:", forumsRes.status);
         }
 
         if (statsRes.ok) {
