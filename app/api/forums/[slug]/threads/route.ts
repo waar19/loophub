@@ -13,6 +13,8 @@ export async function GET(
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100); // Max 100 per page
     const offset = (page - 1) * limit;
+    const sortBy = searchParams.get("sort") || "newest"; // newest, oldest, most_comments, least_comments
+    const order = searchParams.get("order") || "desc"; // asc, desc
 
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase
@@ -36,12 +38,36 @@ export async function GET(
       throw countError;
     }
 
+    // Determine sort column and direction
+    let sortColumn = "created_at";
+    let ascending = false;
+    
+    switch (sortBy) {
+      case "oldest":
+        sortColumn = "created_at";
+        ascending = true;
+        break;
+      case "newest":
+        sortColumn = "created_at";
+        ascending = false;
+        break;
+      case "most_comments":
+      case "least_comments":
+        // These will be sorted after fetching comment counts
+        sortColumn = "created_at";
+        ascending = false;
+        break;
+      default:
+        sortColumn = "created_at";
+        ascending = order === "asc";
+    }
+
     // Get threads for this forum with pagination
     const { data: threads, error: threadsError } = await supabase
       .from("threads")
       .select("*")
       .eq("forum_id", forum.id)
-      .order("created_at", { ascending: false })
+      .order(sortColumn, { ascending })
       .range(offset, offset + limit - 1);
 
     if (threadsError) {
@@ -87,13 +113,26 @@ export async function GET(
     }
 
     // Transform threads with comment counts and profiles
-    const threadsWithCount = (threads || []).map((thread: any) => ({
+    let threadsWithCount = (threads || []).map((thread: any) => ({
       ...thread,
       profile: thread.user_id ? profilesMap[thread.user_id] : null,
       _count: {
         comments: commentCountsMap[thread.id] || 0,
       },
     }));
+
+    // Sort by comment count if needed
+    if (sortBy === "most_comments" || sortBy === "least_comments") {
+      threadsWithCount.sort((a, b) => {
+        const aCount = a._count.comments || 0;
+        const bCount = b._count.comments || 0;
+        if (sortBy === "most_comments") {
+          return bCount - aCount; // Descending
+        } else {
+          return aCount - bCount; // Ascending
+        }
+      });
+    }
 
     return NextResponse.json({
       forum,

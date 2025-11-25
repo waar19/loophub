@@ -7,6 +7,7 @@ import InfiniteScroll from "@/components/InfiniteScroll";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import TrendingPanel from "@/components/TrendingPanel";
+import ThreadSortFilter from "@/components/ThreadSortFilter";
 import { Thread } from "@/lib/supabase";
 
 interface Forum {
@@ -56,6 +57,7 @@ export default function ForumPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "most_comments" | "least_comments">("newest");
 
   const fetchData = async (pageNum: number = 1, append: boolean = false) => {
     try {
@@ -63,7 +65,7 @@ export default function ForumPage({
       else setIsLoadingMore(true);
 
       const res = await fetch(
-        `/api/forums/${slug}/threads?page=${pageNum}&limit=20`
+        `/api/forums/${slug}/threads?page=${pageNum}&limit=20&sort=${sortBy}`
       );
 
       if (!res.ok) {
@@ -102,7 +104,7 @@ export default function ForumPage({
       fetchData(1, false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+  }, [slug, sortBy]);
 
   const handleLoadMore = () => {
     if (!isLoadingMore && data?.pagination.hasMore) {
@@ -242,22 +244,32 @@ export default function ForumPage({
           </div>
         ) : (
           <div className="mb-12">
-            <div className="flex items-center gap-3 mb-8">
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-                style={{
-                  background: "var(--brand)",
-                  color: "white",
-                }}
-              >
-                📋
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                  style={{
+                    background: "var(--brand)",
+                    color: "white",
+                  }}
+                >
+                  📋
+                </div>
+                <h2
+                  className="text-3xl font-bold"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Hilos
+                </h2>
               </div>
-              <h2
-                className="text-3xl font-bold"
-                style={{ color: "var(--foreground)" }}
-              >
-                Hilos
-              </h2>
+              <ThreadSortFilter
+                currentSort={sortBy}
+                onSortChange={(sort) => {
+                  setSortBy(sort);
+                  setPage(1);
+                  setData(null);
+                }}
+              />
             </div>
             <InfiniteScroll
               hasMore={pagination.hasMore}
