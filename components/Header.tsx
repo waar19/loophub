@@ -7,6 +7,7 @@ import DarkModeToggle from "./DarkModeToggle";
 import SearchBar from "./SearchBar";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "./NotificationBell";
+import LanguageSelector from "./LanguageSelector";
 import { useEffect, useState } from "react";
 
 interface Forum {
@@ -89,6 +90,7 @@ export default function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-3">
+          <LanguageSelector />
           <NotificationBell />
           <DarkModeToggle />
           <AuthButton />

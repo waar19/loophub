@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "@/components/TranslationsProvider";
 import Tooltip from "./Tooltip";
 
 interface Forum {
@@ -18,6 +19,7 @@ interface SidebarProps {
 
 export default function Sidebar({ forums }: SidebarProps) {
   const pathname = usePathname();
+  const { t } = useTranslations();
   const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function Sidebar({ forums }: SidebarProps) {
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
-            Inicio
+            {t("nav.home")}
           </Link>
         </div>
 
@@ -104,12 +106,12 @@ export default function Sidebar({ forums }: SidebarProps) {
             className="px-3 text-xs font-semibold uppercase tracking-wider mb-3"
             style={{ color: "var(--muted)" }}
           >
-            Foros
+            {t("nav.forums")}
           </h3>
           <div className="space-y-1">
             {forums.length === 0 ? (
               <p className="px-3 text-sm" style={{ color: "var(--muted)" }}>
-                No hay foros disponibles
+                {t("common.noForumsAvailable")}
               </p>
             ) : (
               forums.map((forum) => {
@@ -149,7 +151,7 @@ export default function Sidebar({ forums }: SidebarProps) {
                     <span className="font-medium">{forum.name}</span>
                     {count > 0 && (
                       <Tooltip
-                        content={`${count} ${count === 1 ? "hilo" : "hilos"} en este foro`}
+                        content={`${count} ${count === 1 ? t("threads.thread") : t("threads.threads")} ${t("common.inThisForum")}`}
                         position="right"
                       >
                         <span

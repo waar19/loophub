@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AppLayout from "@/components/AppLayout";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { TranslationsProvider } from "@/components/TranslationsProvider";
 import { WebsiteStructuredData } from "@/components/StructuredData";
 import { getBaseUrl, getFullUrl } from "@/lib/url-helpers";
 
@@ -91,9 +92,11 @@ export default function RootLayout({
         <WebsiteStructuredData />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <ToastProvider>
-          <AppLayout>{children}</AppLayout>
-        </ToastProvider>
+        <TranslationsProvider>
+          <ToastProvider>
+            <AppLayout>{children}</AppLayout>
+          </ToastProvider>
+        </TranslationsProvider>
       </body>
     </html>
   );

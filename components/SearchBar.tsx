@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { t } = useTranslations();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +38,9 @@ export default function SearchBar() {
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Buscar hilos, foros..."
+        placeholder={t("common.searchPlaceholder")}
         className="search-input w-full"
-        aria-label="Buscar hilos y foros"
+        aria-label={t("common.search")}
         style={{
           background: "var(--card-bg)",
           borderColor: "var(--border)",
