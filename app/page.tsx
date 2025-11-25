@@ -1,4 +1,5 @@
 import ForumCard from "@/components/ForumCard";
+import { headers } from "next/headers";
 
 interface Forum {
   id: string;
@@ -11,7 +12,11 @@ interface Forum {
 }
 
 async function getForums(): Promise<Forum[]> {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const headersList = await headers();
+  const protocol = headersList.get("x-forwarded-proto") || "http";
+  const host = headersList.get("host") || "localhost:3000";
+  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+  
   const res = await fetch(`${baseURL}/api/forums`, {
     cache: "no-store",
   });

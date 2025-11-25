@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ThreadCard from "@/components/ThreadCard";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 
 import { Thread } from "@/lib/supabase";
 
@@ -16,7 +17,11 @@ interface ForumData {
 }
 
 async function getForumData(slug: string): Promise<ForumData> {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const headersList = await headers();
+  const protocol = headersList.get("x-forwarded-proto") || "http";
+  const host = headersList.get("host") || "localhost:3000";
+  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+  
   const res = await fetch(`${baseURL}/api/forums/${slug}/threads`, {
     cache: "no-store",
   });
