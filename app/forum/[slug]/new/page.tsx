@@ -1,17 +1,36 @@
 "use client";
 
+import { use } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import SimpleForm from "@/components/SimpleForm";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { createClient } from "@/lib/supabase-browser";
 
 export default function NewThreadPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = use(params);
   const router = useRouter();
+  const [forumName, setForumName] = useState("");
+
+  useEffect(() => {
+    async function fetchForum() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("forums")
+        .select("name")
+        .eq("slug", slug)
+        .single();
+      if (data) setForumName(data.name);
+    }
+    fetchForum();
+  }, [slug]);
 
   const handleSubmit = async (data: Record<string, string>) => {
-    const res = await fetch(`/api/forums/${params.slug}/threads`, {
+    const res = await fetch(`/api/forums/${slug}/threads`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -27,32 +46,47 @@ export default function NewThreadPage({
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">Create New Thread</h1>
-
-      <div className="card max-w-2xl">
-        <SimpleForm
-          fields={[
-            {
-              name: "title",
-              label: "Title",
-              type: "text",
-              placeholder: "Enter thread title",
-              required: true,
-              maxLength: 200,
-            },
-            {
-              name: "content",
-              label: "Content",
-              type: "textarea",
-              placeholder: "Share your thoughts...",
-              required: true,
-              maxLength: 10000,
-            },
+    <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: forumName || "Foro", href: `/forum/${slug}` },
+            { label: "Nuevo Hilo" },
           ]}
-          onSubmit={handleSubmit}
-          submitText="Create Thread"
         />
+
+        <h1
+          className="text-3xl font-bold mb-8"
+          style={{ color: "var(--foreground)" }}
+        >
+          Crear Nuevo Hilo
+        </h1>
+
+        <div className="card">
+          <SimpleForm
+            fields={[
+              {
+                name: "title",
+                label: "Título",
+                type: "text",
+                placeholder: "Escribe el título del hilo",
+                required: true,
+                maxLength: 200,
+              },
+              {
+                name: "content",
+                label: "Contenido",
+                type: "markdown",
+                placeholder: "Comparte tus pensamientos... (Markdown soportado)",
+                required: true,
+                maxLength: 10000,
+              },
+            ]}
+            onSubmit={handleSubmit}
+            submitText="Crear Hilo"
+          />
+        </div>
       </div>
     </div>
   );

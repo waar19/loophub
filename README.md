@@ -1,16 +1,19 @@
-# LoopHub - Modern Forum Platform
+# LoopHub
 
-A minimalist forum platform built with Next.js 15, Supabase, and Tailwind CSS.
+Plataforma de comunidad enfocada en **Minimalismo Digital** y **Organización Personal**. Construida con Next.js 15, Supabase y Tailwind CSS.
 
-## Features
+## Características
 
-- 🎨 Clean, minimalist design
-- 💬 Forum discussions with threads and comments
+- 🎨 Diseño minimalista y limpio
+- 💬 Foros de discusión con hilos y comentarios
+- 🌙 Modo oscuro integrado
+- 📝 Soporte completo de Markdown
+- 🔄 Paginación con infinite scroll
 - 🚀 Next.js 15 App Router
 - 📦 Supabase PostgreSQL database
-- ✅ Zod validation
-- 🎯 SEO-optimized
-- ☁️ Vercel-ready
+- ✅ Validación con Zod
+- 🎯 SEO optimizado
+- ☁️ Listo para Vercel
 
 ## Tech Stack
 
@@ -18,67 +21,83 @@ A minimalist forum platform built with Next.js 15, Supabase, and Tailwind CSS.
 - **Database**: Supabase (PostgreSQL)
 - **Validation**: Zod
 - **Styling**: Tailwind CSS v4
+- **Markdown**: react-markdown con syntax highlighting
 - **Deployment**: Vercel
+
+## Temáticas
+
+- **Minimalismo Digital**: Limpieza de vida digital, archivos, hábitos tecnológicos
+- **Organización Personal**: Métodos, rutinas, sistemas de organización realistas
+- **Productividad Inteligente**: Técnicas aterrizadas, sin fanatismo ni gurús
+- **Apps y Herramientas**: Notion, Obsidian, Todoist, Google Workspace, Apple Notes
+- **Workflows & Setup**: Rutinas, automatizaciones, dispositivos, ambientes de trabajo
 
 ## Quick Start
 
 ### 1. Prerequisites
 
 - Node.js 18+
-- A Supabase account ([supabase.com](https://supabase.com))
+- Una cuenta de Supabase ([supabase.com](https://supabase.com))
 
-### 2. Install Dependencies
+### 2. Instalar Dependencias
 
 ```bash
-cd loophub
 npm install
 ```
 
-### 3. Set Up Supabase
+### 3. Configurar Supabase
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to **Project Settings** → **API**
-3. Copy your **Project URL** and **anon public** key
+1. Crea un nuevo proyecto en [supabase.com](https://supabase.com)
+2. Ve a **Project Settings** → **API**
+3. Copia tu **Project URL** y **anon public** key
+4. Para el seed script, necesitarás el **Service Role Key** (solo para desarrollo)
 
-### 4. Configure Environment
+### 4. Configurar Variables de Entorno
 
-Copy `.env.example` to `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Add your Supabase credentials:
+Crea `.env.local`:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"  # Solo para seeds
 ```
 
-### 5. Create Database Tables
+### 5. Crear Tablas de Base de Datos
 
-In your Supabase project, go to **SQL Editor** and run the migration:
+En tu proyecto de Supabase, ve a **SQL Editor** y ejecuta las migraciones en orden:
+
+1. `supabase/migrations/001_initial_schema.sql` - Schema inicial
+2. `supabase/migrations/002_add_authentication.sql` - Autenticación
+3. `supabase/migrations/003_add_moderation.sql` - Moderación
+4. `supabase/migrations/004_seed_minimalist_forums.sql` - Foros iniciales
+
+### 6. Poblar con Contenido Inicial (Opcional)
+
+Ejecuta el script de seed para crear hilos y comentarios iniciales:
 
 ```bash
-# Copy the contents of supabase/migrations/001_initial_schema.sql
-# Paste and run in Supabase SQL Editor
+npx tsx scripts/seed-initial-content.ts
 ```
 
-This creates:
+**Nota**: Necesitas tener al menos un usuario creado en Supabase antes de ejecutar el seed.
 
-- `forums` table
-- `threads` table
-- `comments` table
-- Indexes for performance
-- 3 sample forums
-
-### 6. Run Development Server
+### 7. Ejecutar Servidor de Desarrollo
 
 ```bash
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000)
+Visita [http://localhost:3000](http://localhost:3000)
+
+## Estructura de Foros
+
+La plataforma incluye 5 foros predefinidos:
+
+1. **Minimalismo Digital** (`minimalismo-digital`)
+2. **Organización Personal** (`organizacion-personal`)
+3. **Productividad Inteligente** (`productividad-inteligente`)
+4. **Apps y Herramientas** (`apps-herramientas`)
+5. **Workflows & Setup** (`workflows-setup`)
 
 ## Database Schema
 

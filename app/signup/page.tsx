@@ -22,12 +22,12 @@ export default function SignupPage() {
     try {
       // Validate username
       if (username.length < 3) {
-        throw new Error("Username must be at least 3 characters");
+        throw new Error("El nombre de usuario debe tener al menos 3 caracteres");
       }
 
       if (!/^[a-zA-Z0-9_]+$/.test(username)) {
         throw new Error(
-          "Username can only contain letters, numbers, and underscores"
+          "El nombre de usuario solo puede contener letras, números y guiones bajos"
         );
       }
 
@@ -45,7 +45,7 @@ export default function SignupPage() {
       if (signUpError) throw signUpError;
 
       // Redirect to login with success message
-      router.push("/login?message=Check your email to confirm your account");
+      router.push("/login?message=Revisa tu email para confirmar tu cuenta");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
     } finally {
@@ -56,7 +56,7 @@ export default function SignupPage() {
   return (
     <div className="max-w-md mx-auto mt-16">
       <div className="card">
-        <h1 className="text-3xl font-bold mb-6">Join LoopHub</h1>
+        <h1 className="text-3xl font-bold mb-6">Únete a LoopHub</h1>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>
@@ -77,7 +77,7 @@ export default function SignupPage() {
               placeholder="johndoe"
             />
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              Letters, numbers, and underscores only
+              Solo letras, números y guiones bajos
             </p>
           </div>
 
@@ -101,7 +101,7 @@ export default function SignupPage() {
               htmlFor="password"
               className="block text-sm font-medium mb-2"
             >
-              Password
+              Contraseña
             </label>
             <input
               id="password"
@@ -114,14 +114,18 @@ export default function SignupPage() {
               minLength={6}
             />
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              At least 6 characters
+              Mínimo 6 caracteres
             </p>
           </div>
 
           {error && (
             <div
-              className="p-3 rounded"
-              style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
+              className="p-3 rounded border"
+              style={{ 
+                backgroundColor: "rgba(239, 68, 68, 0.1)", 
+                color: "#ef4444",
+                borderColor: "rgba(239, 68, 68, 0.3)"
+              }}
             >
               {error}
             </div>
@@ -132,7 +136,7 @@ export default function SignupPage() {
             className="btn btn-primary w-full"
             disabled={loading}
           >
-            {loading ? "Creating account..." : "Sign up"}
+            {loading ? "Creando cuenta..." : "Registrarse"}
           </button>
         </form>
 
@@ -140,9 +144,9 @@ export default function SignupPage() {
           className="mt-6 text-center text-sm"
           style={{ color: "var(--muted)" }}
         >
-          Already have an account?{" "}
+          ¿Ya tienes una cuenta?{" "}
           <Link href="/login" style={{ color: "var(--accent)" }}>
-            Login
+            Inicia sesión
           </Link>
         </p>
       </div>

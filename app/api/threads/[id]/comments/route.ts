@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase-server";
 import { createCommentSchema } from "@/lib/validations";
 
 export async function GET(
@@ -7,7 +7,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100); // Max 100 per page
+    const offset = (page - 1) * limit;
 
     // Get thread with forum info
     const { data: thread, error: threadError } = await supabase
@@ -25,21 +30,59 @@ export async function GET(
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
     }
 
-    // Get comments for this thread
+    // Get total count for pagination
+    const { count: totalCount, error: countError } = await supabase
+      .from("comments")
+      .select("*", { count: "exact", head: true })
+      .eq("thread_id", id);
+
+    if (countError) throw countError;
+
+    // Get comments for this thread with pagination
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
-      .select(
-        `
-        *,
-        profile:profiles(username)
-      `
-      )
+      .select("*")
       .eq("thread_id", id)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: true })
+      .range(offset, offset + limit - 1);
 
     if (commentsError) throw commentsError;
 
-    return NextResponse.json({ thread, comments: comments || [] });
+    // Get unique user IDs from comments
+    const userIds = [...new Set((comments || []).map((c: any) => c.user_id).filter(Boolean))];
+    
+    // Get profiles for these users
+    let profilesMap: Record<string, { username: string }> = {};
+    if (userIds.length > 0) {
+      const { data: profiles, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .in("id", userIds);
+
+      if (!profilesError && profiles) {
+        profiles.forEach((profile: any) => {
+          profilesMap[profile.id] = { username: profile.username };
+        });
+      }
+    }
+
+    // Transform comments with profiles
+    const commentsWithProfiles = (comments || []).map((comment: any) => ({
+      ...comment,
+      profile: comment.user_id ? profilesMap[comment.user_id] : null,
+    }));
+
+    return NextResponse.json({
+      thread,
+      comments: commentsWithProfiles,
+      pagination: {
+        page,
+        limit,
+        total: totalCount || 0,
+        totalPages: Math.ceil((totalCount || 0) / limit),
+        hasMore: (offset + limit) < (totalCount || 0),
+      },
+    });
   } catch (error) {
     console.error("Error fetching comments:", error);
     return NextResponse.json(
@@ -54,6 +97,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
     const body = await request.json();
     const validatedData = createCommentSchema.parse(body);

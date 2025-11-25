@@ -49,7 +49,10 @@ export default function ReportButton({
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+        className="text-xs transition-colors"
+        style={{ color: "var(--muted)" }}
+        onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
+        onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
       >
         Report
       </button>
@@ -57,20 +60,47 @@ export default function ReportButton({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-        <h3 className="text-lg font-bold mb-4">Report Content</h3>
+    <div 
+      className="fixed inset-0 flex items-center justify-center z-50 p-4"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+    >
+      <div 
+        className="rounded-lg p-6 max-w-sm w-full shadow-xl"
+        style={{ 
+          background: "var(--card-bg)",
+          border: "1px solid var(--border)"
+        }}
+      >
+        <h3 
+          className="text-lg font-bold mb-4"
+          style={{ color: "var(--foreground)" }}
+        >
+          Report Content
+        </h3>
 
         {success ? (
-          <div className="text-green-600 text-center py-4">
+          <div 
+            className="text-center py-4"
+            style={{ color: "#22c55e" }}
+          >
             Report submitted successfully!
           </div>
         ) : (
           <form onSubmit={handleReport}>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Reason</label>
+              <label 
+                className="block text-sm font-medium mb-2"
+                style={{ color: "var(--foreground)" }}
+              >
+                Reason
+              </label>
               <textarea
                 className="w-full border rounded p-2 text-sm"
+                style={{
+                  background: "var(--card-bg)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--border)"
+                }}
                 rows={3}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -83,14 +113,21 @@ export default function ReportButton({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm border rounded transition-colors"
+                style={{
+                  background: "var(--card-bg)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--border)"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--border)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--card-bg)"}
                 disabled={loading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : "Submit Report"}

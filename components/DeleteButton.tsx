@@ -36,7 +36,10 @@ export default function DeleteButton({ id, type }: DeleteButtonProps) {
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="text-xs text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
+      className="text-xs font-medium disabled:opacity-50 transition-colors"
+      style={{ color: "#ef4444" }}
+      onMouseEnter={(e) => !loading && (e.currentTarget.style.color = "#dc2626")}
+      onMouseLeave={(e) => !loading && (e.currentTarget.style.color = "#ef4444")}
     >
       {loading ? "Deleting..." : "Delete"}
     </button>

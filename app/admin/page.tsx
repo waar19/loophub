@@ -29,7 +29,11 @@ export default async function AdminDashboard() {
         <Link
           href="/"
           className="btn"
-          style={{ background: "white", border: "1px solid var(--border)" }}
+          style={{ 
+            background: "var(--card-bg)", 
+            color: "var(--foreground)",
+            border: "1px solid var(--border)" 
+          }}
         >
           Back to Site
         </Link>
@@ -45,14 +49,23 @@ export default async function AdminDashboard() {
                 <div key={report.id} className="border-b pb-2 last:border-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-xs font-bold uppercase px-2 py-1 rounded bg-red-100 text-red-800 mr-2">
+                      <span 
+                        className="text-xs font-bold uppercase px-2 py-1 rounded mr-2"
+                        style={{
+                          background: "rgba(239, 68, 68, 0.1)",
+                          color: "#ef4444"
+                        }}
+                      >
                         {report.content_type}
                       </span>
                       <span className="text-sm font-medium">
                         {report.reason}
                       </span>
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span 
+                      className="text-xs"
+                      style={{ color: "var(--muted)" }}
+                    >
                       {new Date(report.created_at).toLocaleDateString()}
                     </span>
                   </div>
@@ -63,7 +76,12 @@ export default async function AdminDashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-500">No reports found.</p>
+            <p 
+              className="text-sm"
+              style={{ color: "var(--muted)" }}
+            >
+              No reports found.
+            </p>
           )}
         </div>
 
@@ -83,7 +101,10 @@ export default async function AdminDashboard() {
                   >
                     {thread.title}
                   </Link>
-                  <div className="text-xs text-gray-500">
+                  <div 
+                    className="text-xs"
+                    style={{ color: "var(--muted)" }}
+                  >
                     by {thread.profile?.username || "Unknown"} •{" "}
                     {new Date(thread.created_at).toLocaleDateString()}
                   </div>

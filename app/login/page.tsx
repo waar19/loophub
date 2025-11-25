@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -24,14 +25,48 @@ export default function LoginPage() {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check if it's an email confirmation error
+        if (error.message.includes("Email not confirmed") || error.message.includes("email_not_confirmed")) {
+          setError("Email no confirmado. Por favor revisa tu email o reenvía el enlace de confirmación.");
+        } else {
+          throw error;
+        }
+        return;
+      }
 
       router.push("/");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      setError("Por favor ingresa tu dirección de email primero");
+      return;
+    }
+
+    setResendingEmail(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+
+      if (error) throw error;
+
+      setError(null);
+      alert("¡Email de confirmación enviado! Por favor revisa tu bandeja de entrada.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al reenviar el email de confirmación");
+    } finally {
+      setResendingEmail(false);
     }
   };
 
@@ -52,7 +87,7 @@ export default function LoginPage() {
   return (
     <div className="max-w-md mx-auto mt-16">
       <div className="card">
-        <h1 className="text-3xl font-bold mb-6">Login to LoopHub</h1>
+        <h1 className="text-3xl font-bold mb-6">Iniciar Sesión</h1>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -90,10 +125,25 @@ export default function LoginPage() {
 
           {error && (
             <div
-              className="p-3 rounded"
-              style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
+              className="p-3 rounded border"
+              style={{ 
+                backgroundColor: "rgba(239, 68, 68, 0.1)", 
+                color: "#ef4444",
+                borderColor: "rgba(239, 68, 68, 0.3)"
+              }}
             >
-              {error}
+              <div className="mb-2">{error}</div>
+              {(error.includes("Email not confirmed") || error.includes("email_not_confirmed")) && (
+                <button
+                  type="button"
+                  onClick={handleResendConfirmation}
+                  disabled={resendingEmail}
+                  className="text-sm underline hover:no-underline"
+                  style={{ color: "#ef4444" }}
+                >
+                  {resendingEmail ? "Enviando..." : "Reenviar email de confirmación"}
+                </button>
+              )}
             </div>
           )}
 
@@ -102,7 +152,7 @@ export default function LoginPage() {
             className="btn btn-primary w-full"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
           </button>
         </form>
 
@@ -119,7 +169,7 @@ export default function LoginPage() {
                 className="px-2"
                 style={{ background: "var(--card-bg)", color: "var(--muted)" }}
               >
-                Or continue with
+                O continúa con
               </span>
             </div>
           </div>
@@ -127,7 +177,11 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             className="btn w-full mt-4"
-            style={{ background: "white", border: "1px solid var(--border)" }}
+            style={{ 
+              background: "var(--card-bg)", 
+              color: "var(--foreground)",
+              border: "1px solid var(--border)" 
+            }}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
@@ -147,7 +201,7 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Sign in with Google
+            Iniciar sesión con Google
           </button>
         </div>
 
@@ -155,9 +209,9 @@ export default function LoginPage() {
           className="mt-6 text-center text-sm"
           style={{ color: "var(--muted)" }}
         >
-          Don&apos;t have an account?{" "}
+          ¿No tienes una cuenta?{" "}
           <Link href="/signup" style={{ color: "var(--accent)" }}>
-            Sign up
+            Regístrate
           </Link>
         </p>
       </div>

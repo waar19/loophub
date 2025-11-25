@@ -1,58 +1,227 @@
-import ForumCard from "@/components/ForumCard";
-import { headers } from "next/headers";
+import { createClient } from "@/lib/supabase-server";
+import TrendingPanel from "@/components/TrendingPanel";
+import ThreadCard from "@/components/ThreadCard";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
-interface Forum {
+interface Thread {
   id: string;
-  name: string;
-  slug: string;
-  createdAt: string;
-  _count: {
-    threads: number;
+  title: string;
+  content: string;
+  created_at: string;
+  forum_id: string;
+  user_id?: string;
+  profile?: {
+    username: string;
+  };
+  forum?: {
+    name: string;
+    slug: string;
+  };
+  _count?: {
+    comments: number;
   };
 }
 
-async function getForums(): Promise<Forum[]> {
-  const headersList = await headers();
-  const protocol = headersList.get("x-forwarded-proto") || "http";
-  const host = headersList.get("host") || "localhost:3000";
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+async function getRecentThreads(): Promise<Thread[]> {
+  const supabase = await createClient();
   
-  const res = await fetch(`${baseURL}/api/forums`, {
-    cache: "no-store",
-  });
+  const { data: threads, error } = await supabase
+    .from("threads")
+    .select(`
+      *,
+      forums!inner(name, slug)
+    `)
+    .order("created_at", { ascending: false })
+    .limit(20);
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch forums");
+  if (error) {
+    console.error("Error fetching threads:", error);
+    return [];
   }
 
-  return res.json();
+  if (!threads || threads.length === 0) {
+    return [];
+  }
+
+  // Get unique user IDs
+  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
+  
+  // Fetch profiles separately
+  const profilesMap: Record<string, { username: string }> = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+    
+    profiles?.forEach((profile) => {
+      profilesMap[profile.id] = { username: profile.username };
+    });
+  }
+
+  // Get comment counts
+  const threadIds = threads.map((t) => t.id);
+  const { data: commentCounts } = await supabase
+    .from("comments")
+    .select("thread_id")
+    .in("thread_id", threadIds);
+
+  const countsMap: Record<string, number> = {};
+  commentCounts?.forEach((c) => {
+    countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
+  });
+
+  return threads.map((thread) => ({
+    ...thread,
+    profile: thread.user_id ? profilesMap[thread.user_id] : undefined,
+    _count: {
+      comments: countsMap[thread.id] || 0,
+    },
+  }));
+}
+
+async function getFeaturedThreads(): Promise<Thread[]> {
+  const supabase = await createClient();
+  
+  // Get threads with most comments in last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const { data: threads } = await supabase
+    .from("threads")
+    .select(`
+      *,
+      forums!inner(name, slug)
+    `)
+    .gte("created_at", sevenDaysAgo.toISOString())
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (!threads || threads.length === 0) return [];
+
+  // Get unique user IDs
+  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
+  
+  // Fetch profiles separately
+  const profilesMap: Record<string, { username: string }> = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+    
+    profiles?.forEach((profile) => {
+      profilesMap[profile.id] = { username: profile.username };
+    });
+  }
+
+  const threadIds = threads.map((t) => t.id);
+  const { data: commentCounts } = await supabase
+    .from("comments")
+    .select("thread_id")
+    .in("thread_id", threadIds);
+
+  const countsMap: Record<string, number> = {};
+  commentCounts?.forEach((c) => {
+    countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
+  });
+
+  return threads
+    .map((thread) => ({
+      ...thread,
+      profile: thread.user_id ? profilesMap[thread.user_id] : undefined,
+      _count: {
+        comments: countsMap[thread.id] || 0,
+      },
+    }))
+    .filter((t) => (t._count?.comments || 0) > 0)
+    .sort((a, b) => (b._count?.comments || 0) - (a._count?.comments || 0))
+    .slice(0, 5);
 }
 
 export default async function HomePage() {
-  const forums = await getForums();
+  const [recentThreads, featuredThreads] = await Promise.all([
+    getRecentThreads(),
+    getFeaturedThreads(),
+  ]);
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Welcome to LoopHub</h1>
-        <p style={{ color: "var(--muted)" }}>
-          A minimalist forum platform for focused discussions
-        </p>
-      </div>
+    <div
+      className="min-h-screen lg:ml-[var(--sidebar-width)] xl:mr-80"
+    >
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <Breadcrumbs items={[{ label: "Inicio", href: "/" }]} />
 
-      {forums.length === 0 ? (
-        <div className="card text-center py-12">
-          <p style={{ color: "var(--muted)" }}>
-            No forums yet. Check back soon!
+        {/* Hero Section */}
+        <div className="mb-12">
+          <h1
+            className="text-4xl font-bold mb-3"
+            style={{ color: "var(--foreground)" }}
+          >
+            Bienvenido a LoopHub
+          </h1>
+          <p className="text-lg" style={{ color: "var(--muted)" }}>
+            Comunidad enfocada en minimalismo digital, organización personal y
+            productividad realista
           </p>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {forums.map((forum) => (
-            <ForumCard key={forum.id} forum={forum} />
-          ))}
-        </div>
-      )}
+
+        {/* Featured Threads */}
+        {featuredThreads.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2
+                className="text-2xl font-semibold"
+                style={{ color: "var(--foreground)" }}
+              >
+                Hilos Destacados
+              </h2>
+            </div>
+            <div className="space-y-4">
+              {featuredThreads.map((thread) => (
+                <ThreadCard
+                  key={thread.id}
+                  thread={thread}
+                  forumSlug={thread.forum?.slug || ""}
+                  featured
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Recent Threads */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h2
+              className="text-2xl font-semibold"
+              style={{ color: "var(--foreground)" }}
+            >
+              Hilos Recientes
+            </h2>
+          </div>
+          {recentThreads.length === 0 ? (
+            <div className="card text-center py-12">
+              <p style={{ color: "var(--muted)" }}>
+                Aún no hay hilos. Sé el primero en crear uno.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentThreads.map((thread) => (
+                <ThreadCard
+                  key={thread.id}
+                  thread={thread}
+                  forumSlug={thread.forum?.slug || ""}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Trending Panel */}
+      <TrendingPanel />
     </div>
   );
 }
