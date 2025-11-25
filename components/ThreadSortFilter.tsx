@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Tooltip from "./Tooltip";
+import { useTranslations } from "./TranslationsProvider";
 
 type SortOption = "newest" | "oldest" | "most_comments" | "least_comments";
 
@@ -15,19 +16,28 @@ export default function ThreadSortFilter({
   onSortChange,
 }: ThreadSortFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslations();
 
   const sortOptions: { value: SortOption; label: string; icon: string }[] = [
-    { value: "newest", label: "Más recientes", icon: "🕐" },
-    { value: "oldest", label: "Más antiguos", icon: "📅" },
-    { value: "most_comments", label: "Más comentados", icon: "💬" },
-    { value: "least_comments", label: "Menos comentados", icon: "🔇" },
+    { value: "newest", label: t("threads.sortNewest"), icon: "🕐" },
+    { value: "oldest", label: t("threads.sortOldest"), icon: "📅" },
+    {
+      value: "most_comments",
+      label: t("threads.sortMostComments"),
+      icon: "💬",
+    },
+    {
+      value: "least_comments",
+      label: t("threads.sortLeastComments"),
+      icon: "🔇",
+    },
   ];
 
   const currentOption = sortOptions.find((opt) => opt.value === currentSort);
 
   return (
     <div className="relative">
-      <Tooltip content="Ordenar hilos" position="bottom">
+      <Tooltip content={t("threads.sortThreads")} position="bottom">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors"
@@ -48,7 +58,9 @@ export default function ThreadSortFilter({
           <span>{currentOption?.icon}</span>
           <span className="text-sm font-medium">{currentOption?.label}</span>
           <svg
-            className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            className={`w-4 h-4 transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -129,4 +141,3 @@ export default function ThreadSortFilter({
     </div>
   );
 }
-
