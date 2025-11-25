@@ -68,7 +68,8 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Visible solo en pantallas < 1024px (móviles y tablets pequeñas) */}
+      {/* En landscape de tablets grandes o desktop, el sidebar fijo se muestra automáticamente */}
       <button
         onClick={handleToggle}
         className="lg:hidden btn btn-ghost p-2"

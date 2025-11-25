@@ -48,6 +48,7 @@ export default function Sidebar({ forums }: SidebarProps) {
         background: "var(--card-bg)",
         borderColor: "var(--border)",
       }}
+      aria-label="Navegación principal de foros"
     >
       <nav className="p-6 space-y-1">
         <div className="mb-6">
