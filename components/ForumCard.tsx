@@ -6,7 +6,7 @@ interface Forum {
   id: string;
   name: string;
   slug: string;
-  createdAt: string;
+  created_at: string;
   _count: {
     threads: number;
   };

@@ -145,7 +145,7 @@ interface Forum {
   name: string;
   slug: string;
   description?: string;
-  createdAt: string;
+  created_at: string;
   _count: {
     threads: number;
   };
@@ -179,7 +179,7 @@ async function getForums(): Promise<Forum[]> {
     id: forum.id,
     name: forum.name,
     slug: forum.slug,
-    createdAt: forum.created_at,
+    created_at: forum.created_at,
     _count: {
       threads: countsMap[forum.id] || 0,
     },

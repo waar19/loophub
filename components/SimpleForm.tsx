@@ -10,6 +10,7 @@ interface Field {
   placeholder?: string;
   required?: boolean;
   maxLength?: number;
+  defaultValue?: string;
 }
 
 interface SimpleFormProps {
@@ -25,7 +26,15 @@ export default function SimpleForm({
 }: SimpleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    fields.forEach((field) => {
+      if (field.defaultValue) {
+        initial[field.name] = field.defaultValue;
+      }
+    });
+    return initial;
+  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -113,6 +122,7 @@ export default function SimpleForm({
               required={field.required}
               maxLength={field.maxLength}
               disabled={isSubmitting}
+              defaultValue={field.defaultValue}
             />
           ) : (
             <input
@@ -124,6 +134,7 @@ export default function SimpleForm({
               required={field.required}
               maxLength={field.maxLength}
               disabled={isSubmitting}
+              defaultValue={field.defaultValue}
             />
           )}
         </div>
