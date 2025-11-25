@@ -142,8 +142,9 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                   style={
                     pathname === "/"
                       ? {
-                          background: "var(--brand-light)",
-                          color: "var(--brand-dark)",
+                          background: "var(--brand)",
+                          color: "white",
+                          boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
                         }
                       : {
                           color: "var(--muted)",
@@ -206,8 +207,9 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                           style={
                             active
                               ? {
-                                  background: "var(--brand-light)",
-                                  color: "var(--brand-dark)",
+                                  background: "var(--brand)",
+                                  color: "white",
+                                  boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
                                 }
                               : {
                                   color: "var(--muted)",
@@ -236,9 +238,13 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                                 className="text-xs px-1.5 py-0.5 rounded"
                                 style={{
                                   background: active
-                                    ? "var(--brand)"
-                                    : "var(--border-light)",
-                                  color: active ? "white" : "var(--muted)",
+                                    ? "white"
+                                    : "var(--brand)",
+                                  color: active ? "var(--brand)" : "white",
+                                  boxShadow: active 
+                                    ? "0 1px 3px rgba(88, 101, 242, 0.2)"
+                                    : "0 1px 3px rgba(88, 101, 242, 0.3)",
+                                  fontWeight: "bold",
                                 }}
                               >
                                 {count}

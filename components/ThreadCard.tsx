@@ -143,13 +143,14 @@ export default function ThreadCard({
         {/* Featured indicator */}
         {featured && (
           <div
-            className="shrink-0 px-3 py-1 rounded-lg text-xs font-semibold"
+            className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide"
             style={{
               background: "var(--brand)",
               color: "white",
+              boxShadow: "0 2px 8px rgba(88, 101, 242, 0.4)",
             }}
           >
-            Destacado
+            ⭐ Destacado
           </div>
         )}
       </div>
