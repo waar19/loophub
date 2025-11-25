@@ -90,8 +90,31 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-16">
-      <div className="card">
-        <h1 className="text-3xl font-bold mb-6">Iniciar Sesión</h1>
+      <div className="card" style={{
+        borderLeft: "4px solid var(--brand)",
+      }}>
+        <div className="flex items-center gap-3 mb-8">
+          <div
+            className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+            style={{
+              background: "var(--brand)",
+              color: "white",
+            }}
+          >
+            🔐
+          </div>
+          <h1 
+            className="text-4xl font-extrabold"
+            style={{
+              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            Iniciar Sesión
+          </h1>
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>

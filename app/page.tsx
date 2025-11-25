@@ -3,6 +3,14 @@ import TrendingPanel from "@/components/TrendingPanel";
 import ThreadCard from "@/components/ThreadCard";
 import ForumCard from "@/components/ForumCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import {
+  getProfilesMap,
+  getCommentCountsMap,
+  getThreadCountsMap,
+  extractUserIds,
+  extractThreadIds,
+  extractForumIds,
+} from "@/lib/api-helpers";
 
 interface Thread {
   id: string;
@@ -44,33 +52,16 @@ async function getRecentThreads(): Promise<Thread[]> {
     return [];
   }
 
-  // Get unique user IDs
-  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
-  
-  // Fetch profiles separately
-  const profilesMap: Record<string, { username: string }> = {};
-  if (userIds.length > 0) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, username")
-      .in("id", userIds);
-    
-    profiles?.forEach((profile) => {
-      profilesMap[profile.id] = { username: profile.username };
-    });
-  }
+  // Get profiles and comment counts using helper functions
+  const userIds = extractUserIds(threads);
+  const threadIds = extractThreadIds(
+    threads.map((t) => ({ thread_id: t.id }))
+  );
 
-  // Get comment counts
-  const threadIds = threads.map((t) => t.id);
-  const { data: commentCounts } = await supabase
-    .from("comments")
-    .select("thread_id")
-    .in("thread_id", threadIds);
-
-  const countsMap: Record<string, number> = {};
-  commentCounts?.forEach((c) => {
-    countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
-  });
+  const [profilesMap, countsMap] = await Promise.all([
+    getProfilesMap(userIds),
+    getCommentCountsMap(threadIds),
+  ]);
 
   return threads.map((thread) => ({
     ...thread,
@@ -100,32 +91,16 @@ async function getFeaturedThreads(): Promise<Thread[]> {
 
   if (!threads || threads.length === 0) return [];
 
-  // Get unique user IDs
-  const userIds = [...new Set(threads.map((t) => t.user_id).filter(Boolean))];
-  
-  // Fetch profiles separately
-  const profilesMap: Record<string, { username: string }> = {};
-  if (userIds.length > 0) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, username")
-      .in("id", userIds);
-    
-    profiles?.forEach((profile) => {
-      profilesMap[profile.id] = { username: profile.username };
-    });
-  }
+  // Get profiles and comment counts using helper functions
+  const userIds = extractUserIds(threads);
+  const threadIds = extractThreadIds(
+    threads.map((t) => ({ thread_id: t.id }))
+  );
 
-  const threadIds = threads.map((t) => t.id);
-  const { data: commentCounts } = await supabase
-    .from("comments")
-    .select("thread_id")
-    .in("thread_id", threadIds);
-
-  const countsMap: Record<string, number> = {};
-  commentCounts?.forEach((c) => {
-    countsMap[c.thread_id] = (countsMap[c.thread_id] || 0) + 1;
-  });
+  const [profilesMap, countsMap] = await Promise.all([
+    getProfilesMap(userIds),
+    getCommentCountsMap(threadIds),
+  ]);
 
   return threads
     .map((thread) => ({
@@ -145,7 +120,7 @@ interface Forum {
   name: string;
   slug: string;
   description?: string;
-  createdAt: string;
+  created_at: string;
   _count: {
     threads: number;
   };
@@ -163,23 +138,15 @@ async function getForums(): Promise<Forum[]> {
     return [];
   }
 
-  // Get thread counts for each forum
+  // Get thread counts using helper function
   const forumIds = forums.map((f) => f.id);
-  const { data: threads } = await supabase
-    .from("threads")
-    .select("forum_id")
-    .in("forum_id", forumIds);
-
-  const countsMap: Record<string, number> = {};
-  threads?.forEach((thread) => {
-    countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
-  });
+  const countsMap = await getThreadCountsMap(forumIds);
 
   return forums.map((forum) => ({
     id: forum.id,
     name: forum.name,
     slug: forum.slug,
-    createdAt: forum.created_at,
+    created_at: forum.created_at,
     _count: {
       threads: countsMap[forum.id] || 0,
     },
@@ -201,14 +168,20 @@ export default async function HomePage() {
         <Breadcrumbs items={[{ label: "Inicio", href: "/" }]} />
 
         {/* Hero Section */}
-        <div className="mb-12">
+        <div className="mb-16">
           <h1
-            className="text-4xl font-bold mb-3"
-            style={{ color: "var(--foreground)" }}
+            className="text-4xl sm:text-5xl font-extrabold mb-4"
+            style={{ 
+              color: "var(--foreground)",
+              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
           >
             Bienvenido a LoopHub
           </h1>
-          <p className="text-lg" style={{ color: "var(--muted)" }}>
+          <p className="text-xl leading-relaxed" style={{ color: "var(--muted)" }}>
             Comunidad enfocada en minimalismo digital, organización personal y
             productividad realista
           </p>
@@ -216,10 +189,19 @@ export default async function HomePage() {
 
         {/* Forums List */}
         {forums.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                style={{
+                  background: "var(--brand)",
+                  color: "white",
+                }}
+              >
+                💬
+              </div>
               <h2
-                className="text-2xl font-semibold"
+                className="text-2xl sm:text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 Foros
@@ -235,10 +217,20 @@ export default async function HomePage() {
 
         {/* Featured Threads */}
         {featuredThreads.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                style={{
+                  background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)",
+                  color: "white",
+                  boxShadow: "0 4px 12px rgba(88, 101, 242, 0.3)",
+                }}
+              >
+                ⭐
+              </div>
               <h2
-                className="text-2xl font-semibold"
+                className="text-2xl sm:text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 Hilos Destacados
@@ -259,9 +251,18 @@ export default async function HomePage() {
 
         {/* Recent Threads */}
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3 mb-8">
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+              style={{
+                background: "var(--brand)",
+                color: "white",
+              }}
+            >
+              🔥
+            </div>
             <h2
-              className="text-2xl font-semibold"
+              className="text-2xl sm:text-3xl font-bold"
               style={{ color: "var(--foreground)" }}
             >
               Hilos Recientes

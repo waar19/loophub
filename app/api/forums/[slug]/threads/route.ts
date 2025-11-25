@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createThreadSchema } from "@/lib/validations";
+import {
+  getProfilesMap,
+  getCommentCountsMap,
+  extractUserIds,
+  extractThreadIds,
+  requireAuth,
+  handleApiError,
+} from "@/lib/api-helpers";
+import { cache, CACHE_KEYS, CACHE_TTL } from "@/lib/cache";
 
 export async function GET(
   request: Request,
@@ -13,6 +22,8 @@ export async function GET(
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100); // Max 100 per page
     const offset = (page - 1) * limit;
+    const sortBy = searchParams.get("sort") || "newest"; // newest, oldest, most_comments, least_comments
+    const order = searchParams.get("order") || "desc"; // asc, desc
 
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase
@@ -36,12 +47,36 @@ export async function GET(
       throw countError;
     }
 
+    // Determine sort column and direction
+    let sortColumn = "created_at";
+    let ascending = false;
+    
+    switch (sortBy) {
+      case "oldest":
+        sortColumn = "created_at";
+        ascending = true;
+        break;
+      case "newest":
+        sortColumn = "created_at";
+        ascending = false;
+        break;
+      case "most_comments":
+      case "least_comments":
+        // These will be sorted after fetching comment counts
+        sortColumn = "created_at";
+        ascending = false;
+        break;
+      default:
+        sortColumn = "created_at";
+        ascending = order === "asc";
+    }
+
     // Get threads for this forum with pagination
     const { data: threads, error: threadsError } = await supabase
       .from("threads")
       .select("*")
       .eq("forum_id", forum.id)
-      .order("created_at", { ascending: false })
+      .order(sortColumn, { ascending })
       .range(offset, offset + limit - 1);
 
     if (threadsError) {
@@ -49,45 +84,19 @@ export async function GET(
       throw threadsError;
     }
 
-    // Get unique user IDs from threads
-    const userIds = [...new Set((threads || []).map((t: any) => t.user_id).filter(Boolean))];
-    
-    // Get profiles for these users
-    let profilesMap: Record<string, { username: string }> = {};
-    if (userIds.length > 0) {
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .in("id", userIds);
+    // Get profiles and comment counts using helper functions
+    const userIds = extractUserIds(threads || []);
+    const threadIds = extractThreadIds(
+      (threads || []).map((t: any) => ({ thread_id: t.id }))
+    );
 
-      if (!profilesError && profiles) {
-        profiles.forEach((profile: any) => {
-          profilesMap[profile.id] = { username: profile.username };
-        });
-      }
-    }
-
-    // Get thread IDs to fetch comment counts
-    const threadIds = (threads || []).map((t: any) => t.id);
-    
-    // Get comment counts for all threads at once using a single query
-    let commentCountsMap: Record<string, number> = {};
-    if (threadIds.length > 0) {
-      const { data: commentCounts, error: commentCountsError } = await supabase
-        .from("comments")
-        .select("thread_id")
-        .in("thread_id", threadIds);
-
-      if (!commentCountsError && commentCounts) {
-        // Count comments per thread
-        commentCounts.forEach((comment: any) => {
-          commentCountsMap[comment.thread_id] = (commentCountsMap[comment.thread_id] || 0) + 1;
-        });
-      }
-    }
+    const [profilesMap, commentCountsMap] = await Promise.all([
+      getProfilesMap(userIds),
+      getCommentCountsMap(threadIds),
+    ]);
 
     // Transform threads with comment counts and profiles
-    const threadsWithCount = (threads || []).map((thread: any) => ({
+    let threadsWithCount = (threads || []).map((thread: any) => ({
       ...thread,
       profile: thread.user_id ? profilesMap[thread.user_id] : null,
       _count: {
@@ -95,9 +104,25 @@ export async function GET(
       },
     }));
 
+    // Sort by comment count if needed
+    if (sortBy === "most_comments" || sortBy === "least_comments") {
+      threadsWithCount.sort((a, b) => {
+        const aCount = a._count.comments || 0;
+        const bCount = b._count.comments || 0;
+        if (sortBy === "most_comments") {
+          return bCount - aCount; // Descending
+        } else {
+          return aCount - bCount; // Ascending
+        }
+      });
+    }
+
     return NextResponse.json({
       forum,
-      threads: threadsWithCount || [],
+        threads: threadsWithCount.map((thread: any) => ({
+          ...thread,
+          user_id: thread.user_id, // Keep user_id for client-side ownership checks
+        })) || [],
       pagination: {
         page,
         limit,
@@ -140,22 +165,12 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const supabase = await createClient();
     const { slug } = await params;
     const body = await request.json();
     const validatedData = createThreadSchema.parse(body);
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase
@@ -183,20 +198,17 @@ export async function POST(
 
     if (threadError) throw threadError;
 
+    // Invalidate cache
+    cache.delete(CACHE_KEYS.forumThreads(slug, 1, "newest"));
+
     return NextResponse.json(thread, { status: 201 });
   } catch (error) {
-    console.error("Error creating thread:", error);
-
-    if (error instanceof Error && "issues" in error) {
+    if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json(
-        { error: "Validation failed", details: error },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
-
-    return NextResponse.json(
-      { error: "Failed to create thread" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Error al crear el hilo. Por favor intenta de nuevo.");
   }
 }

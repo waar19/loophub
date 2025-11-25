@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createCommentSchema } from "@/lib/validations";
+import {
+  getProfilesMap,
+  extractUserIds,
+  requireAuth,
+  handleApiError,
+} from "@/lib/api-helpers";
 
 export async function GET(
   request: Request,
@@ -48,32 +54,22 @@ export async function GET(
 
     if (commentsError) throw commentsError;
 
-    // Get unique user IDs from comments
-    const userIds = [...new Set((comments || []).map((c: any) => c.user_id).filter(Boolean))];
-    
-    // Get profiles for these users
-    let profilesMap: Record<string, { username: string }> = {};
-    if (userIds.length > 0) {
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .in("id", userIds);
+    // Get profiles using helper function
+    const userIds = extractUserIds(comments || []);
+    const profilesMap = await getProfilesMap(userIds);
 
-      if (!profilesError && profiles) {
-        profiles.forEach((profile: any) => {
-          profilesMap[profile.id] = { username: profile.username };
-        });
-      }
-    }
-
-    // Transform comments with profiles
+    // Transform comments with profiles (include user_id for ownership checks)
     const commentsWithProfiles = (comments || []).map((comment: any) => ({
       ...comment,
       profile: comment.user_id ? profilesMap[comment.user_id] : null,
+      user_id: comment.user_id, // Keep user_id for client-side ownership checks
     }));
 
     return NextResponse.json({
-      thread,
+      thread: {
+        ...thread,
+        user_id: thread.user_id, // Keep user_id for client-side ownership checks
+      },
       comments: commentsWithProfiles,
       pagination: {
         page,
@@ -97,22 +93,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
     const { id } = await params;
     const body = await request.json();
     const validatedData = createCommentSchema.parse(body);
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Verify thread exists
     const { data: thread, error: threadError } = await supabase
@@ -142,18 +128,12 @@ export async function POST(
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {
-    console.error("Error creating comment:", error);
-
-    if (error instanceof Error && "issues" in error) {
+    if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json(
-        { error: "Validation failed", details: error },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
-
-    return NextResponse.json(
-      { error: "Failed to create comment" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Error al crear el comentario. Por favor intenta de nuevo.");
   }
 }

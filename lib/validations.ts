@@ -19,19 +19,22 @@ export const createForumSchema = z.object({
 export const createThreadSchema = z.object({
   title: z
     .string()
-    .min(1, "Title is required")
-    .max(MAX_TITLE_LENGTH, "Title too long"),
+    .min(1, "El título es requerido")
+    .max(MAX_TITLE_LENGTH, `El título no puede exceder ${MAX_TITLE_LENGTH} caracteres`)
+    .trim(),
   content: z
     .string()
-    .min(1, "Content is required")
-    .max(MAX_CONTENT_LENGTH, "Content too long"),
+    .min(1, "El contenido es requerido")
+    .max(MAX_CONTENT_LENGTH, `El contenido no puede exceder ${MAX_CONTENT_LENGTH} caracteres`)
+    .trim(),
 });
 
 export const createCommentSchema = z.object({
   content: z
     .string()
-    .min(1, "Content is required")
-    .max(MAX_CONTENT_LENGTH, "Content too long"),
+    .min(1, "El contenido es requerido")
+    .max(MAX_CONTENT_LENGTH, `El contenido no puede exceder ${MAX_CONTENT_LENGTH} caracteres`)
+    .trim(),
 });
 
 export type CreateForumInput = z.infer<typeof createForumSchema>;

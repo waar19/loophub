@@ -7,6 +7,7 @@ import InfiniteScroll from "@/components/InfiniteScroll";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import TrendingPanel from "@/components/TrendingPanel";
+import ThreadSortFilter from "@/components/ThreadSortFilter";
 import { Thread } from "@/lib/supabase";
 
 interface Forum {
@@ -56,6 +57,7 @@ export default function ForumPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "most_comments" | "least_comments">("newest");
 
   const fetchData = async (pageNum: number = 1, append: boolean = false) => {
     try {
@@ -63,7 +65,7 @@ export default function ForumPage({
       else setIsLoadingMore(true);
 
       const res = await fetch(
-        `/api/forums/${slug}/threads?page=${pageNum}&limit=20`
+        `/api/forums/${slug}/threads?page=${pageNum}&limit=20&sort=${sortBy}`
       );
 
       if (!res.ok) {
@@ -102,7 +104,7 @@ export default function ForumPage({
       fetchData(1, false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+  }, [slug, sortBy]);
 
   const handleLoadMore = () => {
     if (!isLoadingMore && data?.pagination.hasMore) {
@@ -156,43 +158,63 @@ export default function ForumPage({
 
         {/* Forum Header */}
         <div
-          className="card mb-8 overflow-hidden"
+          className="card mb-12 overflow-hidden"
           style={{
             borderLeft: `4px solid ${forumColor}`,
-            background: `linear-gradient(to right, ${forumColor}08, var(--card-bg))`,
+            background: `linear-gradient(to right, ${forumColor}15, var(--card-bg))`,
+            boxShadow: `0 4px 12px ${forumColor}20, var(--shadow-md)`,
           }}
         >
           <div className="flex items-start gap-6">
             <div
-              className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl shrink-0"
+              className="w-20 h-20 rounded-xl flex items-center justify-center text-4xl shrink-0 transition-transform hover:scale-110"
               style={{
-                background: `${forumColor}15`,
+                background: `linear-gradient(135deg, ${forumColor} 0%, ${forumColor}CC 100%)`,
+                boxShadow: `0 4px 12px ${forumColor}40`,
               }}
             >
               {forumIcon}
             </div>
             <div className="flex-1">
               <h1
-                className="text-3xl font-bold mb-2"
-                style={{ color: "var(--foreground)" }}
+                className="text-3xl sm:text-4xl font-extrabold mb-3"
+                style={{ 
+                  color: "var(--foreground)",
+                  background: `linear-gradient(135deg, var(--foreground) 0%, ${forumColor} 100%)`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
               >
                 {forum.name}
               </h1>
               {forum.description && (
-                <p className="text-base mb-4" style={{ color: "var(--muted)" }}>
+                <p className="text-lg mb-6 leading-relaxed" style={{ color: "var(--muted)" }}>
                   {forum.description}
                 </p>
               )}
-              <div className="flex items-center gap-4 text-sm">
-                <span style={{ color: "var(--muted)" }}>
-                  {pagination.total}{" "}
-                  {pagination.total === 1 ? "hilo" : "hilos"}
-                </span>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                    style={{
+                      background: "var(--brand)",
+                      color: "white",
+                      boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
+                    }}
+                  >
+                    📝
+                  </div>
+                  <span className="text-base font-semibold" style={{ color: "var(--foreground)" }}>
+                    {pagination.total}{" "}
+                    {pagination.total === 1 ? "hilo" : "hilos"}
+                  </span>
+                </div>
                 <Link
                   href={`/forum/${slug}/new`}
-                  className="btn btn-primary text-sm"
+                  className="btn btn-primary"
                 >
-                  Nuevo Hilo
+                  + Nuevo Hilo
                 </Link>
               </div>
             </div>
@@ -201,67 +223,144 @@ export default function ForumPage({
 
         {/* Threads List */}
         {threads.length === 0 ? (
-          <div className="card text-center py-12">
-            <p style={{ color: "var(--muted)" }} className="mb-4">
-              Aún no hay hilos. ¡Sé el primero en iniciar una discusión!
+          <div className="card text-center py-16 mb-12">
+            <div
+              className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+              style={{
+                background: "var(--brand-light)",
+              }}
+            >
+              💭
+            </div>
+            <h3 className="text-2xl font-bold mb-3" style={{ color: "var(--foreground)" }}>
+              Aún no hay hilos
+            </h3>
+            <p style={{ color: "var(--muted)" }} className="mb-6 text-lg">
+              ¡Sé el primero en iniciar una discusión!
             </p>
             <Link href={`/forum/${slug}/new`} className="btn btn-primary">
-              Crear Primer Hilo
+              + Crear Primer Hilo
             </Link>
           </div>
         ) : (
-          <InfiniteScroll
-            hasMore={pagination.hasMore}
-            isLoading={isLoadingMore}
-            onLoadMore={handleLoadMore}
-            loader={
-              <div className="space-y-4 mt-4">
-                {[1, 2].map((i) => (
-                  <LoadingSkeleton key={i} />
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                  style={{
+                    background: "var(--brand)",
+                    color: "white",
+                  }}
+                >
+                  📋
+                </div>
+                <h2
+                  className="text-3xl font-bold"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Hilos
+                </h2>
+              </div>
+              <ThreadSortFilter
+                currentSort={sortBy}
+                onSortChange={(sort) => {
+                  setSortBy(sort);
+                  setPage(1);
+                  setData(null);
+                }}
+              />
+            </div>
+            <InfiniteScroll
+              hasMore={pagination.hasMore}
+              isLoading={isLoadingMore}
+              onLoadMore={handleLoadMore}
+              loader={
+                <div className="space-y-4 mt-4">
+                  {[1, 2].map((i) => (
+                    <LoadingSkeleton key={i} />
+                  ))}
+                </div>
+              }
+              endMessage={
+                <p className="text-center mt-6 text-lg" style={{ color: "var(--muted)" }}>
+                  No hay más hilos para cargar
+                </p>
+              }
+            >
+              <div className="space-y-4">
+                {threads.map((thread) => (
+                  <ThreadCard
+                    key={thread.id}
+                    thread={thread}
+                    forumSlug={slug}
+                  />
                 ))}
               </div>
-            }
-            endMessage={
-              <p className="text-center mt-6" style={{ color: "var(--muted)" }}>
-                No hay más hilos para cargar
-              </p>
-            }
-          >
-            <div className="space-y-4">
-              {threads.map((thread) => (
-                <ThreadCard
-                  key={thread.id}
-                  thread={thread}
-                  forumSlug={slug}
-                />
-              ))}
-            </div>
-          </InfiniteScroll>
+            </InfiniteScroll>
+          </div>
         )}
 
         {/* Forum Rules */}
-        <div className="card mt-8">
-          <h3
-            className="text-lg font-semibold mb-3"
-            style={{ color: "var(--foreground)" }}
-          >
-            Reglas del Foro
-          </h3>
-          <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
-            <li className="flex items-start gap-2">
-              <span className="shrink-0">•</span>
+        <div className="card mt-12" style={{
+          borderLeft: `4px solid var(--brand)`,
+        }}>
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+              style={{
+                background: "var(--brand)",
+                color: "white",
+              }}
+            >
+              📜
+            </div>
+            <h3
+              className="text-2xl font-bold"
+              style={{ color: "var(--foreground)" }}
+            >
+              Reglas del Foro
+            </h3>
+          </div>
+          <ul className="space-y-3 text-base" style={{ color: "var(--muted)" }}>
+            <li className="flex items-start gap-3">
+              <span 
+                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                style={{
+                  background: "var(--brand-light)",
+                  color: "var(--brand)",
+                }}
+              >
+                1
+              </span>
               <span>
                 Mantén las discusiones respetuosas y constructivas
               </span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="shrink-0">•</span>
+            <li className="flex items-start gap-3">
+              <span 
+                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                style={{
+                  background: "var(--brand-light)",
+                  color: "var(--brand)",
+                }}
+              >
+                2
+              </span>
               <span>
                 Busca antes de crear un hilo para evitar duplicados
               </span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="shrink-0">•</span>
+            <li className="flex items-start gap-3">
+              <span 
+                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                style={{
+                  background: "var(--brand-light)",
+                  color: "var(--brand)",
+                }}
+              >
+                3
+              </span>
               <span>
                 Usa títulos descriptivos y claros para tus hilos
               </span>

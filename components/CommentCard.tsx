@@ -1,12 +1,21 @@
+"use client";
+
 import { Comment } from "@/lib/supabase";
 import ReportButton from "@/components/ReportButton";
+import EditCommentButton from "@/components/EditCommentButton";
+import DeleteCommentButton from "@/components/DeleteCommentButton";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import { useAuth } from "@/hooks/useAuth";
 
 interface CommentCardProps {
   comment: Comment;
+  onUpdate?: () => void;
 }
 
-export default function CommentCard({ comment }: CommentCardProps) {
+export default function CommentCard({ comment, onUpdate }: CommentCardProps) {
+  const { user } = useAuth();
+  const isOwner = user?.id === comment.user_id;
+  
   const date = new Date(comment.created_at).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "short",
@@ -57,7 +66,22 @@ export default function CommentCard({ comment }: CommentCardProps) {
             </>
           )}
         </div>
-        <ReportButton contentType="comment" contentId={comment.id} />
+        <div className="flex items-center gap-2">
+          {isOwner && (
+            <>
+              <EditCommentButton
+                commentId={comment.id}
+                currentContent={comment.content}
+                onSuccess={onUpdate}
+              />
+              <DeleteCommentButton
+                commentId={comment.id}
+                onSuccess={onUpdate}
+              />
+            </>
+          )}
+          <ReportButton contentType="comment" contentId={comment.id} />
+        </div>
       </div>
       <div className="prose prose-sm max-w-none">
         <MarkdownRenderer content={comment.content} />

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { z } from "zod";
+import { requireAuth, handleApiError } from "@/lib/api-helpers";
 
 const createReportSchema = z.object({
   content_type: z.enum(["thread", "comment"]),
@@ -10,21 +11,11 @@ const createReportSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
     const body = await request.json();
     const validatedData = createReportSchema.parse(body);
 
     // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+    const { user, supabase } = await requireAuth();
 
     // Create report
     const { data: report, error } = await supabase
@@ -42,18 +33,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json(report, { status: 201 });
   } catch (error) {
-    console.error("Error creating report:", error);
-
-    if (error instanceof Error && "issues" in error) {
+    if (error instanceof Error && error.message === "Authentication required") {
       return NextResponse.json(
-        { error: "Validation failed", details: error },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
-
-    return NextResponse.json(
-      { error: "Failed to create report" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Error al crear el reporte");
   }
 }
