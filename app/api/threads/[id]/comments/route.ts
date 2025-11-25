@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase-server";
 import { createCommentSchema } from "@/lib/validations";
 
 export async function GET(
@@ -7,6 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
@@ -40,21 +41,40 @@ export async function GET(
     // Get comments for this thread with pagination
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
-      .select(
-        `
-        *,
-        profile:profiles(username)
-      `
-      )
+      .select("*")
       .eq("thread_id", id)
       .order("created_at", { ascending: true })
       .range(offset, offset + limit - 1);
 
     if (commentsError) throw commentsError;
 
+    // Get unique user IDs from comments
+    const userIds = [...new Set((comments || []).map((c: any) => c.user_id).filter(Boolean))];
+    
+    // Get profiles for these users
+    let profilesMap: Record<string, { username: string }> = {};
+    if (userIds.length > 0) {
+      const { data: profiles, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .in("id", userIds);
+
+      if (!profilesError && profiles) {
+        profiles.forEach((profile: any) => {
+          profilesMap[profile.id] = { username: profile.username };
+        });
+      }
+    }
+
+    // Transform comments with profiles
+    const commentsWithProfiles = (comments || []).map((comment: any) => ({
+      ...comment,
+      profile: comment.user_id ? profilesMap[comment.user_id] : null,
+    }));
+
     return NextResponse.json({
       thread,
-      comments: comments || [],
+      comments: commentsWithProfiles,
       pagination: {
         page,
         limit,
@@ -77,6 +97,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
     const body = await request.json();
     const validatedData = createCommentSchema.parse(body);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase-server";
 import { z } from "zod";
 
 const createReportSchema = z.object({
@@ -10,6 +10,7 @@ const createReportSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const supabase = await createClient();
     const body = await request.json();
     const validatedData = createReportSchema.parse(body);
 
