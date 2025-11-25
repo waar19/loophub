@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
+  --background: #ffffff;
   --foreground: #1a1a1a;
   --card-bg: #ffffff;
   --border: #e5e5e5;
@@ -9,6 +9,17 @@
   --muted: #737373;
   --accent: #3b82f6;
   --accent-hover: #2563eb;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card-bg: #1e293b;
+  --border: #334155;
+  --border-hover: #475569;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
 }
 
 @theme inline {
@@ -22,21 +33,47 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  line-height: 1.6;
+  line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Minimalist spacing improvements */
+.markdown-content {
+  line-height: 1.8;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.markdown-content p {
+  margin-bottom: 1.25rem;
 }
 
 .card {
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   transition: all 0.2s ease;
+}
+
+.dark .card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.dark .card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .btn {

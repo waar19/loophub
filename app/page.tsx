@@ -46,17 +46,19 @@ export default async function HomePage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Welcome to LoopHub</h1>
-        <p style={{ color: "var(--muted)" }}>
-          A minimalist forum platform for focused discussions
+      <div className="mb-12">
+        <h1 className="text-4xl font-bold mb-3 tracking-tight">
+          Minimalist Hub
+        </h1>
+        <p className="text-lg" style={{ color: "var(--muted)" }}>
+          Comunidad enfocada en minimalismo digital, organización personal y productividad realista
         </p>
       </div>
 
       {forums.length === 0 ? (
         <div className="card text-center py-12">
           <p style={{ color: "var(--muted)" }}>
-            No forums yet. Check back soon!
+            Aún no hay foros. Vuelve pronto.
           </p>
         </div>
       ) : (

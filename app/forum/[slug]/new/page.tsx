@@ -30,30 +30,30 @@ export default function NewThreadPage({
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Create New Thread</h1>
+      <h1 className="text-3xl font-bold mb-8">Crear Nuevo Hilo</h1>
 
       <div className="card max-w-2xl">
         <SimpleForm
           fields={[
             {
               name: "title",
-              label: "Title",
+              label: "Título",
               type: "text",
-              placeholder: "Enter thread title",
+              placeholder: "Escribe el título del hilo",
               required: true,
               maxLength: 200,
             },
             {
               name: "content",
-              label: "Content",
+              label: "Contenido",
               type: "markdown",
-              placeholder: "Share your thoughts... (Markdown supported)",
+              placeholder: "Comparte tus pensamientos... (Markdown soportado)",
               required: true,
               maxLength: 10000,
             },
           ]}
           onSubmit={handleSubmit}
-          submitText="Create Thread"
+          submitText="Crear Hilo"
         />
       </div>
     </div>

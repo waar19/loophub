@@ -109,13 +109,13 @@ export default function ForumPage({
     return (
       <div className="card text-center py-12">
         <p style={{ color: "var(--muted)" }} className="mb-4">
-          Failed to load forum. Please try refreshing the page.
+          Error al cargar el foro. Por favor, intenta refrescar la página.
         </p>
         <button
           onClick={() => fetchData(1, false)}
           className="btn btn-primary"
         >
-          Retry
+          Reintentar
         </button>
       </div>
     );
@@ -133,21 +133,21 @@ export default function ForumPage({
         <div>
           <h1 className="text-3xl font-bold mb-2">{forum.name}</h1>
           <p style={{ color: "var(--muted)" }}>
-            {pagination.total} {pagination.total === 1 ? "thread" : "threads"}
+            {pagination.total} {pagination.total === 1 ? "hilo" : "hilos"}
           </p>
         </div>
         <Link href={`/forum/${slug}/new`} className="btn btn-primary">
-          New Thread
+          Nuevo Hilo
         </Link>
       </div>
 
       {threads.length === 0 ? (
         <div className="card text-center py-12">
           <p style={{ color: "var(--muted)" }} className="mb-4">
-            No threads yet. Be the first to start a discussion!
+            Aún no hay hilos. ¡Sé el primero en iniciar una discusión!
           </p>
           <Link href={`/forum/${slug}/new`} className="btn btn-primary">
-            Create First Thread
+            Crear Primer Hilo
           </Link>
         </div>
       ) : (
@@ -164,7 +164,7 @@ export default function ForumPage({
           }
           endMessage={
             <p style={{ color: "var(--muted)" }}>
-              No more threads to load
+              No hay más hilos para cargar
             </p>
           }
         >

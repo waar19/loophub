@@ -134,14 +134,14 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
           className="text-sm"
           style={{ color: "var(--accent)" }}
         >
-          ← Back to {thread.forum.name}
+          ← Volver a {thread.forum.name}
         </Link>
       </div>
 
       <div className="card mb-8">
         <h1 className="text-3xl font-bold mb-3">{thread.title}</h1>
         <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
-          Posted on {date}
+          Publicado el {date}
         </p>
         <div className="text-lg">
           <MarkdownRenderer content={thread.content} />
@@ -150,13 +150,13 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-4">
-          Comments ({data.pagination.total})
+          Comentarios ({data.pagination.total})
         </h2>
 
         {comments.length === 0 && !isLoading ? (
           <div className="card text-center py-8">
             <p style={{ color: "var(--muted)" }}>
-              No comments yet. Be the first to comment!
+              Aún no hay comentarios. ¡Sé el primero en comentar!
             </p>
           </div>
         ) : (
@@ -173,7 +173,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
             }
             endMessage={
               <p style={{ color: "var(--muted)" }} className="text-center py-4">
-                No more comments to load
+                No hay más comentarios para cargar
               </p>
             }
           >
@@ -187,20 +187,20 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
       </div>
 
       <div className="card max-w-2xl">
-        <h3 className="text-xl font-semibold mb-4">Add a Comment</h3>
+        <h3 className="text-xl font-semibold mb-4">Agregar Comentario</h3>
         <SimpleForm
           fields={[
             {
               name: "content",
-              label: "Your Comment",
+              label: "Tu Comentario",
               type: "markdown",
-              placeholder: "Share your thoughts... (Markdown supported)",
+              placeholder: "Comparte tus pensamientos... (Markdown soportado)",
               required: true,
               maxLength: 10000,
             },
           ]}
           onSubmit={handleCommentSubmit}
-          submitText="Post Comment"
+          submitText="Publicar Comentario"
         />
       </div>
     </div>

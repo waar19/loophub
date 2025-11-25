@@ -41,7 +41,7 @@ export default function ThreadCard({ thread, forumSlug }: ThreadCardProps) {
       >
         {thread.profile?.username && (
           <>
-            <span>by {thread.profile.username}</span>
+            <span>por {thread.profile.username}</span>
             <span>•</span>
           </>
         )}
@@ -49,7 +49,7 @@ export default function ThreadCard({ thread, forumSlug }: ThreadCardProps) {
         <span>•</span>
         <span>
           {thread._count?.comments || 0}{" "}
-          {thread._count?.comments === 1 ? "comment" : "comments"}
+          {thread._count?.comments === 1 ? "comentario" : "comentarios"}
         </span>
         <ReportButton contentType="thread" contentId={thread.id} />
       </div>

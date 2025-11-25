@@ -18,9 +18,17 @@ export async function generateMetadata({
       .single();
     
     if (forum) {
+      const descriptions: Record<string, string> = {
+        "minimalismo-digital": "Limpieza de vida digital, archivos, hábitos tecnológicos y minimalismo tecnológico",
+        "organizacion-personal": "Métodos, rutinas y sistemas de organización personal realistas",
+        "productividad-inteligente": "Técnicas de productividad aterrizadas, sin fanatismo ni gurús",
+        "apps-herramientas": "Notion, Obsidian, Todoist, Google Workspace, Apple Notes y más herramientas de organización",
+        "workflows-setup": "Rutinas, automatizaciones, dispositivos y ambientes de trabajo optimizados",
+      };
+      
       return {
-        title: `${forum.name} - LoopHub`,
-        description: `Discussion threads in ${forum.name} forum`,
+        title: `${forum.name} - Minimalist Hub`,
+        description: descriptions[slug] || `Discusiones sobre ${forum.name}`,
       };
     }
   } catch (error) {
@@ -28,8 +36,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: "Forum - LoopHub",
-    description: "Discussion forum",
+    title: "Foro - Minimalist Hub",
+    description: "Comunidad de minimalismo digital y organización personal",
   };
 }
 
