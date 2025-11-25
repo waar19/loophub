@@ -30,29 +30,67 @@ export async function GET(
       .select("*", { count: "exact", head: true })
       .eq("forum_id", forum.id);
 
-    if (countError) throw countError;
+    if (countError) {
+      console.error("Count error:", countError);
+      throw countError;
+    }
 
     // Get threads for this forum with pagination
     const { data: threads, error: threadsError } = await supabase
       .from("threads")
-      .select(
-        `
-        *,
-        comments:comments(count),
-        profile:profiles(username)
-      `
-      )
+      .select("*")
       .eq("forum_id", forum.id)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    if (threadsError) throw threadsError;
+    if (threadsError) {
+      console.error("Threads error:", threadsError);
+      throw threadsError;
+    }
 
-    // Transform count data
-    const threadsWithCount = threads?.map((thread) => ({
+    // Get unique user IDs from threads
+    const userIds = [...new Set((threads || []).map((t: any) => t.user_id).filter(Boolean))];
+    
+    // Get profiles for these users
+    let profilesMap: Record<string, { username: string }> = {};
+    if (userIds.length > 0) {
+      const { data: profiles, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .in("id", userIds);
+
+      if (!profilesError && profiles) {
+        profiles.forEach((profile: any) => {
+          profilesMap[profile.id] = { username: profile.username };
+        });
+      }
+    }
+
+    // Get thread IDs to fetch comment counts
+    const threadIds = (threads || []).map((t: any) => t.id);
+    
+    // Get comment counts for all threads at once using a single query
+    let commentCountsMap: Record<string, number> = {};
+    if (threadIds.length > 0) {
+      const { data: commentCounts, error: commentCountsError } = await supabase
+        .from("comments")
+        .select("thread_id")
+        .in("thread_id", threadIds);
+
+      if (!commentCountsError && commentCounts) {
+        // Count comments per thread
+        commentCounts.forEach((comment: any) => {
+          commentCountsMap[comment.thread_id] = (commentCountsMap[comment.thread_id] || 0) + 1;
+        });
+      }
+    }
+
+    // Transform threads with comment counts and profiles
+    const threadsWithCount = (threads || []).map((thread: any) => ({
       ...thread,
+      profile: thread.user_id ? profilesMap[thread.user_id] : null,
       _count: {
-        comments: thread.comments[0]?.count || 0,
+        comments: commentCountsMap[thread.id] || 0,
       },
     }));
 
@@ -69,8 +107,28 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error fetching threads:", error);
+    
+    // Better error handling for Supabase errors
+    let errorMessage = "Unknown error";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null) {
+      // Handle Supabase error objects
+      const supabaseError = error as any;
+      if (supabaseError.message) {
+        errorMessage = supabaseError.message;
+      } else if (supabaseError.code) {
+        errorMessage = `Error ${supabaseError.code}: ${supabaseError.message || 'Database error'}`;
+      }
+    }
+    
     return NextResponse.json(
-      { error: "Failed to fetch threads" },
+      { 
+        error: "Failed to fetch threads", 
+        details: errorMessage,
+        // Include full error in development
+        ...(process.env.NODE_ENV === 'development' && { fullError: JSON.stringify(error) })
+      },
       { status: 500 }
     );
   }

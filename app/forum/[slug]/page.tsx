@@ -44,7 +44,14 @@ export default function ForumPage({
       const res = await fetch(
         `/api/forums/${slug}/threads?page=${pageNum}&limit=20`
       );
-      if (!res.ok) throw new Error("Failed to fetch forum data");
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessage = errorData.error || errorData.details || `Failed to fetch forum data: ${res.status}`;
+        console.error("API Error:", errorMessage, errorData);
+        throw new Error(errorMessage);
+      }
+      
       const forumData: ForumData = await res.json();
 
       if (append && data) {
@@ -56,7 +63,11 @@ export default function ForumPage({
         setData(forumData);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching forum data:", error);
+      // Only set error state if it's the initial load
+      if (!append && !data) {
+        setData(null);
+      }
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
@@ -64,7 +75,10 @@ export default function ForumPage({
   };
 
   useEffect(() => {
-    fetchData(1, false);
+    if (slug) {
+      fetchData(1, false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const handleLoadMore = () => {
@@ -91,10 +105,18 @@ export default function ForumPage({
     );
   }
 
-  if (!data) {
+  if (!data && !isLoading) {
     return (
       <div className="card text-center py-12">
-        <p style={{ color: "var(--muted)" }}>Failed to load forum</p>
+        <p style={{ color: "var(--muted)" }} className="mb-4">
+          Failed to load forum. Please try refreshing the page.
+        </p>
+        <button
+          onClick={() => fetchData(1, false)}
+          className="btn btn-primary"
+        >
+          Retry
+        </button>
       </div>
     );
   }
