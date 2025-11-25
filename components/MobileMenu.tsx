@@ -69,7 +69,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
   return (
     <>
       {/* Mobile Menu Button - Visible solo en pantallas < 1024px (móviles y tablets pequeñas) */}
-      {/* En landscape de tablets grandes o desktop, el sidebar fijo se muestra automáticamente */}
+      {/* En pantallas grandes (>= 1024px), el sidebar fijo se muestra automáticamente y este botón se oculta */}
       <button
         onClick={handleToggle}
         className="lg:hidden btn btn-ghost p-2"
@@ -77,6 +77,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
         aria-expanded={isOpen}
         aria-controls="mobile-menu"
         style={{ minWidth: "auto" }}
+        type="button"
       >
         <svg
           className="w-6 h-6"
@@ -102,7 +103,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
         </svg>
       </button>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Solo visible en pantallas < 1024px */}
       {isOpen && (
         <>
           <div
@@ -112,12 +113,14 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
               top: "var(--header-height)",
               zIndex: 1000,
             }}
+            aria-hidden={!isOpen}
           />
           <aside
             id="mobile-menu"
             className="fixed left-0 top-0 bottom-0 w-80 overflow-y-auto lg:hidden"
             role="navigation"
             aria-label="Menú de navegación principal"
+            aria-hidden={!isOpen}
             style={{
               top: "var(--header-height)",
               background: "var(--card-bg)",
