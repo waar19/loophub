@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [resendingEmail, setResendingEmail] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { showSuccess, showError } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,9 +64,11 @@ export default function LoginPage() {
       if (error) throw error;
 
       setError(null);
-      alert("¡Email de confirmación enviado! Por favor revisa tu bandeja de entrada.");
+      showSuccess("¡Email de confirmación enviado! Por favor revisa tu bandeja de entrada.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al reenviar el email de confirmación");
+      const errorMessage = err instanceof Error ? err.message : "Error al reenviar el email de confirmación";
+      setError(errorMessage);
+      showError(errorMessage);
     } finally {
       setResendingEmail(false);
     }

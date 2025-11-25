@@ -10,6 +10,7 @@ import MarkdownRenderer from "@/components/MarkdownRenderer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ThreadSidebar from "@/components/ThreadSidebar";
 import TrendingPanel from "@/components/TrendingPanel";
+import { useToast } from "@/contexts/ToastContext";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -36,6 +37,7 @@ export default function ThreadPage({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -78,19 +80,26 @@ export default function ThreadPage({
   };
 
   const handleCommentSubmit = async (formData: Record<string, string>) => {
-    const res = await fetch(`/api/threads/${id}/comments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch(`/api/threads/${id}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Failed to post comment");
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al publicar el comentario");
+      }
+
+      showSuccess("¡Comentario publicado exitosamente!");
+      setPage(1);
+      await fetchData(1, false);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error al publicar el comentario";
+      showError(errorMessage);
+      throw error;
     }
-
-    setPage(1);
-    await fetchData(1, false);
   };
 
   if (isLoading && !data) {
