@@ -6,28 +6,10 @@ import Link from "next/link";
 import CommentCard from "@/components/CommentCard";
 import SimpleForm from "@/components/SimpleForm";
 
-interface Forum {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Thread {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  forum: Forum;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-}
+import { Thread, Comment, Forum } from "@/lib/supabase";
 
 interface ThreadData {
-  thread: Thread;
+  thread: Thread & { forum: Forum };
   comments: Comment[];
 }
 
@@ -85,7 +67,7 @@ export default function ThreadPage({ params }: { params: { id: string } }) {
   }
 
   const { thread, comments } = data;
-  const date = new Date(thread.createdAt).toLocaleDateString("en-US", {
+  const date = new Date(thread.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",

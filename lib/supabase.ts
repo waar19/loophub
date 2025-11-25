@@ -19,6 +19,13 @@ export interface Thread {
   title: string;
   content: string;
   created_at: string;
+  user_id?: string;
+  profile?: {
+    username: string;
+  };
+  _count?: {
+    comments: number;
+  };
 }
 
 export interface Comment {
@@ -26,4 +33,8 @@ export interface Comment {
   thread_id: string;
   content: string;
   created_at: string;
+  user_id?: string;
+  profile?: {
+    username: string;
+  };
 }

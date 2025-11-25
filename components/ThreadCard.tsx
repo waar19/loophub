@@ -1,17 +1,6 @@
 import Link from "next/link";
-
-interface Thread {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  _count: {
-    comments: number;
-  };
-  profile?: {
-    username: string;
-  };
-}
+import { Thread } from "@/lib/supabase";
+import ReportButton from "@/components/ReportButton";
 
 interface ThreadCardProps {
   thread: Thread;
@@ -24,7 +13,7 @@ export default function ThreadCard({ thread, forumSlug }: ThreadCardProps) {
       ? thread.content.substring(0, 150) + "..."
       : thread.content;
 
-  const date = new Date(thread.createdAt).toLocaleDateString("en-US", {
+  const date = new Date(thread.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -49,9 +38,10 @@ export default function ThreadCard({ thread, forumSlug }: ThreadCardProps) {
         <span>{date}</span>
         <span>•</span>
         <span>
-          {thread._count.comments}{" "}
-          {thread._count.comments === 1 ? "comment" : "comments"}
+          {thread._count?.comments || 0}{" "}
+          {thread._count?.comments === 1 ? "comment" : "comments"}
         </span>
+        <ReportButton contentType="thread" contentId={thread.id} />
       </div>
     </Link>
   );

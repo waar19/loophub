@@ -2,20 +2,12 @@ import Link from "next/link";
 import ThreadCard from "@/components/ThreadCard";
 import { Metadata } from "next";
 
+import { Thread } from "@/lib/supabase";
+
 interface Forum {
   id: string;
   name: string;
   slug: string;
-}
-
-interface Thread {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  _count: {
-    comments: number;
-  };
 }
 
 interface ForumData {

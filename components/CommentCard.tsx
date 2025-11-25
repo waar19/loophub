@@ -1,18 +1,12 @@
-interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-  profile?: {
-    username: string;
-  };
-}
+import { Comment } from "@/lib/supabase";
+import ReportButton from "@/components/ReportButton";
 
 interface CommentCardProps {
   comment: Comment;
 }
 
 export default function CommentCard({ comment }: CommentCardProps) {
-  const date = new Date(comment.createdAt).toLocaleString("en-US", {
+  const date = new Date(comment.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -33,6 +27,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
           </>
         )}
         <span>{date}</span>
+        <ReportButton contentType="comment" contentId={comment.id} />
       </div>
       <p className="whitespace-pre-wrap">{comment.content}</p>
     </div>

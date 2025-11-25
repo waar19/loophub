@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import DeleteButton from "@/components/DeleteButton";
 
 export default async function AdminDashboard() {
   await requireAdmin();
@@ -87,12 +88,7 @@ export default async function AdminDashboard() {
                     {new Date(thread.created_at).toLocaleDateString()}
                   </div>
                 </div>
-                <form action={`/api/admin/thread/${thread.id}`} method="POST">
-                  {/* Note: We'll need to handle this delete action properly, maybe client-side or server action */}
-                  <button className="text-xs text-red-600 hover:text-red-800 font-medium">
-                    Delete
-                  </button>
-                </form>
+                <DeleteButton id={thread.id} type="thread" />
               </div>
             ))}
           </div>
