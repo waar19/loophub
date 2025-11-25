@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
-import DarkModeToggle from "@/components/DarkModeToggle";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import AppLayout from "@/components/AppLayout";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -37,40 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <header className="border-b bg-white dark:bg-gray-900 transition-colors" style={{ borderColor: "var(--border)" }}>
-          <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <Link
-              href="/"
-              className="text-2xl font-bold"
-              style={{ color: "var(--foreground)" }}
-            >
-              LoopHub
-            </Link>
-            <div className="flex items-center gap-4">
-              <DarkModeToggle />
-              <AuthButton />
-            </div>
-          </div>
-        </header>
-        <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
-        <footer
-          className="border-t mt-16 bg-white dark:bg-gray-900 transition-colors"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <div
-            className="max-w-5xl mx-auto px-4 py-8 text-center"
-            style={{ color: "var(--muted)" }}
-          >
-            <p className="text-sm mb-2">LoopHub</p>
-            <p className="text-xs" style={{ color: "var(--muted)" }}>
-              Minimalismo Digital • Organización Personal • Productividad Realista
-            </p>
-          </div>
-        </footer>
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${inter.variable} antialiased`}>
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   );

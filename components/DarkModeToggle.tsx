@@ -36,8 +36,12 @@ export default function DarkModeToggle() {
   return (
     <button
       onClick={toggleDarkMode}
-      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      className="btn btn-ghost p-2"
       aria-label="Toggle dark mode"
+      style={{
+        minWidth: "auto",
+        padding: "0.5rem",
+      }}
     >
       {isDark ? (
         <svg

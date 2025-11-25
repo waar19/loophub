@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase-server";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
   
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://minimalisthub.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://loophub.com";
 
   // Get all forums
   const { data: forums } = await supabase
