@@ -6,6 +6,7 @@ import {
   extractUserIds,
   requireAuth,
   handleApiError,
+  checkRateLimit,
 } from "@/lib/api-helpers";
 
 export async function GET(
@@ -99,6 +100,10 @@ export async function POST(
 
     // Check authentication
     const { user, supabase } = await requireAuth();
+
+    // Check rate limit
+    const rateLimitError = checkRateLimit(request, "comments", user.id);
+    if (rateLimitError) return rateLimitError;
 
     // Verify thread exists
     const { data: thread, error: threadError } = await supabase

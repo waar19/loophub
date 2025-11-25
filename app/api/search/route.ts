@@ -7,10 +7,15 @@ import {
   extractUserIds,
   extractThreadIds,
   extractForumIds,
+  checkRateLimit,
 } from "@/lib/api-helpers";
 
 export async function GET(request: Request) {
   try {
+    // Check rate limit
+    const rateLimitError = checkRateLimit(request, "search");
+    if (rateLimitError) return rateLimitError;
+
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q")?.trim();

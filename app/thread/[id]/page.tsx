@@ -12,6 +12,7 @@ import ThreadSidebar from "@/components/ThreadSidebar";
 import TrendingPanel from "@/components/TrendingPanel";
 import EditThreadButton from "@/components/EditThreadButton";
 import DeleteButton from "@/components/DeleteButton";
+import ShareButtons from "@/components/ShareButtons";
 import { useToast } from "@/contexts/ToastContext";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -188,8 +189,21 @@ export default function ThreadPage({
                   </div>
                 )}
               </div>
-              <div className="text-lg leading-relaxed markdown-content">
+              <div className="text-lg leading-relaxed markdown-content mb-6">
                 <MarkdownRenderer content={thread.content} />
+              </div>
+              
+              {/* Share Buttons */}
+              <div className="pt-6 border-t" style={{ borderColor: "var(--border)" }}>
+                <ShareButtons
+                  title={thread.title}
+                  url={`/thread/${thread.id}`}
+                  description={thread.content
+                    .replace(/[#*`_~\[\]()]/g, "")
+                    .replace(/\n/g, " ")
+                    .substring(0, 100)
+                    .trim()}
+                />
               </div>
             </div>
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { NextResponse } from "next/server";
+import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
 
 /**
  * Get profiles for multiple user IDs in a single query
@@ -134,5 +135,40 @@ export function extractThreadIds(items: Array<{ thread_id: string }>): string[] 
  */
 export function extractForumIds(items: Array<{ forum_id: string }>): string[] {
   return [...new Set(items.map((item) => item.forum_id))];
+}
+
+/**
+ * Check rate limit and return error response if exceeded
+ */
+export function checkRateLimit(
+  request: Request,
+  limitType: keyof typeof RATE_LIMITS = "default",
+  userId?: string
+): NextResponse | null {
+  const identifier = userId ? `user:${userId}` : getRateLimitIdentifier(request);
+  const limits = RATE_LIMITS[limitType];
+  const result = rateLimit(identifier, limits);
+
+  if (!result.allowed) {
+    const resetDate = new Date(result.resetTime);
+    const retryAfterSeconds = Math.ceil((result.resetTime - Date.now()) / 1000);
+    return NextResponse.json(
+      {
+        error: `Demasiadas solicitudes. Por favor espera ${retryAfterSeconds} segundos`,
+        retryAfter: retryAfterSeconds,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": retryAfterSeconds.toString(),
+          "X-RateLimit-Limit": limits.maxRequests.toString(),
+          "X-RateLimit-Remaining": result.remaining.toString(),
+          "X-RateLimit-Reset": result.resetTime.toString(),
+        },
+      }
+    );
+  }
+
+  return null;
 }
 

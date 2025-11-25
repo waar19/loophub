@@ -8,6 +8,7 @@ import {
   extractThreadIds,
   requireAuth,
   handleApiError,
+  checkRateLimit,
 } from "@/lib/api-helpers";
 import { cache, CACHE_KEYS, CACHE_TTL } from "@/lib/cache";
 
@@ -171,6 +172,10 @@ export async function POST(
 
     // Check authentication
     const { user, supabase } = await requireAuth();
+
+    // Check rate limit
+    const rateLimitError = checkRateLimit(request, "threads", user.id);
+    if (rateLimitError) return rateLimitError;
 
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { z } from "zod";
-import { requireAuth, handleApiError } from "@/lib/api-helpers";
+import { requireAuth, handleApiError, checkRateLimit } from "@/lib/api-helpers";
 
 const createReportSchema = z.object({
   content_type: z.enum(["thread", "comment"]),
@@ -16,6 +16,10 @@ export async function POST(request: Request) {
 
     // Check authentication
     const { user, supabase } = await requireAuth();
+
+    // Check rate limit
+    const rateLimitError = checkRateLimit(request, "reports", user.id);
+    if (rateLimitError) return rateLimitError;
 
     // Create report
     const { data: report, error } = await supabase
