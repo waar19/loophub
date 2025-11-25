@@ -203,7 +203,7 @@ export default async function HomePage() {
         {/* Hero Section */}
         <div className="mb-16">
           <h1
-            className="text-5xl font-extrabold mb-4"
+            className="text-4xl sm:text-5xl font-extrabold mb-4"
             style={{ 
               color: "var(--foreground)",
               background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
@@ -234,7 +234,7 @@ export default async function HomePage() {
                 💬
               </div>
               <h2
-                className="text-3xl font-bold"
+                className="text-2xl sm:text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 Foros
@@ -263,7 +263,7 @@ export default async function HomePage() {
                 ⭐
               </div>
               <h2
-                className="text-3xl font-bold"
+                className="text-2xl sm:text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 Hilos Destacados
@@ -295,7 +295,7 @@ export default async function HomePage() {
               🔥
             </div>
             <h2
-              className="text-3xl font-bold"
+              className="text-2xl sm:text-3xl font-bold"
               style={{ color: "var(--foreground)" }}
             >
               Hilos Recientes

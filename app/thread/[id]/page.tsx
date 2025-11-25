@@ -156,31 +156,70 @@ export default function ThreadPage({
           {/* Main Content */}
           <div className="flex-1 min-w-0">
             {/* Thread Header */}
-            <div className="card mb-8">
+            <div className="card mb-12" style={{
+              borderLeft: "4px solid var(--brand)",
+            }}>
               <h1
-                className="text-3xl font-bold mb-4"
-                style={{ color: "var(--foreground)" }}
+                className="text-3xl sm:text-4xl font-extrabold mb-6 leading-tight"
+                style={{ 
+                  color: "var(--foreground)",
+                  background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
               >
                 {thread.title}
               </h1>
-              <div className="text-lg">
+              <div className="text-lg leading-relaxed markdown-content">
                 <MarkdownRenderer content={thread.content} />
               </div>
             </div>
 
             {/* Comments Section */}
-            <div className="mb-6">
-              <h2
-                className="text-2xl font-semibold mb-6"
-                style={{ color: "var(--foreground)" }}
-              >
-                Comentarios ({data.pagination.total})
-              </h2>
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-8">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                  style={{
+                    background: "var(--brand)",
+                    color: "white",
+                  }}
+                >
+                  💬
+                </div>
+                <h2
+                  className="text-3xl font-bold"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Comentarios
+                </h2>
+                <div
+                  className="px-3 py-1 rounded-lg text-sm font-bold"
+                  style={{
+                    background: "var(--brand-light)",
+                    color: "var(--brand)",
+                  }}
+                >
+                  {data.pagination.total}
+                </div>
+              </div>
 
               {comments.length === 0 && !isLoading ? (
-                <div className="card text-center py-8">
-                  <p style={{ color: "var(--muted)" }}>
-                    Aún no hay comentarios. ¡Sé el primero en comentar!
+                <div className="card text-center py-16 mb-8">
+                  <div
+                    className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+                    style={{
+                      background: "var(--brand-light)",
+                    }}
+                  >
+                    💭
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3" style={{ color: "var(--foreground)" }}>
+                    Aún no hay comentarios
+                  </h3>
+                  <p style={{ color: "var(--muted)" }} className="text-lg">
+                    ¡Sé el primero en comentar!
                   </p>
                 </div>
               ) : (
@@ -214,13 +253,26 @@ export default function ThreadPage({
             </div>
 
             {/* Comment Form */}
-            <div className="card">
-              <h3
-                className="text-xl font-semibold mb-4"
-                style={{ color: "var(--foreground)" }}
-              >
-                Agregar Comentario
-              </h3>
+            <div className="card" style={{
+              borderLeft: "4px solid var(--brand)",
+            }}>
+              <div className="flex items-center gap-3 mb-6">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                  style={{
+                    background: "var(--brand)",
+                    color: "white",
+                  }}
+                >
+                  ✍️
+                </div>
+                <h3
+                  className="text-2xl font-bold"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Agregar Comentario
+                </h3>
+              </div>
               <SimpleForm
                 fields={[
                   {
