@@ -28,12 +28,21 @@ export default async function AuthButton() {
   // Get user profile
   const { data: profile } = await supabase
     .from("profiles")
-    .select("username")
+    .select("username, is_admin")
     .eq("id", user.id)
     .single();
 
   return (
     <div className="flex items-center gap-4">
+      {profile?.is_admin && (
+        <Link
+          href="/admin"
+          className="text-sm font-medium hover:underline"
+          style={{ color: "var(--accent)" }}
+        >
+          Admin Dashboard
+        </Link>
+      )}
       <span style={{ color: "var(--muted)" }}>
         {profile?.username || user.email}
       </span>

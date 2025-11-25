@@ -2,6 +2,9 @@ interface Comment {
   id: string;
   content: string;
   createdAt: string;
+  profile?: {
+    username: string;
+  };
 }
 
 interface CommentCardProps {

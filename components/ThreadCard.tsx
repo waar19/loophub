@@ -8,6 +8,9 @@ interface Thread {
   _count: {
     comments: number;
   };
+  profile?: {
+    username: string;
+  };
 }
 
 interface ThreadCardProps {
