@@ -61,8 +61,9 @@ export default function Sidebar({ forums }: SidebarProps) {
             style={
               pathname === "/"
                 ? {
-                    background: "var(--brand-light)",
-                    color: "var(--brand-dark)",
+                    background: "var(--brand)",
+                    color: "white",
+                    boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
                   }
                 : {
                     color: "var(--muted)",
@@ -124,8 +125,9 @@ export default function Sidebar({ forums }: SidebarProps) {
                     style={
                       active
                         ? {
-                            background: "var(--brand-light)",
-                            color: "var(--brand-dark)",
+                            background: "var(--brand)",
+                            color: "white",
+                            boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
                           }
                         : {
                             color: "var(--muted)",
@@ -151,12 +153,15 @@ export default function Sidebar({ forums }: SidebarProps) {
                         position="right"
                       >
                         <span
-                          className="text-xs px-1.5 py-0.5 rounded"
+                          className="text-xs px-2 py-0.5 rounded font-bold"
                           style={{
                             background: active
-                              ? "var(--brand)"
-                              : "var(--border-light)",
-                            color: active ? "white" : "var(--muted)",
+                              ? "white"
+                              : "var(--brand)",
+                            color: active ? "var(--brand)" : "white",
+                            boxShadow: active 
+                              ? "0 1px 3px rgba(88, 101, 242, 0.2)"
+                              : "0 1px 3px rgba(88, 101, 242, 0.3)",
                           }}
                         >
                           {count}
