@@ -1,15 +1,12 @@
+import HomeContent from "@/components/HomeContent";
+
 import { createClient } from "@/lib/supabase-server";
-import TrendingPanel from "@/components/TrendingPanel";
-import ThreadCard from "@/components/ThreadCard";
-import ForumCard from "@/components/ForumCard";
-import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   getProfilesMap,
   getCommentCountsMap,
   getThreadCountsMap,
   extractUserIds,
   extractThreadIds,
-  extractForumIds,
 } from "@/lib/api-helpers";
 
 interface Thread {
@@ -33,13 +30,15 @@ interface Thread {
 
 async function getRecentThreads(): Promise<Thread[]> {
   const supabase = await createClient();
-  
+
   const { data: threads, error } = await supabase
     .from("threads")
-    .select(`
+    .select(
+      `
       *,
       forums!inner(name, slug)
-    `)
+    `
+    )
     .order("created_at", { ascending: false })
     .limit(20);
 
@@ -54,9 +53,7 @@ async function getRecentThreads(): Promise<Thread[]> {
 
   // Get profiles and comment counts using helper functions
   const userIds = extractUserIds(threads);
-  const threadIds = extractThreadIds(
-    threads.map((t) => ({ thread_id: t.id }))
-  );
+  const threadIds = extractThreadIds(threads.map((t) => ({ thread_id: t.id })));
 
   const [profilesMap, countsMap] = await Promise.all([
     getProfilesMap(userIds),
@@ -74,17 +71,19 @@ async function getRecentThreads(): Promise<Thread[]> {
 
 async function getFeaturedThreads(): Promise<Thread[]> {
   const supabase = await createClient();
-  
+
   // Get threads with most comments in last 7 days
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
+
   const { data: threads } = await supabase
     .from("threads")
-    .select(`
+    .select(
+      `
       *,
       forums!inner(name, slug)
-    `)
+    `
+    )
     .gte("created_at", sevenDaysAgo.toISOString())
     .order("created_at", { ascending: false })
     .limit(10);
@@ -93,9 +92,7 @@ async function getFeaturedThreads(): Promise<Thread[]> {
 
   // Get profiles and comment counts using helper functions
   const userIds = extractUserIds(threads);
-  const threadIds = extractThreadIds(
-    threads.map((t) => ({ thread_id: t.id }))
-  );
+  const threadIds = extractThreadIds(threads.map((t) => ({ thread_id: t.id })));
 
   const [profilesMap, countsMap] = await Promise.all([
     getProfilesMap(userIds),
@@ -128,7 +125,7 @@ interface Forum {
 
 async function getForums(): Promise<Forum[]> {
   const supabase = await createClient();
-  
+
   const { data: forums, error } = await supabase
     .from("forums")
     .select("id, name, slug, created_at")
@@ -161,135 +158,10 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div
-      className="min-h-screen lg:ml-[var(--sidebar-width)] xl:mr-80"
-    >
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <Breadcrumbs items={[{ label: "Inicio", href: "/" }]} />
-
-        {/* Hero Section */}
-        <div className="mb-16">
-          <h1
-            className="text-4xl sm:text-5xl font-extrabold mb-4"
-            style={{ 
-              color: "var(--foreground)",
-              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            Bienvenido a LoopHub
-          </h1>
-          <p className="text-xl leading-relaxed" style={{ color: "var(--muted)" }}>
-            Comunidad enfocada en minimalismo digital, organización personal y
-            productividad realista
-          </p>
-        </div>
-
-        {/* Forums List */}
-        {forums.length > 0 && (
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-                style={{
-                  background: "var(--brand)",
-                  color: "white",
-                }}
-              >
-                💬
-              </div>
-              <h2
-                className="text-2xl sm:text-3xl font-bold"
-                style={{ color: "var(--foreground)" }}
-              >
-                Foros
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {forums.map((forum) => (
-                <ForumCard key={forum.id} forum={forum} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Featured Threads */}
-        {featuredThreads.length > 0 && (
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-                style={{
-                  background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)",
-                  color: "white",
-                  boxShadow: "0 4px 12px rgba(88, 101, 242, 0.3)",
-                }}
-              >
-                ⭐
-              </div>
-              <h2
-                className="text-2xl sm:text-3xl font-bold"
-                style={{ color: "var(--foreground)" }}
-              >
-                Hilos Destacados
-              </h2>
-            </div>
-            <div className="space-y-4">
-              {featuredThreads.map((thread) => (
-                <ThreadCard
-                  key={thread.id}
-                  thread={thread}
-                  forumSlug={thread.forum?.slug || ""}
-                  featured
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Recent Threads */}
-        <section>
-          <div className="flex items-center gap-3 mb-8">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-              style={{
-                background: "var(--brand)",
-                color: "white",
-              }}
-            >
-              🔥
-            </div>
-            <h2
-              className="text-2xl sm:text-3xl font-bold"
-              style={{ color: "var(--foreground)" }}
-            >
-              Hilos Recientes
-            </h2>
-          </div>
-          {recentThreads.length === 0 ? (
-            <div className="card text-center py-12">
-              <p style={{ color: "var(--muted)" }}>
-                Aún no hay hilos. Sé el primero en crear uno.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {recentThreads.map((thread) => (
-                <ThreadCard
-                  key={thread.id}
-                  thread={thread}
-                  forumSlug={thread.forum?.slug || ""}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-
-      {/* Trending Panel */}
-      <TrendingPanel />
-    </div>
+    <HomeContent
+      recentThreads={recentThreads}
+      featuredThreads={featuredThreads}
+      forums={forums}
+    />
   );
 }
