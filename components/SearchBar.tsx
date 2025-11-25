@@ -33,11 +33,12 @@ export default function SearchBar() {
         </svg>
       </div>
       <input
-        type="text"
+        type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Buscar hilos, foros..."
         className="search-input w-full"
+        aria-label="Buscar hilos y foros"
         style={{
           background: "var(--card-bg)",
           borderColor: "var(--border)",

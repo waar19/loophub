@@ -55,14 +55,21 @@ export default function SimpleForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {fields.map((field) => (
         <div key={field.name}>
           <label
             htmlFor={field.name}
             className="block text-sm font-medium mb-2"
+            style={{ color: "var(--foreground)" }}
           >
             {field.label}
+            {field.required && (
+              <span aria-label="requerido" style={{ color: "var(--error)" }}>
+                {" "}
+                *
+              </span>
+            )}
           </label>
           {field.type === "markdown" ? (
             <MarkdownEditor
@@ -108,8 +115,13 @@ export default function SimpleForm({
         </div>
       )}
 
-      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-        {isSubmitting ? "Submitting..." : submitText}
+      <button
+        type="submit"
+        className="btn btn-primary w-full"
+        disabled={isSubmitting}
+        aria-busy={isSubmitting}
+      >
+        {isSubmitting ? "Enviando..." : submitText}
       </button>
     </form>
   );

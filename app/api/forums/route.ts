@@ -16,9 +16,12 @@ export async function GET() {
 
     if (error) throw error;
 
-    // Transform the count data
+    // Transform the count data and return simplified structure
     const forumsWithCount = forums?.map((forum) => ({
-      ...forum,
+      id: forum.id,
+      name: forum.name,
+      slug: forum.slug,
+      description: forum.description,
       _count: {
         threads: forum.threads[0]?.count || 0,
       },
