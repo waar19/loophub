@@ -20,6 +20,7 @@ export default function Sidebar({ forums }: SidebarProps) {
   const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    console.log("Sidebar received forums:", forums?.length || 0);
     async function fetchCounts() {
       try {
         const response = await fetch("/api/forums/stats");
@@ -32,7 +33,7 @@ export default function Sidebar({ forums }: SidebarProps) {
       }
     }
     fetchCounts();
-  }, []);
+  }, [forums]);
 
   const isActive = (slug: string) => {
     return pathname === `/forum/${slug}`;

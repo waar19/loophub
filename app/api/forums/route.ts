@@ -10,25 +10,35 @@ export async function GET() {
       .select("id, name, slug, description, created_at")
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error fetching forums:", error);
+      // Return empty array instead of error if it's just a query issue
+      return NextResponse.json([]);
+    }
+
+    if (!forums || forums.length === 0) {
+      return NextResponse.json([]);
+    }
 
     // Get thread counts separately
-    const forumIds = forums?.map((f) => f.id) || [];
+    const forumIds = forums.map((f) => f.id);
     const countsMap: Record<string, number> = {};
     
     if (forumIds.length > 0) {
-      const { data: threads } = await supabase
+      const { data: threads, error: threadsError } = await supabase
         .from("threads")
         .select("forum_id")
         .in("forum_id", forumIds);
       
-      threads?.forEach((thread) => {
-        countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
-      });
+      if (!threadsError && threads) {
+        threads.forEach((thread) => {
+          countsMap[thread.forum_id] = (countsMap[thread.forum_id] || 0) + 1;
+        });
+      }
     }
 
     // Transform the count data and return simplified structure
-    const forumsWithCount = forums?.map((forum) => ({
+    const forumsWithCount = forums.map((forum) => ({
       id: forum.id,
       name: forum.name,
       slug: forum.slug,
@@ -38,13 +48,11 @@ export async function GET() {
       },
     }));
 
-    return NextResponse.json(forumsWithCount || []);
+    return NextResponse.json(forumsWithCount);
   } catch (error) {
     console.error("Error fetching forums:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch forums" },
-      { status: 500 }
-    );
+    // Return empty array on error instead of 500
+    return NextResponse.json([]);
   }
 }
 

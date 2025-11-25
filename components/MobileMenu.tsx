@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -20,23 +20,62 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    console.log("MobileMenu forums:", forums?.length || 0, forums);
+  }, [forums]);
+
   const isActive = (slug: string) => {
     return pathname === `/forum/${slug}`;
   };
+
+  const handleToggle = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setIsOpen((prev) => {
+      const newState = !prev;
+      console.log("Menu toggle:", newState);
+      return newState;
+    });
+  };
+
+  const handleClose = () => {
+    console.log("Closing menu");
+    setIsOpen(false);
+  };
+
+  // Close menu on escape key and prevent body scroll when open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   return (
     <>
       {/* Mobile Menu Button */}
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen(!isOpen);
-        }}
+        onClick={handleToggle}
         className="lg:hidden btn btn-ghost p-2"
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         aria-expanded={isOpen}
         aria-controls="mobile-menu"
-        style={{ minWidth: "auto", zIndex: 100 }}
+        style={{ minWidth: "auto" }}
       >
         <svg
           className="w-6 h-6"
@@ -66,13 +105,16 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/50 z-[60] lg:hidden"
-            onClick={() => setIsOpen(false)}
-            style={{ marginTop: "var(--header-height)" }}
+            className="fixed inset-0 bg-black/50 lg:hidden"
+            onClick={handleClose}
+            style={{ 
+              marginTop: "var(--header-height)",
+              zIndex: 60,
+            }}
           />
           <aside
             id="mobile-menu"
-            className="fixed left-0 top-0 bottom-0 w-80 z-[70] overflow-y-auto lg:hidden"
+            className="fixed left-0 top-0 bottom-0 w-80 overflow-y-auto lg:hidden"
             role="navigation"
             aria-label="Menú de navegación principal"
             style={{
@@ -80,6 +122,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
               background: "var(--card-bg)",
               borderRight: "1px solid var(--border)",
               boxShadow: "var(--shadow-lg)",
+              zIndex: 70,
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -87,7 +130,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
               <div className="mb-6">
                 <Link
                   href="/"
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleClose}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     pathname === "/" ? "" : ""
                   }`}
@@ -151,7 +194,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                         <Link
                           key={forum.id}
                           href={`/forum/${forum.slug}`}
-                          onClick={() => setIsOpen(false)}
+                          onClick={handleClose}
                           className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                             active ? "" : ""
                           }`}
