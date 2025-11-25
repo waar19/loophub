@@ -28,7 +28,12 @@ export async function GET(
     // Get comments for this thread
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
-      .select("*")
+      .select(
+        `
+        *,
+        profile:profiles(username)
+      `
+      )
       .eq("thread_id", id)
       .order("created_at", { ascending: true });
 
@@ -53,6 +58,18 @@ export async function POST(
     const body = await request.json();
     const validatedData = createCommentSchema.parse(body);
 
+    // Check authentication
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     // Verify thread exists
     const { data: thread, error: threadError } = await supabase
       .from("threads")
@@ -64,13 +81,14 @@ export async function POST(
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
     }
 
-    // Create comment
+    // Create comment with user_id
     const { data: comment, error: commentError } = await supabase
       .from("comments")
       .insert([
         {
           ...validatedData,
           thread_id: id,
+          user_id: user.id,
         },
       ])
       .select()

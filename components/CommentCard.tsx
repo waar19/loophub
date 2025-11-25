@@ -19,8 +19,17 @@ export default function CommentCard({ comment }: CommentCardProps) {
 
   return (
     <div className="card">
-      <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>
-        {date}
+      <div
+        className="flex items-center gap-2 text-xs mb-2"
+        style={{ color: "var(--muted)" }}
+      >
+        {comment.profile?.username && (
+          <>
+            <span className="font-medium">{comment.profile.username}</span>
+            <span>•</span>
+          </>
+        )}
+        <span>{date}</span>
       </div>
       <p className="whitespace-pre-wrap">{comment.content}</p>
     </div>

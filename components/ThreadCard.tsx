@@ -37,6 +37,12 @@ export default function ThreadCard({ thread, forumSlug }: ThreadCardProps) {
         className="flex items-center gap-4 text-sm"
         style={{ color: "var(--muted)" }}
       >
+        {thread.profile?.username && (
+          <>
+            <span>by {thread.profile.username}</span>
+            <span>•</span>
+          </>
+        )}
         <span>{date}</span>
         <span>•</span>
         <span>

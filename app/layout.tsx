@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import AuthButton from "@/components/AuthButton";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <header className="border-b" style={{ borderColor: "var(--border)" }}>
-          <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
             <Link
               href="/"
               className="text-2xl font-bold"
@@ -37,6 +38,7 @@ export default function RootLayout({
             >
               LoopHub
             </Link>
+            <AuthButton />
           </div>
         </header>
         <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>

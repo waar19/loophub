@@ -26,7 +26,8 @@ export async function GET(
       .select(
         `
         *,
-        comments:comments(count)
+        comments:comments(count),
+        profile:profiles(username)
       `
       )
       .eq("forum_id", forum.id)
@@ -61,6 +62,18 @@ export async function POST(
     const body = await request.json();
     const validatedData = createThreadSchema.parse(body);
 
+    // Check authentication
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase
       .from("forums")
@@ -72,13 +85,14 @@ export async function POST(
       return NextResponse.json({ error: "Forum not found" }, { status: 404 });
     }
 
-    // Create thread
+    // Create thread with user_id
     const { data: thread, error: threadError } = await supabase
       .from("threads")
       .insert([
         {
           ...validatedData,
           forum_id: forum.id,
+          user_id: user.id,
         },
       ])
       .select()
