@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -24,7 +25,15 @@ export default function LoginPage() {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check if it's an email confirmation error
+        if (error.message.includes("Email not confirmed") || error.message.includes("email_not_confirmed")) {
+          setError("Email not confirmed. Please check your email or resend the confirmation link.");
+        } else {
+          throw error;
+        }
+        return;
+      }
 
       router.push("/");
       router.refresh();
@@ -32,6 +41,32 @@ export default function LoginPage() {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      setError("Please enter your email address first");
+      return;
+    }
+
+    setResendingEmail(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+
+      if (error) throw error;
+
+      setError(null);
+      alert("Confirmation email sent! Please check your inbox.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to resend confirmation email");
+    } finally {
+      setResendingEmail(false);
     }
   };
 
@@ -93,7 +128,18 @@ export default function LoginPage() {
               className="p-3 rounded"
               style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
             >
-              {error}
+              <div className="mb-2">{error}</div>
+              {(error.includes("Email not confirmed") || error.includes("email_not_confirmed")) && (
+                <button
+                  type="button"
+                  onClick={handleResendConfirmation}
+                  disabled={resendingEmail}
+                  className="text-sm underline hover:no-underline"
+                  style={{ color: "#dc2626" }}
+                >
+                  {resendingEmail ? "Sending..." : "Resend confirmation email"}
+                </button>
+              )}
             </div>
           )}
 
