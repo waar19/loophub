@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Tooltip from "./Tooltip";
 
 interface Forum {
   id: string;
@@ -145,17 +146,22 @@ export default function Sidebar({ forums }: SidebarProps) {
                   >
                     <span className="font-medium">{forum.name}</span>
                     {count > 0 && (
-                      <span
-                        className="text-xs px-1.5 py-0.5 rounded"
-                        style={{
-                          background: active
-                            ? "var(--brand)"
-                            : "var(--border-light)",
-                          color: active ? "white" : "var(--muted)",
-                        }}
+                      <Tooltip
+                        content={`${count} ${count === 1 ? "hilo" : "hilos"} en este foro`}
+                        position="right"
                       >
-                        {count}
-                      </span>
+                        <span
+                          className="text-xs px-1.5 py-0.5 rounded"
+                          style={{
+                            background: active
+                              ? "var(--brand)"
+                              : "var(--border-light)",
+                            color: active ? "white" : "var(--muted)",
+                          }}
+                        >
+                          {count}
+                        </span>
+                      </Tooltip>
                     )}
                   </Link>
                 );

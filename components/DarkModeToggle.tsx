@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Tooltip from "./Tooltip";
 
 export default function DarkModeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -34,15 +35,16 @@ export default function DarkModeToggle() {
   };
 
   return (
-    <button
-      onClick={toggleDarkMode}
-      className="btn btn-ghost p-2"
-      aria-label="Toggle dark mode"
-      style={{
-        minWidth: "auto",
-        padding: "0.5rem",
-      }}
-    >
+    <Tooltip content={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"} position="bottom">
+      <button
+        onClick={toggleDarkMode}
+        className="btn btn-ghost p-2"
+        aria-label="Toggle dark mode"
+        style={{
+          minWidth: "auto",
+          padding: "0.5rem",
+        }}
+      >
       {isDark ? (
         <svg
           className="w-5 h-5"
@@ -73,6 +75,7 @@ export default function DarkModeToggle() {
         </svg>
       )}
     </button>
+    </Tooltip>
   );
 }
 
