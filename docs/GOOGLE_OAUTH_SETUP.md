@@ -32,8 +32,11 @@
    ```
    https://mpaytwbuhngrdjnfojhq.supabase.co/auth/v1/callback
    http://localhost:3000/auth/callback  (solo para desarrollo)
+   https://tu-app.vercel.app/auth/callback  (tu URL de producción en Vercel)
    ```
-   ⚠️ **IMPORTANTE**: Reemplaza `[tu-proyecto]` con el ID de tu proyecto de Supabase
+   ⚠️ **IMPORTANTE**: 
+   - Reemplaza `tu-app.vercel.app` con tu URL real de Vercel
+   - La URL de Supabase (`mpaytwbuhngrdjnfojhq.supabase.co`) es la que maneja el callback de OAuth
 
 5. Haz clic en **CREATE**
 6. **Copia el Client ID y Client Secret** (los necesitarás en el siguiente paso)
@@ -41,13 +44,21 @@
 ## Paso 3: Configurar en Supabase
 
 1. Ve a tu proyecto en [Supabase Dashboard](https://app.supabase.com)
-2. Ve a **Authentication** → **Providers**
-3. Busca **Google** en la lista de proveedores
-4. Haz clic en **Google** para expandir la configuración
-5. Habilita el toggle **Enable Google provider**
-6. Pega el **Client ID** de Google
-7. Pega el **Client Secret** de Google
-8. Haz clic en **Save**
+2. Ve a **Authentication** → **URL Configuration**
+3. Configura las URLs:
+   - **Site URL**: `https://tu-app.vercel.app` (tu URL de producción en Vercel)
+   - **Redirect URLs**: Agrega estas URLs (una por línea):
+     ```
+     http://localhost:3000/**
+     https://tu-app.vercel.app/**
+     ```
+4. Ve a **Authentication** → **Providers**
+5. Busca **Google** en la lista de proveedores
+6. Haz clic en **Google** para expandir la configuración
+7. Habilita el toggle **Enable Google provider**
+8. Pega el **Client ID** de Google
+9. Pega el **Client Secret** de Google
+10. Haz clic en **Save**
 
 ## Paso 4: Verificar Configuración
 
@@ -67,9 +78,13 @@
 - Verifica que el Client ID y Client Secret sean correctos
 - Asegúrate de haberlos copiado sin espacios adicionales
 
-### No redirige después del login
+### No redirige después del login / Redirige a localhost en producción
+- **IMPORTANTE**: Verifica que en Supabase Dashboard → Authentication → URL Configuration:
+  - **Site URL** esté configurada con tu URL de producción (ej: `https://tu-app.vercel.app`)
+  - **Redirect URLs** incluya `https://tu-app.vercel.app/**`
 - Verifica que la ruta `/auth/callback` esté configurada correctamente
 - Revisa la consola del navegador para errores
+- Asegúrate de que en Google Cloud Console hayas agregado la URL de producción de Vercel
 
 ## URLs de Ejemplo
 
@@ -79,7 +94,10 @@ Si tu proyecto de Supabase es `abcdefghijklmnop`, tus URLs serían:
 - Authorized redirect URI: `https://abcdefghijklmnop.supabase.co/auth/v1/callback`
 
 **Supabase Dashboard:**
-- Site URL: `http://localhost:3000` (desarrollo) o `https://tu-dominio.com` (producción)
+- Site URL: `https://tu-app.vercel.app` (producción)
+- Redirect URLs: 
+  - `http://localhost:3000/**` (desarrollo)
+  - `https://tu-app.vercel.app/**` (producción)
 
 ## Notas Importantes
 
