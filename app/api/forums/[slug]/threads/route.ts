@@ -97,7 +97,10 @@ export async function GET(
 
     return NextResponse.json({
       forum,
-      threads: threadsWithCount || [],
+        threads: threadsWithCount.map((thread: any) => ({
+          ...thread,
+          user_id: thread.user_id, // Keep user_id for client-side ownership checks
+        })) || [],
       pagination: {
         page,
         limit,
@@ -187,15 +190,28 @@ export async function POST(
   } catch (error) {
     console.error("Error creating thread:", error);
 
+    // Handle Zod validation errors
     if (error instanceof Error && "issues" in error) {
+      const zodError = error as any;
+      const firstIssue = zodError.issues?.[0];
+      const errorMessage = firstIssue?.message || "Error de validación";
       return NextResponse.json(
-        { error: "Validation failed", details: error },
+        { error: errorMessage, details: zodError.issues },
         { status: 400 }
       );
     }
 
+    // Handle Supabase errors
+    if (error && typeof error === "object" && "message" in error) {
+      const supabaseError = error as any;
+      return NextResponse.json(
+        { error: supabaseError.message || "Error al crear el hilo" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to create thread" },
+      { error: "Error al crear el hilo. Por favor intenta de nuevo." },
       { status: 500 }
     );
   }

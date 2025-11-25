@@ -10,7 +10,10 @@ import MarkdownRenderer from "@/components/MarkdownRenderer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ThreadSidebar from "@/components/ThreadSidebar";
 import TrendingPanel from "@/components/TrendingPanel";
+import EditThreadButton from "@/components/EditThreadButton";
+import DeleteButton from "@/components/DeleteButton";
 import { useToast } from "@/contexts/ToastContext";
+import { useAuth } from "@/hooks/useAuth";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -38,6 +41,7 @@ export default function ThreadPage({
   const [page, setPage] = useState(1);
   const router = useRouter();
   const { showSuccess, showError } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchData();
@@ -159,18 +163,31 @@ export default function ThreadPage({
             <div className="card mb-12" style={{
               borderLeft: "4px solid var(--brand)",
             }}>
-              <h1
-                className="text-3xl sm:text-4xl font-extrabold mb-6 leading-tight"
-                style={{ 
-                  color: "var(--foreground)",
-                  background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                {thread.title}
-              </h1>
+              <div className="flex items-start justify-between gap-4 mb-6">
+                <h1
+                  className="text-3xl sm:text-4xl font-extrabold leading-tight flex-1"
+                  style={{ 
+                    color: "var(--foreground)",
+                    background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  {thread.title}
+                </h1>
+                {user?.id === thread.user_id && (
+                  <div className="flex items-center gap-2 shrink-0">
+                    <EditThreadButton
+                      threadId={thread.id}
+                      currentTitle={thread.title}
+                      currentContent={thread.content}
+                      onSuccess={() => fetchData(1, false)}
+                    />
+                    <DeleteButton id={thread.id} type="thread" />
+                  </div>
+                )}
+              </div>
               <div className="text-lg leading-relaxed markdown-content">
                 <MarkdownRenderer content={thread.content} />
               </div>
@@ -245,7 +262,11 @@ export default function ThreadPage({
                 >
                   <div className="space-y-4">
                     {comments.map((comment) => (
-                      <CommentCard key={comment.id} comment={comment} />
+                      <CommentCard
+                        key={comment.id}
+                        comment={comment}
+                        onUpdate={() => fetchData(1, false)}
+                      />
                     ))}
                   </div>
                 </InfiniteScroll>

@@ -43,12 +43,35 @@ export default function SimpleForm({
       }
     });
 
+    // Client-side validation
+    for (const field of fields) {
+      const value = field.type === "markdown" 
+        ? fieldValues[field.name] || ""
+        : (formData.get(field.name) as string) || "";
+      
+      if (field.required && !value.trim()) {
+        setError(`${field.label} es requerido`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      if (field.maxLength && value.length > field.maxLength) {
+        setError(`${field.label} no puede exceder ${field.maxLength} caracteres`);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     try {
       await onSubmit(data);
       e.currentTarget.reset();
       setFieldValues({});
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit form");
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : "Error al enviar el formulario. Por favor intenta de nuevo.";
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -108,10 +131,29 @@ export default function SimpleForm({
 
       {error && (
         <div
-          className="p-3 rounded"
-          style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
+          className="p-3 rounded border"
+          style={{
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            color: "var(--error)",
+            borderColor: "rgba(239, 68, 68, 0.3)",
+          }}
         >
-          {error}
+          <div className="flex items-start gap-2">
+            <svg
+              className="w-5 h-5 shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
         </div>
       )}
 

@@ -66,14 +66,18 @@ export async function GET(
       }
     }
 
-    // Transform comments with profiles
+    // Transform comments with profiles (include user_id for ownership checks)
     const commentsWithProfiles = (comments || []).map((comment: any) => ({
       ...comment,
       profile: comment.user_id ? profilesMap[comment.user_id] : null,
+      user_id: comment.user_id, // Keep user_id for client-side ownership checks
     }));
 
     return NextResponse.json({
-      thread,
+      thread: {
+        ...thread,
+        user_id: thread.user_id, // Keep user_id for client-side ownership checks
+      },
       comments: commentsWithProfiles,
       pagination: {
         page,
@@ -144,15 +148,28 @@ export async function POST(
   } catch (error) {
     console.error("Error creating comment:", error);
 
+    // Handle Zod validation errors
     if (error instanceof Error && "issues" in error) {
+      const zodError = error as any;
+      const firstIssue = zodError.issues?.[0];
+      const errorMessage = firstIssue?.message || "Error de validación";
       return NextResponse.json(
-        { error: "Validation failed", details: error },
+        { error: errorMessage, details: zodError.issues },
         { status: 400 }
       );
     }
 
+    // Handle Supabase errors
+    if (error && typeof error === "object" && "message" in error) {
+      const supabaseError = error as any;
+      return NextResponse.json(
+        { error: supabaseError.message || "Error al crear el comentario" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to create comment" },
+      { error: "Error al crear el comentario. Por favor intenta de nuevo." },
       { status: 500 }
     );
   }
