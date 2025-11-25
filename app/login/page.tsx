@@ -125,8 +125,12 @@ export default function LoginPage() {
 
           {error && (
             <div
-              className="p-3 rounded"
-              style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
+              className="p-3 rounded border"
+              style={{ 
+                backgroundColor: "rgba(239, 68, 68, 0.1)", 
+                color: "#ef4444",
+                borderColor: "rgba(239, 68, 68, 0.3)"
+              }}
             >
               <div className="mb-2">{error}</div>
               {(error.includes("Email not confirmed") || error.includes("email_not_confirmed")) && (
@@ -135,7 +139,7 @@ export default function LoginPage() {
                   onClick={handleResendConfirmation}
                   disabled={resendingEmail}
                   className="text-sm underline hover:no-underline"
-                  style={{ color: "#dc2626" }}
+                  style={{ color: "#ef4444" }}
                 >
                   {resendingEmail ? "Enviando..." : "Reenviar email de confirmación"}
                 </button>
@@ -173,7 +177,11 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             className="btn w-full mt-4"
-            style={{ background: "white", border: "1px solid var(--border)" }}
+            style={{ 
+              background: "var(--card-bg)", 
+              color: "var(--foreground)",
+              border: "1px solid var(--border)" 
+            }}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path

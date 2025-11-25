@@ -30,33 +30,99 @@ export default function MarkdownEditor({
           <button
             type="button"
             onClick={() => setMode("edit")}
-            className={`px-3 py-1 text-sm rounded ${
+            className={`px-3 py-1 text-sm rounded transition-colors ${
               mode === "edit"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 hover:bg-gray-200"
+                ? ""
+                : ""
             }`}
+            style={
+              mode === "edit"
+                ? {
+                    background: "var(--accent)",
+                    color: "white"
+                  }
+                : {
+                    background: "var(--card-bg)",
+                    color: "var(--foreground)",
+                    border: "1px solid var(--border)"
+                  }
+            }
+            onMouseEnter={(e) => {
+              if (mode !== "edit") {
+                e.currentTarget.style.backgroundColor = "var(--border)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (mode !== "edit") {
+                e.currentTarget.style.backgroundColor = "var(--card-bg)";
+              }
+            }}
           >
             Edit
           </button>
           <button
             type="button"
             onClick={() => setMode("preview")}
-            className={`px-3 py-1 text-sm rounded ${
+            className={`px-3 py-1 text-sm rounded transition-colors ${
               mode === "preview"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 hover:bg-gray-200"
+                ? ""
+                : ""
             }`}
+            style={
+              mode === "preview"
+                ? {
+                    background: "var(--accent)",
+                    color: "white"
+                  }
+                : {
+                    background: "var(--card-bg)",
+                    color: "var(--foreground)",
+                    border: "1px solid var(--border)"
+                  }
+            }
+            onMouseEnter={(e) => {
+              if (mode !== "preview") {
+                e.currentTarget.style.backgroundColor = "var(--border)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (mode !== "preview") {
+                e.currentTarget.style.backgroundColor = "var(--card-bg)";
+              }
+            }}
           >
             Preview
           </button>
           <button
             type="button"
             onClick={() => setMode("split")}
-            className={`px-3 py-1 text-sm rounded ${
+            className={`px-3 py-1 text-sm rounded transition-colors ${
               mode === "split"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 hover:bg-gray-200"
+                ? ""
+                : ""
             }`}
+            style={
+              mode === "split"
+                ? {
+                    background: "var(--accent)",
+                    color: "white"
+                  }
+                : {
+                    background: "var(--card-bg)",
+                    color: "var(--foreground)",
+                    border: "1px solid var(--border)"
+                  }
+            }
+            onMouseEnter={(e) => {
+              if (mode !== "split") {
+                e.currentTarget.style.backgroundColor = "var(--border)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (mode !== "split") {
+                e.currentTarget.style.backgroundColor = "var(--card-bg)";
+              }
+            }}
           >
             Split
           </button>

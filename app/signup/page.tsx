@@ -120,8 +120,12 @@ export default function SignupPage() {
 
           {error && (
             <div
-              className="p-3 rounded"
-              style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
+              className="p-3 rounded border"
+              style={{ 
+                backgroundColor: "rgba(239, 68, 68, 0.1)", 
+                color: "#ef4444",
+                borderColor: "rgba(239, 68, 68, 0.3)"
+              }}
             >
               {error}
             </div>

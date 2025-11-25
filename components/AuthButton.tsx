@@ -14,7 +14,11 @@ export default async function AuthButton() {
         <Link
           href="/login"
           className="btn"
-          style={{ background: "white", border: "1px solid var(--border)" }}
+          style={{ 
+            background: "var(--card-bg)", 
+            color: "var(--foreground)",
+            border: "1px solid var(--border)" 
+          }}
         >
           Login
         </Link>
@@ -50,7 +54,11 @@ export default async function AuthButton() {
         <button
           type="submit"
           className="btn"
-          style={{ background: "white", border: "1px solid var(--border)" }}
+          style={{ 
+            background: "var(--card-bg)", 
+            color: "var(--foreground)",
+            border: "1px solid var(--border)" 
+          }}
         >
           Logout
         </button>

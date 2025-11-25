@@ -39,7 +39,8 @@ export default function MarkdownRenderer({
           // Customize links
           a: ({ node, ...props }) => (
             <a
-              className="text-blue-600 hover:underline"
+              className="hover:underline"
+              style={{ color: "var(--accent)" }}
               target="_blank"
               rel="noopener noreferrer"
               {...props}
@@ -60,7 +61,11 @@ export default function MarkdownRenderer({
             if (isInline) {
               return (
                 <code
-                  className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono"
+                  className="px-1.5 py-0.5 rounded text-sm font-mono"
+                  style={{
+                    background: "var(--border)",
+                    color: "var(--foreground)"
+                  }}
                   {...props}
                 >
                   {children}
@@ -91,8 +96,11 @@ export default function MarkdownRenderer({
           // Customize blockquotes
           blockquote: ({ node, ...props }) => (
             <blockquote
-              className="border-l-4 border-gray-300 pl-4 italic my-4"
-              style={{ borderColor: "var(--border)" }}
+              className="border-l-4 pl-4 italic my-4"
+              style={{ 
+                borderColor: "var(--border)",
+                color: "var(--muted)"
+              }}
               {...props}
             />
           ),
