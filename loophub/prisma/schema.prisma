@@ -1,0 +1,46 @@
+// This is your Prisma schema file for LoopHub
+// Database: Supabase PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Forum {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  threads   Thread[]
+
+  @@map("forums")
+}
+
+model Thread {
+  id        String    @id @default(cuid())
+  forumId   String
+  title     String
+  content   String    @db.Text
+  createdAt DateTime  @default(now())
+  comments  Comment[]
+  forum     Forum     @relation(fields: [forumId], references: [id], onDelete: Cascade)
+
+  @@index([forumId])
+  @@map("threads")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  threadId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@map("comments")
+}
