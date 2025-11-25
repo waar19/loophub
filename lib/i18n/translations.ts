@@ -1,7 +1,7 @@
-export type Locale = "es" | "en";
+export type Locale = "es" | "en" | "pt";
 
 export const defaultLocale: Locale = "es";
-export const supportedLocales: Locale[] = ["es", "en"];
+export const supportedLocales: Locale[] = ["es", "en", "pt"];
 
 export const translations = {
   es: {
@@ -19,7 +19,8 @@ export const translations = {
     // Homepage
     home: {
       welcome: "Bienvenido a LoopHub",
-      welcomeSubtitle: "Comunidad de minimalismo digital y organización personal",
+      welcomeSubtitle:
+        "Comunidad de minimalismo digital y organización personal",
       forums: "Foros",
       featuredThreads: "Hilos Destacados",
       recentThreads: "Hilos Recientes",
@@ -78,7 +79,8 @@ export const translations = {
       loginHere: "Inicia sesión",
       forgotPassword: "¿Olvidaste tu contraseña?",
       resendConfirmation: "Reenviar email de confirmación",
-      emailNotConfirmed: "Email no confirmado. Por favor revisa tu email o reenvía el enlace de confirmación.",
+      emailNotConfirmed:
+        "Email no confirmado. Por favor revisa tu email o reenvía el enlace de confirmación.",
     },
     // Common
     common: {
@@ -166,7 +168,8 @@ export const translations = {
     // Homepage
     home: {
       welcome: "Welcome to LoopHub",
-      welcomeSubtitle: "Community for digital minimalism and personal organization",
+      welcomeSubtitle:
+        "Community for digital minimalism and personal organization",
       forums: "Forums",
       featuredThreads: "Featured Threads",
       recentThreads: "Recent Threads",
@@ -225,7 +228,8 @@ export const translations = {
       loginHere: "Log in here",
       forgotPassword: "Forgot your password?",
       resendConfirmation: "Resend confirmation email",
-      emailNotConfirmed: "Email not confirmed. Please check your email or resend the confirmation link.",
+      emailNotConfirmed:
+        "Email not confirmed. Please check your email or resend the confirmation link.",
     },
     // Common
     common: {
@@ -270,7 +274,8 @@ export const translations = {
       newComment: "New comment on your thread",
       newReply: "New activity on a thread",
       unread: "unread",
-      whenInteract: "When someone interacts with your content, you'll see it here",
+      whenInteract:
+        "When someone interacts with your content, you'll see it here",
     },
     // Admin
     admin: {
@@ -298,7 +303,155 @@ export const translations = {
       daysAgo: "{count} {count, plural, one {day} other {days}} ago",
     },
   },
+  pt: {
+    // Navigation
+    nav: {
+      home: "Início",
+      forums: "Fóruns",
+      search: "Pesquisar",
+      notifications: "Notificações",
+      login: "Entrar",
+      signup: "Cadastrar-se",
+      logout: "Sair",
+      admin: "Administração",
+    },
+    // Homepage
+    home: {
+      welcome: "Bem-vindo ao LoopHub",
+      welcomeSubtitle:
+        "Comunidade de minimalismo digital e organização pessoal",
+      forums: "Fóruns",
+      featuredThreads: "Tópicos em Destaque",
+      recentThreads: "Tópicos Recentes",
+      noThreads: "Ainda não há tópicos",
+      createFirst: "Crie o primeiro!",
+    },
+    // Threads
+    threads: {
+      title: "Tópicos",
+      thread: "Tópico",
+      threads: "Tópicos",
+      newThread: "Novo Tópico",
+      createThread: "Criar Tópico",
+      editThread: "Editar Tópico",
+      deleteThread: "Excluir Tópico",
+      threadTitle: "Título do Tópico",
+      threadContent: "Conteúdo",
+      noThreads: "Ainda não há tópicos neste fórum",
+      createFirstThread: "Crie o primeiro tópico!",
+      comments: "Comentários",
+      comment: "Comentário",
+      addComment: "Adicionar Comentário",
+      postComment: "Publicar Comentário",
+      editComment: "Editar Comentário",
+      deleteComment: "Excluir Comentário",
+      yourComment: "Seu Comentário",
+      noComments: "Ainda não há comentários",
+      beFirst: "Seja o primeiro a comentar!",
+      noMoreComments: "Não há mais comentários para carregar",
+      share: "Compartilhar",
+      copy: "Copiar",
+      copied: "Copiado!",
+      shareOn: "Compartilhar em",
+    },
+    // Forums
+    forums: {
+      forum: "Fórum",
+      forums: "Fóruns",
+      rules: "Regras do Fórum",
+      rule1: "Mantenha as discussões respeitosas e construtivas",
+      rule2: "Pesquise antes de criar um tópico duplicado",
+      rule3: "Use títulos descritivos e claros",
+      rule4: "Siga as regras específicas de cada fórum",
+    },
+    // Auth
+    auth: {
+      login: "Entrar",
+      signup: "Cadastrar-se",
+      email: "Email",
+      password: "Senha",
+      username: "Nome de Usuário",
+      loginWithGoogle: "Entrar com Google",
+      noAccount: "Não tem uma conta?",
+      haveAccount: "Já tem uma conta?",
+      register: "Cadastre-se",
+      loginHere: "Entre aqui",
+      forgotPassword: "Esqueceu sua senha?",
+      resendConfirmation: "Reenviar email de confirmação",
+      emailNotConfirmed:
+        "Email não confirmado. Por favor verifique seu email ou reenvie o link de confirmação.",
+    },
+    // Common
+    common: {
+      loading: "Carregando...",
+      error: "Erro",
+      success: "Sucesso",
+      save: "Salvar",
+      cancel: "Cancelar",
+      delete: "Excluir",
+      edit: "Editar",
+      close: "Fechar",
+      back: "Voltar",
+      next: "Próximo",
+      previous: "Anterior",
+      search: "Pesquisar",
+      searchPlaceholder: "Pesquisar tópicos, fóruns...",
+      noResults: "Nenhum resultado encontrado",
+      tryAgain: "Tente novamente",
+      or: "Ou continue com",
+      ago: "Há",
+      seconds: "segundos",
+      minutes: "minutos",
+      hours: "horas",
+      days: "dias",
+      weeks: "semanas",
+      months: "meses",
+      years: "anos",
+      justNow: "Agora mesmo",
+      readMore: "Ler mais",
+      showMore: "Mostrar mais",
+      showLess: "Mostrar menos",
+      inThisForum: "neste fórum",
+      noForumsAvailable: "Nenhum fórum disponível",
+    },
+    // Notifications
+    notifications: {
+      title: "Notificações",
+      noNotifications: "Você não tem notificações",
+      markAllRead: "Marcar todas como lidas",
+      markAsRead: "Marcar como lida",
+      viewAll: "Ver todas as notificações",
+      newComment: "Novo comentário em seu tópico",
+      newReply: "Nova atividade em um tópico",
+      unread: "não lida",
+      whenInteract: "Quando alguém interagir com seu conteúdo, você verá aqui",
+    },
+    // Admin
+    admin: {
+      title: "Administração",
+      reports: "Denúncias",
+      pending: "Pendentes",
+      reviewed: "Revisados",
+      dismissed: "Descartados",
+    },
+    // Errors
+    errors: {
+      generic: "Algo deu errado",
+      notFound: "Não encontrado",
+      unauthorized: "Não autorizado",
+      forbidden: "Proibido",
+      serverError: "Erro do servidor",
+      networkError: "Erro de rede",
+      tryAgain: "Por favor tente novamente",
+    },
+    // Time
+    time: {
+      justNow: "Agora mesmo",
+      minutesAgo: "Há {count} {count, plural, one {minuto} other {minutos}}",
+      hoursAgo: "Há {count} {count, plural, one {hora} other {horas}}",
+      daysAgo: "Há {count} {count, plural, one {dia} other {dias}}",
+    },
+  },
 } as const;
 
 export type TranslationKey = keyof typeof translations.es;
-
