@@ -19,15 +19,15 @@
   --muted: #6B7280;
   --muted-light: #9CA3AF;
   
-  /* Brand color - Modern blue-gray (Linear-inspired) */
-  --brand: #5E6AD2;
-  --brand-hover: #4F5BC4;
-  --brand-light: #E8EAF6;
-  --brand-dark: #3D4A9E;
+  /* Brand color - Amarillo oscuro/Ámbar distintivo */
+  --brand: #CA8A04;
+  --brand-hover: #A16207;
+  --brand-light: #FEF3C7;
+  --brand-dark: #854D0E;
   
   /* Accent colors */
-  --accent: #5E6AD2;
-  --accent-hover: #4F5BC4;
+  --accent: #CA8A04;
+  --accent-hover: #A16207;
   
   /* Status colors */
   --success: #10B981;
@@ -62,15 +62,15 @@
   --muted: #9CA3AF;
   --muted-light: #6B7280;
   
-  /* Brand color - Lighter for dark mode visibility */
-  --brand: #7C8AF0;
-  --brand-hover: #8B9AFF;
-  --brand-light: #2A2A3E;
-  --brand-dark: #6B7AE8;
+  /* Brand color - Amarillo/Ámbar más claro para modo oscuro */
+  --brand: #FBBF24;
+  --brand-hover: #FCD34D;
+  --brand-light: #3E2A0E;
+  --brand-dark: #D97706;
   
   /* Accent colors */
-  --accent: #7C8AF0;
-  --accent-hover: #8B9AFF;
+  --accent: #FBBF24;
+  --accent-hover: #FCD34D;
   
   /* Status colors - Adjusted for dark mode */
   --success: #34D399;
