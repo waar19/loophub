@@ -108,8 +108,8 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
             className="fixed inset-0 bg-black/50 lg:hidden"
             onClick={handleClose}
             style={{ 
-              marginTop: "var(--header-height)",
-              zIndex: 60,
+              top: "var(--header-height)",
+              zIndex: 1000,
             }}
           />
           <aside
@@ -118,11 +118,11 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
             role="navigation"
             aria-label="Menú de navegación principal"
             style={{
-              marginTop: "var(--header-height)",
+              top: "var(--header-height)",
               background: "var(--card-bg)",
               borderRight: "1px solid var(--border)",
               boxShadow: "var(--shadow-lg)",
-              zIndex: 70,
+              zIndex: 1001,
             }}
             onClick={(e) => e.stopPropagation()}
           >

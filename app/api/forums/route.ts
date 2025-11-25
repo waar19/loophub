@@ -7,7 +7,7 @@ export async function GET() {
     const supabase = await createClient();
     const { data: forums, error } = await supabase
       .from("forums")
-      .select("id, name, slug, description, created_at")
+      .select("id, name, slug, created_at")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -42,7 +42,6 @@ export async function GET() {
       id: forum.id,
       name: forum.name,
       slug: forum.slug,
-      description: forum.description,
       _count: {
         threads: countsMap[forum.id] || 0,
       },

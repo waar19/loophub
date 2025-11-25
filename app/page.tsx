@@ -156,7 +156,7 @@ async function getForums(): Promise<Forum[]> {
   
   const { data: forums, error } = await supabase
     .from("forums")
-    .select("id, name, slug, description, created_at")
+    .select("id, name, slug, created_at")
     .order("created_at", { ascending: false });
 
   if (error || !forums || forums.length === 0) {
@@ -179,7 +179,6 @@ async function getForums(): Promise<Forum[]> {
     id: forum.id,
     name: forum.name,
     slug: forum.slug,
-    description: forum.description,
     createdAt: forum.created_at,
     _count: {
       threads: countsMap[forum.id] || 0,

@@ -11,7 +11,7 @@ export default async function AppLayout({
   const supabase = await createClient();
   const { data: forums, error } = await supabase
     .from("forums")
-    .select("id, name, slug, description")
+    .select("id, name, slug")
     .order("created_at", { ascending: false });
 
   if (error) {
