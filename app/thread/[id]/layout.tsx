@@ -16,6 +16,7 @@ export async function generateMetadata({
         title,
         content,
         created_at,
+        forum_id,
         forums!inner(name, slug)
       `)
       .eq("id", id)
@@ -29,8 +30,12 @@ export async function generateMetadata({
         .substring(0, 160)
         .trim() + "...";
 
+      // Handle forums as array (Supabase returns it as array even with single relation)
+      const forum = Array.isArray(thread.forums) ? thread.forums[0] : thread.forums;
+      const forumName = forum?.name || "Foro";
+
       return {
-        title: `${thread.title} - ${thread.forums.name} | LoopHub`,
+        title: `${thread.title} - ${forumName} | LoopHub`,
         description: preview,
         openGraph: {
           title: thread.title,
