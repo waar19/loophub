@@ -1,5 +1,5 @@
 import ForumCard from "@/components/ForumCard";
-import { headers } from "next/headers";
+import { createClient } from "@/lib/supabase-server";
 
 interface Forum {
   id: string;
@@ -12,20 +12,33 @@ interface Forum {
 }
 
 async function getForums(): Promise<Forum[]> {
-  const headersList = await headers();
-  const protocol = headersList.get("x-forwarded-proto") || "http";
-  const host = headersList.get("host") || "localhost:3000";
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+  const supabase = await createClient();
   
-  const res = await fetch(`${baseURL}/api/forums`, {
-    cache: "no-store",
-  });
+  const { data: forums, error } = await supabase
+    .from("forums")
+    .select(
+      `
+      *,
+      threads:threads(count)
+    `
+    )
+    .order("created_at", { ascending: false });
 
-  if (!res.ok) {
+  if (error) {
+    console.error("Error fetching forums:", error);
     throw new Error("Failed to fetch forums");
   }
 
-  return res.json();
+  // Transform the count data
+  const forumsWithCount = forums?.map((forum) => ({
+    ...forum,
+    createdAt: forum.created_at,
+    _count: {
+      threads: forum.threads[0]?.count || 0,
+    },
+  })) || [];
+
+  return forumsWithCount;
 }
 
 export default async function HomePage() {
