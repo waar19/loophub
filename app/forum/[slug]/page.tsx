@@ -121,6 +121,10 @@ export default function ForumPage({
     );
   }
 
+  if (!data) {
+    return null;
+  }
+
   const { forum, threads, pagination } = data;
 
   return (
