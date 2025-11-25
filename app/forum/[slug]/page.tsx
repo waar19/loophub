@@ -1,8 +1,10 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import ThreadCard from "@/components/ThreadCard";
-import { Metadata } from "next";
-import { headers } from "next/headers";
-
+import InfiniteScroll from "@/components/InfiniteScroll";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { Thread } from "@/lib/supabase";
 
 interface Forum {
@@ -14,46 +16,90 @@ interface Forum {
 interface ForumData {
   forum: Forum;
   threads: Thread[];
-}
-
-async function getForumData(slug: string): Promise<ForumData> {
-  const headersList = await headers();
-  const protocol = headersList.get("x-forwarded-proto") || "http";
-  const host = headersList.get("host") || "localhost:3000";
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
-  
-  const res = await fetch(`${baseURL}/api/forums/${slug}/threads`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch forum data");
-  }
-
-  return res.json();
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const { forum } = await getForumData(slug);
-
-  return {
-    title: `${forum.name} - LoopHub`,
-    description: `Discussion threads in ${forum.name} forum`,
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
   };
 }
 
-export default async function ForumPage({
+export default function ForumPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const { forum, threads } = await getForumData(slug);
+  const { slug } = use(params);
+  const [data, setData] = useState<ForumData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+
+  const fetchData = async (pageNum: number = 1, append: boolean = false) => {
+    try {
+      if (!append) setIsLoading(true);
+      else setIsLoadingMore(true);
+
+      const res = await fetch(
+        `/api/forums/${slug}/threads?page=${pageNum}&limit=20`
+      );
+      if (!res.ok) throw new Error("Failed to fetch forum data");
+      const forumData: ForumData = await res.json();
+
+      if (append && data) {
+        setData({
+          ...forumData,
+          threads: [...data.threads, ...forumData.threads],
+        });
+      } else {
+        setData(forumData);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(1, false);
+  }, [slug]);
+
+  const handleLoadMore = () => {
+    if (!isLoadingMore && data?.pagination.hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchData(nextPage, true);
+    }
+  };
+
+  if (isLoading && !data) {
+    return (
+      <div>
+        <div className="mb-8">
+          <div className="h-10 rounded w-64 mb-2 animate-pulse" style={{ backgroundColor: "var(--border)" }}></div>
+          <div className="h-5 rounded w-32 animate-pulse" style={{ backgroundColor: "var(--border)" }}></div>
+        </div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <LoadingSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="card text-center py-12">
+        <p style={{ color: "var(--muted)" }}>Failed to load forum</p>
+      </div>
+    );
+  }
+
+  const { forum, threads, pagination } = data;
 
   return (
     <div>
@@ -61,7 +107,7 @@ export default async function ForumPage({
         <div>
           <h1 className="text-3xl font-bold mb-2">{forum.name}</h1>
           <p style={{ color: "var(--muted)" }}>
-            {threads.length} {threads.length === 1 ? "thread" : "threads"}
+            {pagination.total} {pagination.total === 1 ? "thread" : "threads"}
           </p>
         </div>
         <Link href={`/forum/${slug}/new`} className="btn btn-primary">
@@ -79,11 +125,29 @@ export default async function ForumPage({
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {threads.map((thread) => (
-            <ThreadCard key={thread.id} thread={thread} forumSlug={slug} />
-          ))}
-        </div>
+        <InfiniteScroll
+          hasMore={pagination.hasMore}
+          isLoading={isLoadingMore}
+          onLoadMore={handleLoadMore}
+          loader={
+            <div className="space-y-4 mt-4">
+              {[1, 2].map((i) => (
+                <LoadingSkeleton key={i} />
+              ))}
+            </div>
+          }
+          endMessage={
+            <p style={{ color: "var(--muted)" }}>
+              No more threads to load
+            </p>
+          }
+        >
+          <div className="space-y-4">
+            {threads.map((thread) => (
+              <ThreadCard key={thread.id} thread={thread} forumSlug={slug} />
+            ))}
+          </div>
+        </InfiniteScroll>
       )}
     </div>
   );

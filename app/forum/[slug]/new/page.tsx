@@ -1,17 +1,19 @@
 "use client";
 
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import SimpleForm from "@/components/SimpleForm";
 
 export default function NewThreadPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = use(params);
   const router = useRouter();
 
   const handleSubmit = async (data: Record<string, string>) => {
-    const res = await fetch(`/api/forums/${params.slug}/threads`, {
+    const res = await fetch(`/api/forums/${slug}/threads`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

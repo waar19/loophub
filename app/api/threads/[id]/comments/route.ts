@@ -8,6 +8,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100); // Max 100 per page
+    const offset = (page - 1) * limit;
 
     // Get thread with forum info
     const { data: thread, error: threadError } = await supabase
@@ -25,7 +29,15 @@ export async function GET(
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
     }
 
-    // Get comments for this thread
+    // Get total count for pagination
+    const { count: totalCount, error: countError } = await supabase
+      .from("comments")
+      .select("*", { count: "exact", head: true })
+      .eq("thread_id", id);
+
+    if (countError) throw countError;
+
+    // Get comments for this thread with pagination
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
       .select(
@@ -35,11 +47,22 @@ export async function GET(
       `
       )
       .eq("thread_id", id)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: true })
+      .range(offset, offset + limit - 1);
 
     if (commentsError) throw commentsError;
 
-    return NextResponse.json({ thread, comments: comments || [] });
+    return NextResponse.json({
+      thread,
+      comments: comments || [],
+      pagination: {
+        page,
+        limit,
+        total: totalCount || 0,
+        totalPages: Math.ceil((totalCount || 0) / limit),
+        hasMore: (offset + limit) < (totalCount || 0),
+      },
+    });
   } catch (error) {
     console.error("Error fetching comments:", error);
     return NextResponse.json(

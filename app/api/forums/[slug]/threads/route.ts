@@ -8,6 +8,10 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100); // Max 100 per page
+    const offset = (page - 1) * limit;
 
     // Get forum by slug
     const { data: forum, error: forumError } = await supabase
@@ -20,7 +24,15 @@ export async function GET(
       return NextResponse.json({ error: "Forum not found" }, { status: 404 });
     }
 
-    // Get threads for this forum
+    // Get total count for pagination
+    const { count: totalCount, error: countError } = await supabase
+      .from("threads")
+      .select("*", { count: "exact", head: true })
+      .eq("forum_id", forum.id);
+
+    if (countError) throw countError;
+
+    // Get threads for this forum with pagination
     const { data: threads, error: threadsError } = await supabase
       .from("threads")
       .select(
@@ -31,7 +43,8 @@ export async function GET(
       `
       )
       .eq("forum_id", forum.id)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (threadsError) throw threadsError;
 
@@ -43,7 +56,17 @@ export async function GET(
       },
     }));
 
-    return NextResponse.json({ forum, threads: threadsWithCount || [] });
+    return NextResponse.json({
+      forum,
+      threads: threadsWithCount || [],
+      pagination: {
+        page,
+        limit,
+        total: totalCount || 0,
+        totalPages: Math.ceil((totalCount || 0) / limit),
+        hasMore: (offset + limit) < (totalCount || 0),
+      },
+    });
   } catch (error) {
     console.error("Error fetching threads:", error);
     return NextResponse.json(
