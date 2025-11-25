@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 interface Forum {
   id: string;
@@ -17,9 +18,10 @@ interface ForumCardProps {
 }
 
 export default function ForumCard({ forum }: ForumCardProps) {
+  const { t } = useTranslations();
   return (
-    <Link 
-      href={`/forum/${forum.slug}`} 
+    <Link
+      href={`/forum/${forum.slug}`}
       className="card block group relative overflow-hidden"
       style={{
         borderLeft: "4px solid var(--brand)",
@@ -27,23 +29,27 @@ export default function ForumCard({ forum }: ForumCardProps) {
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <h3 
+          <h3
             className="text-xl font-bold mb-2 transition-colors"
             style={{ color: "var(--foreground)" }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "var(--brand)"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "var(--foreground)"}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--brand)")}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = "var(--foreground)")
+            }
           >
             {forum.name}
           </h3>
           <div className="flex items-center gap-2">
-            <span 
+            <span
               className="text-sm font-semibold"
               style={{ color: "var(--brand)" }}
             >
               {forum._count.threads}
             </span>
             <span className="text-sm" style={{ color: "var(--muted)" }}>
-              {forum._count.threads === 1 ? "hilo" : "hilos"}
+              {forum._count.threads === 1
+                ? t("threads.thread")
+                : t("threads.threads")}
             </span>
           </div>
         </div>

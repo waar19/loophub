@@ -15,6 +15,7 @@ import DeleteButton from "@/components/DeleteButton";
 import ShareButtons from "@/components/ShareButtons";
 import { useToast } from "@/contexts/ToastContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -43,6 +44,7 @@ export default function ThreadPage({
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
+  const { t } = useTranslations();
 
   useEffect(() => {
     fetchData();
@@ -94,14 +96,15 @@ export default function ThreadPage({
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error || "Error al publicar el comentario");
+        throw new Error(error.error || t("threads.errorPosting"));
       }
 
-      showSuccess("¡Comentario publicado exitosamente!");
+      showSuccess(t("threads.commentPosted"));
       setPage(1);
       await fetchData(1, false);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al publicar el comentario";
+      const errorMessage =
+        error instanceof Error ? error.message : t("threads.errorPosting");
       showError(errorMessage);
       throw error;
     }
@@ -136,7 +139,7 @@ export default function ThreadPage({
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="card text-center py-12">
             <p style={{ color: "var(--muted)" }}>
-              Hilo no encontrado
+              {t("threads.threadNotFound")}
             </p>
           </div>
         </div>
@@ -151,7 +154,7 @@ export default function ThreadPage({
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Breadcrumbs
           items={[
-            { label: "Inicio", href: "/" },
+            { label: t("common.home"), href: "/" },
             { label: thread.forum.name, href: `/forum/${thread.forum.slug}` },
             { label: thread.title },
           ]}
@@ -161,15 +164,19 @@ export default function ThreadPage({
           {/* Main Content */}
           <div className="flex-1 min-w-0">
             {/* Thread Header */}
-            <div className="card mb-12" style={{
-              borderLeft: "4px solid var(--brand)",
-            }}>
+            <div
+              className="card mb-12"
+              style={{
+                borderLeft: "4px solid var(--brand)",
+              }}
+            >
               <div className="flex items-start justify-between gap-4 mb-6">
                 <h1
                   className="text-3xl sm:text-4xl font-extrabold leading-tight flex-1"
-                  style={{ 
+                  style={{
                     color: "var(--foreground)",
-                    background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+                    background:
+                      "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -192,9 +199,12 @@ export default function ThreadPage({
               <div className="text-lg leading-relaxed markdown-content mb-6">
                 <MarkdownRenderer content={thread.content} />
               </div>
-              
+
               {/* Share Buttons */}
-              <div className="pt-6 border-t" style={{ borderColor: "var(--border)" }}>
+              <div
+                className="pt-6 border-t"
+                style={{ borderColor: "var(--border)" }}
+              >
                 <ShareButtons
                   title={thread.title}
                   url={`/thread/${thread.id}`}
@@ -223,7 +233,7 @@ export default function ThreadPage({
                   className="text-3xl font-bold"
                   style={{ color: "var(--foreground)" }}
                 >
-                  Comentarios
+                  {t("threads.comments")}
                 </h2>
                 <div
                   className="px-3 py-1 rounded-lg text-sm font-bold"
@@ -246,11 +256,14 @@ export default function ThreadPage({
                   >
                     💭
                   </div>
-                  <h3 className="text-2xl font-bold mb-3" style={{ color: "var(--foreground)" }}>
-                    Aún no hay comentarios
+                  <h3
+                    className="text-2xl font-bold mb-3"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {t("threads.noComments")}
                   </h3>
                   <p style={{ color: "var(--muted)" }} className="text-lg">
-                    ¡Sé el primero en comentar!
+                    {t("threads.beFirst")}
                   </p>
                 </div>
               ) : (
@@ -270,7 +283,7 @@ export default function ThreadPage({
                       className="text-center py-4"
                       style={{ color: "var(--muted)" }}
                     >
-                      No hay más comentarios para cargar
+                      {t("threads.noMoreComments")}
                     </p>
                   }
                 >
@@ -288,9 +301,12 @@ export default function ThreadPage({
             </div>
 
             {/* Comment Form */}
-            <div className="card" style={{
-              borderLeft: "4px solid var(--brand)",
-            }}>
+            <div
+              className="card"
+              style={{
+                borderLeft: "4px solid var(--brand)",
+              }}
+            >
               <div className="flex items-center gap-3 mb-6">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
@@ -305,23 +321,22 @@ export default function ThreadPage({
                   className="text-2xl font-bold"
                   style={{ color: "var(--foreground)" }}
                 >
-                  Agregar Comentario
+                  {t("threads.addComment")}
                 </h3>
               </div>
               <SimpleForm
                 fields={[
                   {
                     name: "content",
-                    label: "Tu Comentario",
+                    label: t("threads.yourComment"),
                     type: "markdown",
-                    placeholder:
-                      "Comparte tus pensamientos... (Markdown soportado)",
+                    placeholder: t("threads.commentPlaceholder"),
                     required: true,
                     maxLength: 10000,
                   },
                 ]}
                 onSubmit={handleCommentSubmit}
-                submitText="Publicar Comentario"
+                submitText={t("threads.postComment")}
               />
             </div>
           </div>

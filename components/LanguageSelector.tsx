@@ -7,11 +7,13 @@ import { useState, useRef, useEffect } from "react";
 const localeNames: Record<Locale, string> = {
   es: "Español",
   en: "English",
+  pt: "Português",
 };
 
 const localeFlags: Record<Locale, string> = {
   es: "🇪🇸",
   en: "🇺🇸",
+  pt: "🇧🇷",
 };
 
 export default function LanguageSelector() {
@@ -21,7 +23,10 @@ export default function LanguageSelector() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -44,11 +49,16 @@ export default function LanguageSelector() {
         title="Select language"
       >
         <span className="text-lg">{localeFlags[locale]}</span>
-        <span className="hidden sm:inline text-sm font-medium" style={{ color: "var(--foreground)" }}>
+        <span
+          className="hidden sm:inline text-sm font-medium"
+          style={{ color: "var(--foreground)" }}
+        >
           {localeNames[locale]}
         </span>
         <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`w-4 h-4 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -89,7 +99,10 @@ export default function LanguageSelector() {
                 <span
                   className="text-sm font-medium"
                   style={{
-                    color: locale === loc ? "var(--brand-dark)" : "var(--foreground)",
+                    color:
+                      locale === loc
+                        ? "var(--brand-dark)"
+                        : "var(--foreground)",
                   }}
                 >
                   {localeNames[loc]}
@@ -116,4 +129,3 @@ export default function LanguageSelector() {
     </div>
   );
 }
-

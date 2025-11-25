@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "@/components/TranslationsProvider";
 import ThreadCard from "@/components/ThreadCard";
 import ForumCard from "@/components/ForumCard";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
@@ -34,10 +34,11 @@ interface SearchResults {
 }
 
 export default function SearchPage() {
+  const { t } = useTranslations();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const type = searchParams.get("type") || "all";
-  
+
   const [results, setResults] = useState<SearchResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "threads" | "forums">(
@@ -83,7 +84,9 @@ export default function SearchPage() {
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <Breadcrumbs items={[{ label: "Búsqueda", href: "/search" }]} />
+          <Breadcrumbs
+            items={[{ label: t("common.search"), href: "/search" }]}
+          />
           <div className="card text-center py-16">
             <div
               className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
@@ -93,11 +96,14 @@ export default function SearchPage() {
             >
               🔍
             </div>
-            <h2 className="text-2xl font-bold mb-3" style={{ color: "var(--foreground)" }}>
-              Buscar en LoopHub
+            <h2
+              className="text-2xl font-bold mb-3"
+              style={{ color: "var(--foreground)" }}
+            >
+              {t("common.search")} en LoopHub
             </h2>
             <p style={{ color: "var(--muted)" }} className="text-lg">
-              Ingresa un término de búsqueda para encontrar hilos y foros
+              {t("common.searchPrompt")}
             </p>
           </div>
         </div>
@@ -109,7 +115,7 @@ export default function SearchPage() {
   return (
     <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <Breadcrumbs items={[{ label: "Búsqueda", href: "/search" }]} />
+        <Breadcrumbs items={[{ label: t("common.search"), href: "/search" }]} />
 
         {/* Header */}
         <div className="mb-8">
@@ -126,22 +132,34 @@ export default function SearchPage() {
             <h1
               className="text-3xl sm:text-4xl font-extrabold"
               style={{
-                background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+                background:
+                  "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}
             >
-              Resultados de búsqueda
+              {t("common.searchResults") || "Resultados de búsqueda"}
             </h1>
           </div>
           <p className="text-lg" style={{ color: "var(--muted)" }}>
-            Buscando: <span className="font-semibold" style={{ color: "var(--foreground)" }}>"{query}"</span>
+            {t("common.search")}:{" "}
+            <span
+              className="font-semibold"
+              style={{ color: "var(--foreground)" }}
+            >
+              {'"'}
+              {query}
+              {'"'}
+            </span>
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="flex gap-2 mb-8 border-b"
+          style={{ borderColor: "var(--border)" }}
+        >
           {(["all", "threads", "forums"] as const).map((tab) => (
             <button
               key={tab}
@@ -151,9 +169,9 @@ export default function SearchPage() {
                 color: activeTab === tab ? "var(--brand)" : "var(--muted)",
               }}
             >
-              {tab === "all" && "Todo"}
-              {tab === "threads" && "Hilos"}
-              {tab === "forums" && "Foros"}
+              {tab === "all" && t("common.search")}
+              {tab === "threads" && t("threads.threads")}
+              {tab === "forums" && t("forums.forums")}
               {activeTab === tab && (
                 <div
                   className="absolute bottom-0 left-0 right-0 h-0.5"
@@ -177,14 +195,20 @@ export default function SearchPage() {
             {(activeTab === "all" || activeTab === "threads") && (
               <section className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
-                    Hilos ({results?.pagination.total || 0})
+                  <h2
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {t("threads.threads")} ({results?.pagination.total || 0})
                   </h2>
                 </div>
                 {results?.threads.length === 0 ? (
                   <div className="card text-center py-12">
                     <p style={{ color: "var(--muted)" }}>
-                      No se encontraron hilos para "{query}"
+                      {t("common.noResultsFor")}{" "}
+                      {t("forums.forums").toLowerCase()} {'"'}
+                      {query}
+                      {'"'}
                     </p>
                   </div>
                 ) : (
@@ -205,14 +229,20 @@ export default function SearchPage() {
             {(activeTab === "all" || activeTab === "forums") && (
               <section>
                 <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
-                    Foros ({results?.forums.length || 0})
+                  <h2
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {t("forums.forums")} ({results?.forums.length || 0})
                   </h2>
                 </div>
                 {results?.forums.length === 0 ? (
                   <div className="card text-center py-12">
                     <p style={{ color: "var(--muted)" }}>
-                      No se encontraron foros para "{query}"
+                      {t("common.noResultsFor")}{" "}
+                      {t("forums.forums").toLowerCase()} {'"'}
+                      {query}
+                      {'"'}
                     </p>
                   </div>
                 ) : (
@@ -232,4 +262,3 @@ export default function SearchPage() {
     </div>
   );
 }
-

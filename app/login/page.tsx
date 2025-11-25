@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import { useTranslations } from "@/components/TranslationsProvider";
 import { useToast } from "@/contexts/ToastContext";
 
 export default function LoginPage() {
+  const { t } = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,8 +31,11 @@ export default function LoginPage() {
 
       if (error) {
         // Check if it's an email confirmation error
-        if (error.message.includes("Email not confirmed") || error.message.includes("email_not_confirmed")) {
-          setError("Email no confirmado. Por favor revisa tu email o reenvía el enlace de confirmación.");
+        if (
+          error.message.includes("Email not confirmed") ||
+          error.message.includes("email_not_confirmed")
+        ) {
+          setError(t("auth.emailNotConfirmed"));
         } else {
           throw error;
         }
@@ -64,9 +69,14 @@ export default function LoginPage() {
       if (error) throw error;
 
       setError(null);
-      showSuccess("¡Email de confirmación enviado! Por favor revisa tu bandeja de entrada.");
+      showSuccess(
+        "¡Email de confirmación enviado! Por favor revisa tu bandeja de entrada."
+      );
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Error al reenviar el email de confirmación";
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Error al reenviar el email de confirmación";
       setError(errorMessage);
       showError(errorMessage);
     } finally {
@@ -90,9 +100,12 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-16">
-      <div className="card" style={{
-        borderLeft: "4px solid var(--brand)",
-      }}>
+      <div
+        className="card"
+        style={{
+          borderLeft: "4px solid var(--brand)",
+        }}
+      >
         <div className="flex items-center gap-3 mb-8">
           <div
             className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
@@ -103,23 +116,24 @@ export default function LoginPage() {
           >
             🔐
           </div>
-          <h1 
+          <h1
             className="text-4xl font-extrabold"
             style={{
-              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+              background:
+                "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
             }}
           >
-            Iniciar Sesión
+            {t("auth.login")}
           </h1>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -137,7 +151,7 @@ export default function LoginPage() {
               htmlFor="password"
               className="block text-sm font-medium mb-2"
             >
-              Password
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -153,14 +167,15 @@ export default function LoginPage() {
           {error && (
             <div
               className="p-3 rounded border"
-              style={{ 
-                backgroundColor: "rgba(239, 68, 68, 0.1)", 
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
                 color: "#ef4444",
-                borderColor: "rgba(239, 68, 68, 0.3)"
+                borderColor: "rgba(239, 68, 68, 0.3)",
               }}
             >
               <div className="mb-2">{error}</div>
-              {(error.includes("Email not confirmed") || error.includes("email_not_confirmed")) && (
+              {(error.includes("Email not confirmed") ||
+                error.includes("email_not_confirmed")) && (
                 <button
                   type="button"
                   onClick={handleResendConfirmation}
@@ -168,7 +183,9 @@ export default function LoginPage() {
                   className="text-sm underline hover:no-underline"
                   style={{ color: "#ef4444" }}
                 >
-                  {resendingEmail ? "Enviando..." : "Reenviar email de confirmación"}
+                  {resendingEmail
+                    ? t("common.loading")
+                    : t("auth.resendConfirmation")}
                 </button>
               )}
             </div>
@@ -179,7 +196,7 @@ export default function LoginPage() {
             className="btn btn-primary w-full"
             disabled={loading}
           >
-            {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {loading ? t("common.loading") : t("auth.login")}
           </button>
         </form>
 
@@ -196,7 +213,7 @@ export default function LoginPage() {
                 className="px-2"
                 style={{ background: "var(--card-bg)", color: "var(--muted)" }}
               >
-                O continúa con
+                {t("common.or")}
               </span>
             </div>
           </div>
@@ -204,10 +221,10 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             className="btn w-full mt-4"
-            style={{ 
-              background: "var(--card-bg)", 
+            style={{
+              background: "var(--card-bg)",
               color: "var(--foreground)",
-              border: "1px solid var(--border)" 
+              border: "1px solid var(--border)",
             }}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -228,7 +245,7 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Iniciar sesión con Google
+            {t("auth.loginWithGoogle")}
           </button>
         </div>
 
@@ -236,9 +253,9 @@ export default function LoginPage() {
           className="mt-6 text-center text-sm"
           style={{ color: "var(--muted)" }}
         >
-          ¿No tienes una cuenta?{" "}
+          {t("auth.noAccount")}{" "}
           <Link href="/signup" style={{ color: "var(--accent)" }}>
-            Regístrate
+            {t("auth.register")}
           </Link>
         </p>
       </div>

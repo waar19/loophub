@@ -9,6 +9,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import TrendingPanel from "@/components/TrendingPanel";
 import ThreadSortFilter from "@/components/ThreadSortFilter";
 import { Thread } from "@/lib/supabase";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 interface Forum {
   id: string;
@@ -53,11 +54,14 @@ export default function ForumPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const { t } = useTranslations();
   const [data, setData] = useState<ForumData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "most_comments" | "least_comments">("newest");
+  const [sortBy, setSortBy] = useState<
+    "newest" | "oldest" | "most_comments" | "least_comments"
+  >("newest");
 
   const fetchData = async (pageNum: number = 1, append: boolean = false) => {
     try {
@@ -133,9 +137,7 @@ export default function ForumPage({
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="card text-center py-12">
-            <p style={{ color: "var(--muted)" }}>
-              Error al cargar el foro. Por favor, intenta de nuevo.
-            </p>
+            <p style={{ color: "var(--muted)" }}>{t("forums.errorLoading")}</p>
           </div>
         </div>
       </div>
@@ -151,7 +153,7 @@ export default function ForumPage({
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Breadcrumbs
           items={[
-            { label: "Inicio", href: "/" },
+            { label: t("common.home"), href: "/" },
             { label: forum.name, href: `/forum/${slug}` },
           ]}
         />
@@ -178,7 +180,7 @@ export default function ForumPage({
             <div className="flex-1">
               <h1
                 className="text-3xl sm:text-4xl font-extrabold mb-3"
-                style={{ 
+                style={{
                   color: "var(--foreground)",
                   background: `linear-gradient(135deg, var(--foreground) 0%, ${forumColor} 100%)`,
                   WebkitBackgroundClip: "text",
@@ -189,7 +191,10 @@ export default function ForumPage({
                 {forum.name}
               </h1>
               {forum.description && (
-                <p className="text-lg mb-6 leading-relaxed" style={{ color: "var(--muted)" }}>
+                <p
+                  className="text-lg mb-6 leading-relaxed"
+                  style={{ color: "var(--muted)" }}
+                >
                   {forum.description}
                 </p>
               )}
@@ -205,16 +210,18 @@ export default function ForumPage({
                   >
                     📝
                   </div>
-                  <span className="text-base font-semibold" style={{ color: "var(--foreground)" }}>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "var(--foreground)" }}
+                  >
                     {pagination.total}{" "}
-                    {pagination.total === 1 ? "hilo" : "hilos"}
+                    {pagination.total === 1
+                      ? t("threads.thread")
+                      : t("threads.threads")}
                   </span>
                 </div>
-                <Link
-                  href={`/forum/${slug}/new`}
-                  className="btn btn-primary"
-                >
-                  + Nuevo Hilo
+                <Link href={`/forum/${slug}/new`} className="btn btn-primary">
+                  + {t("threads.newThread")}
                 </Link>
               </div>
             </div>
@@ -232,14 +239,17 @@ export default function ForumPage({
             >
               💭
             </div>
-            <h3 className="text-2xl font-bold mb-3" style={{ color: "var(--foreground)" }}>
-              Aún no hay hilos
+            <h3
+              className="text-2xl font-bold mb-3"
+              style={{ color: "var(--foreground)" }}
+            >
+              {t("threads.noThreads")}
             </h3>
             <p style={{ color: "var(--muted)" }} className="mb-6 text-lg">
-              ¡Sé el primero en iniciar una discusión!
+              {t("threads.beFirstDiscussion")}
             </p>
             <Link href={`/forum/${slug}/new`} className="btn btn-primary">
-              + Crear Primer Hilo
+              {t("threads.createFirstThread")}
             </Link>
           </div>
         ) : (
@@ -259,7 +269,7 @@ export default function ForumPage({
                   className="text-3xl font-bold"
                   style={{ color: "var(--foreground)" }}
                 >
-                  Hilos
+                  {t("threads.title")}
                 </h2>
               </div>
               <ThreadSortFilter
@@ -283,8 +293,11 @@ export default function ForumPage({
                 </div>
               }
               endMessage={
-                <p className="text-center mt-6 text-lg" style={{ color: "var(--muted)" }}>
-                  No hay más hilos para cargar
+                <p
+                  className="text-center mt-6 text-lg"
+                  style={{ color: "var(--muted)" }}
+                >
+                  {t("threads.noMoreThreads")}
                 </p>
               }
             >
@@ -302,9 +315,12 @@ export default function ForumPage({
         )}
 
         {/* Forum Rules */}
-        <div className="card mt-12" style={{
-          borderLeft: `4px solid var(--brand)`,
-        }}>
+        <div
+          className="card mt-12"
+          style={{
+            borderLeft: `4px solid var(--brand)`,
+          }}
+        >
           <div className="flex items-center gap-3 mb-6">
             <div
               className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
@@ -319,12 +335,12 @@ export default function ForumPage({
               className="text-2xl font-bold"
               style={{ color: "var(--foreground)" }}
             >
-              Reglas del Foro
+              {t("forums.rules")}
             </h3>
           </div>
           <ul className="space-y-3 text-base" style={{ color: "var(--muted)" }}>
             <li className="flex items-start gap-3">
-              <span 
+              <span
                 className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{
                   background: "var(--brand-light)",
@@ -333,12 +349,10 @@ export default function ForumPage({
               >
                 1
               </span>
-              <span>
-                Mantén las discusiones respetuosas y constructivas
-              </span>
+              <span>{t("forums.rule1")}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span 
+              <span
                 className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{
                   background: "var(--brand-light)",
@@ -347,12 +361,10 @@ export default function ForumPage({
               >
                 2
               </span>
-              <span>
-                Busca antes de crear un hilo para evitar duplicados
-              </span>
+              <span>{t("forums.rule2")}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span 
+              <span
                 className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{
                   background: "var(--brand-light)",
@@ -361,9 +373,7 @@ export default function ForumPage({
               >
                 3
               </span>
-              <span>
-                Usa títulos descriptivos y claros para tus hilos
-              </span>
+              <span>{t("forums.rule3")}</span>
             </li>
           </ul>
         </div>

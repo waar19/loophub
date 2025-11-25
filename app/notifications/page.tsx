@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 interface Notification {
   id: string;
@@ -25,6 +26,7 @@ export default function NotificationsPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { showError, showSuccess } = useToast();
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (user) {
@@ -34,14 +36,19 @@ export default function NotificationsPage() {
     }
   }, [user]);
 
-  const fetchNotifications = async (pageNum: number = 1, append: boolean = false) => {
+  const fetchNotifications = async (
+    pageNum: number = 1,
+    append: boolean = false
+  ) => {
     if (!user) return;
 
     try {
       if (!append) setIsLoading(true);
       else setIsLoadingMore(true);
 
-      const res = await fetch(`/api/notifications?limit=20&offset=${(pageNum - 1) * 20}`);
+      const res = await fetch(
+        `/api/notifications?limit=20&offset=${(pageNum - 1) * 20}`
+      );
       if (!res.ok) throw new Error("Failed to fetch notifications");
       const data = await res.json();
 
@@ -55,7 +62,9 @@ export default function NotificationsPage() {
       setHasMore((data.notifications || []).length === 20);
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      showError("Error al cargar notificaciones");
+      showError(
+        t("notifications.errorLoading") || "Error al cargar notificaciones"
+      );
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
@@ -86,7 +95,7 @@ export default function NotificationsPage() {
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error("Error marking notification as read:", error);
-      showError("Error al marcar notificación como leída");
+      showError(t("notifications.errorMarking"));
     }
   };
 
@@ -100,11 +109,55 @@ export default function NotificationsPage() {
 
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
-      showSuccess("Todas las notificaciones marcadas como leídas");
+      showSuccess(t("notifications.allMarkedRead"));
     } catch (error) {
       console.error("Error marking all as read:", error);
-      showError("Error al marcar todas como leídas");
+      showError(t("notifications.errorMarkingAll"));
     }
+  };
+
+  const formatTimeAgo = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+      return t("common.justNow");
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${t("common.ago")} ${diffInMinutes} ${
+        diffInMinutes === 1 ? t("common.minute") : t("common.minutes")
+      }`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${t("common.ago")} ${diffInHours} ${
+        diffInHours === 1 ? t("common.hour") : t("common.hours")
+      }`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) {
+      return `${t("common.ago")} ${diffInDays} ${
+        diffInDays === 1 ? t("common.day") : t("common.days")
+      }`;
+    }
+
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    if (diffInWeeks < 4) {
+      return `${t("common.ago")} ${diffInWeeks} ${
+        diffInWeeks === 1 ? t("common.week") : t("common.weeks")
+      }`;
+    }
+
+    return date.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "short",
+      year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+    });
   };
 
   if (!user) {
@@ -113,7 +166,7 @@ export default function NotificationsPage() {
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="card text-center py-12">
             <p style={{ color: "var(--muted)" }}>
-              Debes iniciar sesión para ver tus notificaciones
+              {t("notifications.mustLogin")}
             </p>
           </div>
         </div>
@@ -144,8 +197,8 @@ export default function NotificationsPage() {
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Breadcrumbs
           items={[
-            { label: "Inicio", href: "/" },
-            { label: "Notificaciones" },
+            { label: t("common.home"), href: "/" },
+            { label: t("notifications.title") },
           ]}
         />
 
@@ -165,7 +218,7 @@ export default function NotificationsPage() {
                 className="text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
-                Notificaciones
+                {t("notifications.title")}
                 {unreadCount > 0 && (
                   <span
                     className="ml-3 px-3 py-1 rounded-lg text-sm font-semibold"
@@ -174,7 +227,7 @@ export default function NotificationsPage() {
                       color: "var(--brand)",
                     }}
                   >
-                    {unreadCount} sin leer
+                    {unreadCount} {t("notifications.unread")}
                   </span>
                 )}
               </h1>
@@ -189,7 +242,7 @@ export default function NotificationsPage() {
                   color: "var(--foreground)",
                 }}
               >
-                Marcar todas como leídas
+                {t("notifications.markAllRead")}
               </button>
             )}
           </div>
@@ -209,10 +262,10 @@ export default function NotificationsPage() {
               className="text-2xl font-bold mb-3"
               style={{ color: "var(--foreground)" }}
             >
-              No tienes notificaciones
+              {t("notifications.noNotifications")}
             </h3>
             <p style={{ color: "var(--muted)" }} className="text-lg">
-              Cuando alguien interactúe con tu contenido, lo verás aquí
+              {t("notifications.whenInteract")}
             </p>
           </div>
         ) : (
@@ -232,11 +285,8 @@ export default function NotificationsPage() {
               </div>
             }
             endMessage={
-              <p
-                className="text-center py-4"
-                style={{ color: "var(--muted)" }}
-              >
-                No hay más notificaciones
+              <p className="text-center py-4" style={{ color: "var(--muted)" }}>
+                {t("notifications.noMoreNotifications")}
               </p>
             }
           >
@@ -251,9 +301,7 @@ export default function NotificationsPage() {
                     }
                   }}
                   className={`card block transition-all hover:scale-[1.01] ${
-                    !notification.read
-                      ? "border-l-4"
-                      : "opacity-75"
+                    !notification.read ? "border-l-4" : "opacity-75"
                   }`}
                   style={{
                     borderLeftColor: notification.read
@@ -298,40 +346,3 @@ export default function NotificationsPage() {
     </div>
   );
 }
-
-function formatTimeAgo(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (diffInSeconds < 60) {
-    return "Hace unos segundos";
-  }
-
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) {
-    return `Hace ${diffInMinutes} ${diffInMinutes === 1 ? "minuto" : "minutos"}`;
-  }
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) {
-    return `Hace ${diffInHours} ${diffInHours === 1 ? "hora" : "horas"}`;
-  }
-
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) {
-    return `Hace ${diffInDays} ${diffInDays === 1 ? "día" : "días"}`;
-  }
-
-  const diffInWeeks = Math.floor(diffInDays / 7);
-  if (diffInWeeks < 4) {
-    return `Hace ${diffInWeeks} ${diffInWeeks === 1 ? "semana" : "semanas"}`;
-  }
-
-  return date.toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "short",
-    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
-  });
-}
-

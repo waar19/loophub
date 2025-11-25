@@ -7,6 +7,7 @@ import SimpleForm from "@/components/SimpleForm";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { createClient } from "@/lib/supabase-browser";
 import { useToast } from "@/contexts/ToastContext";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 export default function NewThreadPage({
   params,
@@ -17,6 +18,7 @@ export default function NewThreadPage({
   const router = useRouter();
   const [forumName, setForumName] = useState("");
   const { showSuccess, showError } = useToast();
+  const { t } = useTranslations();
 
   useEffect(() => {
     async function fetchForum() {
@@ -41,14 +43,15 @@ export default function NewThreadPage({
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error || "Error al crear el hilo");
+        throw new Error(error.error || t("threads.errorCreating"));
       }
 
       const thread = await res.json();
-      showSuccess("¡Hilo creado exitosamente!");
+      showSuccess(t("threads.threadCreated") || "¡Hilo creado exitosamente!");
       router.push(`/thread/${thread.id}`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al crear el hilo";
+      const errorMessage =
+        error instanceof Error ? error.message : t("threads.errorCreating");
       showError(errorMessage);
       throw error;
     }
@@ -59,9 +62,9 @@ export default function NewThreadPage({
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Breadcrumbs
           items={[
-            { label: "Inicio", href: "/" },
-            { label: forumName || "Foro", href: `/forum/${slug}` },
-            { label: "Nuevo Hilo" },
+            { label: t("common.home"), href: "/" },
+            { label: forumName || t("forums.forum"), href: `/forum/${slug}` },
+            { label: t("threads.newThread") },
           ]}
         />
 
@@ -78,40 +81,44 @@ export default function NewThreadPage({
           <h1
             className="text-4xl font-extrabold"
             style={{
-              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+              background:
+                "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
             }}
           >
-            Crear Nuevo Hilo
+            {t("threads.createNewThread")}
           </h1>
         </div>
 
-        <div className="card" style={{
-          borderLeft: "4px solid var(--brand)",
-        }}>
+        <div
+          className="card"
+          style={{
+            borderLeft: "4px solid var(--brand)",
+          }}
+        >
           <SimpleForm
             fields={[
               {
                 name: "title",
-                label: "Título",
+                label: t("threads.threadTitle"),
                 type: "text",
-                placeholder: "Escribe el título del hilo",
+                placeholder: t("threads.threadTitlePlaceholder"),
                 required: true,
                 maxLength: 200,
               },
               {
                 name: "content",
-                label: "Contenido",
+                label: t("threads.threadContent"),
                 type: "markdown",
-                placeholder: "Comparte tus pensamientos... (Markdown soportado)",
+                placeholder: t("threads.threadContentPlaceholder"),
                 required: true,
                 maxLength: 10000,
               },
             ]}
             onSubmit={handleSubmit}
-            submitText="Crear Hilo"
+            submitText={t("threads.createThread")}
           />
         </div>
       </div>
