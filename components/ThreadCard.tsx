@@ -8,10 +8,20 @@ interface ThreadCardProps {
 }
 
 export default function ThreadCard({ thread, forumSlug }: ThreadCardProps) {
+  // Strip markdown syntax for excerpt
+  const plainText = thread.content
+    .replace(/#{1,6}\s+/g, "") // Remove headers
+    .replace(/\*\*([^*]+)\*\*/g, "$1") // Remove bold
+    .replace(/\*([^*]+)\*/g, "$1") // Remove italic
+    .replace(/`([^`]+)`/g, "$1") // Remove inline code
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // Remove links
+    .replace(/\n+/g, " ") // Replace newlines with spaces
+    .trim();
+  
   const excerpt =
-    thread.content.length > 150
-      ? thread.content.substring(0, 150) + "..."
-      : thread.content;
+    plainText.length > 150
+      ? plainText.substring(0, 150) + "..."
+      : plainText;
 
   const date = new Date(thread.created_at).toLocaleDateString("en-US", {
     year: "numeric",

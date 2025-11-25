@@ -1,11 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import MarkdownEditor from "./MarkdownEditor";
 
 interface Field {
   name: string;
   label: string;
-  type: "text" | "textarea";
+  type: "text" | "textarea" | "markdown";
   placeholder?: string;
   required?: boolean;
   maxLength?: number;
@@ -24,6 +25,7 @@ export default function SimpleForm({
 }: SimpleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,12 +36,17 @@ export default function SimpleForm({
     const data: Record<string, string> = {};
 
     fields.forEach((field) => {
-      data[field.name] = formData.get(field.name) as string;
+      if (field.type === "markdown") {
+        data[field.name] = fieldValues[field.name] || "";
+      } else {
+        data[field.name] = formData.get(field.name) as string;
+      }
     });
 
     try {
       await onSubmit(data);
       e.currentTarget.reset();
+      setFieldValues({});
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit form");
     } finally {
@@ -57,7 +64,17 @@ export default function SimpleForm({
           >
             {field.label}
           </label>
-          {field.type === "textarea" ? (
+          {field.type === "markdown" ? (
+            <MarkdownEditor
+              value={fieldValues[field.name] || ""}
+              onChange={(value) =>
+                setFieldValues((prev) => ({ ...prev, [field.name]: value }))
+              }
+              placeholder={field.placeholder}
+              required={field.required}
+              maxLength={field.maxLength}
+            />
+          ) : field.type === "textarea" ? (
             <textarea
               id={field.name}
               name={field.name}

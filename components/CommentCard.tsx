@@ -1,5 +1,6 @@
 import { Comment } from "@/lib/supabase";
 import ReportButton from "@/components/ReportButton";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 interface CommentCardProps {
   comment: Comment;
@@ -29,7 +30,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
         <span>{date}</span>
         <ReportButton contentType="comment" contentId={comment.id} />
       </div>
-      <p className="whitespace-pre-wrap">{comment.content}</p>
+      <MarkdownRenderer content={comment.content} />
     </div>
   );
 }

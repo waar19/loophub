@@ -46,8 +46,8 @@ export default function NewThreadPage({
             {
               name: "content",
               label: "Content",
-              type: "textarea",
-              placeholder: "Share your thoughts...",
+              type: "markdown",
+              placeholder: "Share your thoughts... (Markdown supported)",
               required: true,
               maxLength: 10000,
             },

@@ -7,6 +7,7 @@ import CommentCard from "@/components/CommentCard";
 import SimpleForm from "@/components/SimpleForm";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import { CommentSkeleton } from "@/components/LoadingSkeleton";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -142,7 +143,9 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
           Posted on {date}
         </p>
-        <p className="whitespace-pre-wrap text-lg">{thread.content}</p>
+        <div className="text-lg">
+          <MarkdownRenderer content={thread.content} />
+        </div>
       </div>
 
       <div className="mb-6">
@@ -190,8 +193,8 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
             {
               name: "content",
               label: "Your Comment",
-              type: "textarea",
-              placeholder: "Share your thoughts...",
+              type: "markdown",
+              placeholder: "Share your thoughts... (Markdown supported)",
               required: true,
               maxLength: 10000,
             },
