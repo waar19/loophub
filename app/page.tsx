@@ -201,14 +201,20 @@ export default async function HomePage() {
         <Breadcrumbs items={[{ label: "Inicio", href: "/" }]} />
 
         {/* Hero Section */}
-        <div className="mb-12">
+        <div className="mb-16">
           <h1
-            className="text-4xl font-bold mb-3"
-            style={{ color: "var(--foreground)" }}
+            className="text-5xl font-extrabold mb-4"
+            style={{ 
+              color: "var(--foreground)",
+              background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
           >
             Bienvenido a LoopHub
           </h1>
-          <p className="text-lg" style={{ color: "var(--muted)" }}>
+          <p className="text-xl leading-relaxed" style={{ color: "var(--muted)" }}>
             Comunidad enfocada en minimalismo digital, organización personal y
             productividad realista
           </p>
@@ -216,10 +222,19 @@ export default async function HomePage() {
 
         {/* Forums List */}
         {forums.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                style={{
+                  background: "var(--brand)",
+                  color: "white",
+                }}
+              >
+                💬
+              </div>
               <h2
-                className="text-2xl font-semibold"
+                className="text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 Foros
@@ -235,10 +250,20 @@ export default async function HomePage() {
 
         {/* Featured Threads */}
         {featuredThreads.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                style={{
+                  background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)",
+                  color: "white",
+                  boxShadow: "0 4px 12px rgba(88, 101, 242, 0.3)",
+                }}
+              >
+                ⭐
+              </div>
               <h2
-                className="text-2xl font-semibold"
+                className="text-3xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 Hilos Destacados
@@ -259,9 +284,18 @@ export default async function HomePage() {
 
         {/* Recent Threads */}
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3 mb-8">
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+              style={{
+                background: "var(--brand)",
+                color: "white",
+              }}
+            >
+              🔥
+            </div>
             <h2
-              className="text-2xl font-semibold"
+              className="text-3xl font-bold"
               style={{ color: "var(--foreground)" }}
             >
               Hilos Recientes
