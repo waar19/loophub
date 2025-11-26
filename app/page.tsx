@@ -14,6 +14,7 @@ interface Thread {
   id: string;
   title: string;
   content: string;
+  like_count: number;
   created_at: string;
   forum_id: string;
   user_id?: string;

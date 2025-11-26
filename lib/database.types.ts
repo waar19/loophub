@@ -29,6 +29,7 @@ export type Database = {
           user_id: string | null;
           title: string;
           content: string;
+          like_count: number;
           created_at: string;
         };
         Insert: {
@@ -37,6 +38,7 @@ export type Database = {
           user_id?: string | null;
           title: string;
           content: string;
+          like_count?: number;
           created_at?: string;
         };
         Update: {
@@ -45,6 +47,7 @@ export type Database = {
           user_id?: string | null;
           title?: string;
           content?: string;
+          like_count?: number;
           created_at?: string;
         };
       };
@@ -54,6 +57,7 @@ export type Database = {
           thread_id: string;
           user_id: string | null;
           content: string;
+          like_count: number;
           created_at: string;
         };
         Insert: {
@@ -61,6 +65,7 @@ export type Database = {
           thread_id: string;
           user_id?: string | null;
           content: string;
+          like_count?: number;
           created_at?: string;
         };
         Update: {
@@ -68,6 +73,7 @@ export type Database = {
           thread_id?: string;
           user_id?: string | null;
           content?: string;
+          like_count?: number;
           created_at?: string;
         };
       };
@@ -76,6 +82,10 @@ export type Database = {
           id: string;
           username: string;
           avatar_url: string | null;
+          bio: string | null;
+          website: string | null;
+          location: string | null;
+          reputation: number;
           is_admin: boolean;
           created_at: string;
           updated_at: string;
@@ -84,6 +94,10 @@ export type Database = {
           id: string;
           username: string;
           avatar_url?: string | null;
+          bio?: string | null;
+          website?: string | null;
+          location?: string | null;
+          reputation?: number;
           is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -92,9 +106,36 @@ export type Database = {
           id?: string;
           username?: string;
           avatar_url?: string | null;
+          bio?: string | null;
+          website?: string | null;
+          location?: string | null;
+          reputation?: number;
           is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
+        };
+      };
+      likes: {
+        Row: {
+          id: string;
+          user_id: string;
+          thread_id: string | null;
+          comment_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          thread_id?: string | null;
+          comment_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          thread_id?: string | null;
+          comment_id?: string | null;
+          created_at?: string;
         };
       };
     };
