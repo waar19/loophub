@@ -61,14 +61,16 @@ export default function CommentThread({
     const canReply = depth < maxDepth;
 
     return (
-      <div key={comment.id} className="comment-thread-item">
+      <div key={comment.id} className="comment-thread-item relative">
         {/* Vertical line indicator for nested comments */}
         {depth > 0 && (
           <div
-            className="absolute left-0 top-0 bottom-0 w-0.5 opacity-20"
+            className="absolute left-0 top-0 bottom-0"
             style={{
+              width: "1px",
               background: "var(--border)",
-              marginLeft: `${(depth - 1) * 24 + 12}px`,
+              marginLeft: `${(depth - 1) * 16 + 8}px`,
+              opacity: 0.3,
             }}
           />
         )}
@@ -76,7 +78,8 @@ export default function CommentThread({
         {/* Comment card with indentation */}
         <div
           style={{
-            marginLeft: depth > 0 ? `${depth * 24}px` : "0",
+            marginLeft: depth > 0 ? `${depth * 16}px` : "0",
+            paddingLeft: depth > 0 ? "8px" : "0",
           }}
           className="relative"
         >
@@ -102,10 +105,11 @@ export default function CommentThread({
         {/* Max depth reached indicator */}
         {!canReply && hasReplies && (
           <div
-            className="text-xs italic py-2"
+            className="text-xs italic py-1"
             style={{
               color: "var(--muted)",
-              marginLeft: `${(depth + 1) * 24}px`,
+              marginLeft: `${(depth + 1) * 16}px`,
+              paddingLeft: "8px",
             }}
           >
             {t("threads.maxDepthReached") || "Nivel máximo de respuestas alcanzado"}
@@ -136,7 +140,7 @@ export default function CommentThread({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-1">
       {commentTree.map((comment) => renderComment(comment, 0))}
     </div>
   );

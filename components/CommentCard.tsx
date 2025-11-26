@@ -95,56 +95,73 @@ export default function CommentCard({
   };
 
   return (
-    <div
-      className="card transition-all duration-200"
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "var(--border-hover)";
-        e.currentTarget.style.boxShadow = "var(--shadow-md)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "var(--border)";
-        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
-      }}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
+    <div className="flex gap-2 py-2">
+      {/* Voting column - left side like Reddit */}
+      <div className="flex flex-col items-center gap-1 pt-1">
+        <VoteButtons
+          commentId={comment.id}
+          initialUpvotes={comment.upvote_count || 0}
+          initialDownvotes={comment.downvote_count || 0}
+        />
+      </div>
+
+      {/* Content column */}
+      <div className="flex-1 min-w-0">
+        {/* Header - compact single line */}
+        <div className="flex items-center gap-2 mb-1">
           {comment.profile?.username && (
-            <>
-              <Link
-                href={`/u/${comment.profile.username}`}
-                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            <Link
+              href={`/u/${comment.profile.username}`}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium shrink-0"
+                style={{
+                  background: "var(--brand-light)",
+                  color: "var(--brand-dark)",
+                }}
               >
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0"
-                  style={{
-                    background: "var(--brand-light)",
-                    color: "var(--brand-dark)",
-                  }}
-                >
-                  {comment.profile.username.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <span
-                    className="text-sm font-medium block hover:underline"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    {comment.profile.username}
-                  </span>
-                  <span className="text-xs" style={{ color: "var(--muted)" }}>
-                    {date}
-                  </span>
-                </div>
-              </Link>
-            </>
+                {comment.profile.username.charAt(0).toUpperCase()}
+              </div>
+              <span
+                className="text-sm font-medium hover:underline"
+                style={{ color: "var(--foreground)" }}
+              >
+                {comment.profile.username}
+              </span>
+            </Link>
           )}
+          <span className="text-xs" style={{ color: "var(--muted)" }}>
+            •
+          </span>
+          <span className="text-xs" style={{ color: "var(--muted)" }}>
+            {date}
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Vote buttons */}
-          <VoteButtons
-            commentId={comment.id}
-            initialUpvotes={comment.upvote_count || 0}
-            initialDownvotes={comment.downvote_count || 0}
-          />
+        
+        {/* Comment content - compact prose */}
+        <div className="prose prose-sm max-w-none mb-2" style={{ fontSize: "0.875rem" }}>
+          <MarkdownRenderer content={comment.content} />
+        </div>
+
+        {/* Action buttons - compact horizontal list */}
+        <div className="flex items-center gap-3">
+          {canReply && (
+            <button
+              onClick={() => setIsReplying(!isReplying)}
+              className="text-xs font-medium transition-colors hover:opacity-80"
+              style={{ color: isReplying ? "var(--brand)" : "var(--muted)" }}
+              disabled={!user}
+            >
+              {isReplying ? t("common.cancel") : t("threads.reply")}
+            </button>
+          )}
+          
+          {comment.reply_count > 0 && (
+            <span className="text-xs" style={{ color: "var(--muted)" }}>
+              {comment.reply_count} {comment.reply_count === 1 ? t("threads.oneReply") : t("threads.replies")}
+            </span>
+          )}
 
           {isOwner && (
             <>
@@ -159,69 +176,54 @@ export default function CommentCard({
               />
             </>
           )}
+          
           <ReportButton contentType="comment" contentId={comment.id} />
         </div>
-      </div>
-      
-      <div className="prose prose-sm max-w-none">
-        <MarkdownRenderer content={comment.content} />
-      </div>
 
-      {/* Reply button and count */}
-      <div className="flex items-center gap-4 mt-3 pt-3 border-t" style={{ borderColor: "var(--border)" }}>
-        {canReply && (
-          <button
-            onClick={() => setIsReplying(!isReplying)}
-            className="text-sm font-medium transition-colors hover:opacity-80"
-            style={{ color: isReplying ? "var(--brand)" : "var(--muted)" }}
-            disabled={!user}
-          >
-            {isReplying ? t("common.cancel") : t("threads.reply")}
-          </button>
-        )}
-        
-        {comment.reply_count > 0 && (
-          <span className="text-sm" style={{ color: "var(--muted)" }}>
-            {comment.reply_count} {comment.reply_count === 1 ? t("threads.oneReply") : t("threads.replies")}
-          </span>
-        )}
-      </div>
-
-      {/* Reply form (inline) */}
-      {isReplying && (
-        <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
-          <textarea
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            placeholder={t("threads.replyPlaceholder")}
-            className="w-full p-3 rounded-lg border resize-none focus:outline-none focus:ring-2 transition-all"
-            style={{
-              background: "var(--card-bg)",
-              borderColor: "var(--border)",
-              color: "var(--foreground)",
-            }}
-            rows={3}
-          />
-          <div className="flex items-center gap-2 mt-2">
-            <button
-              onClick={handleReply}
-              disabled={isSubmitting || !replyContent.trim()}
-              className="btn btn-primary text-sm px-4 py-2"
-            >
-              {isSubmitting ? t("threads.posting") : t("threads.postReply")}
-            </button>
-            <button
-              onClick={() => {
-                setIsReplying(false);
-                setReplyContent("");
+        {/* Reply form (inline) */}
+        {isReplying && (
+          <div className="mt-3">
+            <textarea
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              placeholder={t("threads.replyPlaceholder")}
+              className="w-full p-2 rounded border resize-none focus:outline-none focus:ring-1 transition-all text-sm"
+              style={{
+                background: "var(--card-bg)",
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
               }}
-              className="btn btn-secondary text-sm px-4 py-2"
-            >
-              {t("common.cancel")}
-            </button>
+              rows={3}
+            />
+            <div className="flex items-center gap-2 mt-2">
+              <button
+                onClick={handleReply}
+                disabled={isSubmitting || !replyContent.trim()}
+                className="text-xs px-3 py-1.5 rounded font-medium transition-colors"
+                style={{
+                  background: isSubmitting || !replyContent.trim() ? "var(--muted)" : "var(--brand)",
+                  color: "white",
+                }}
+              >
+                {isSubmitting ? t("threads.posting") : t("threads.postReply")}
+              </button>
+              <button
+                onClick={() => {
+                  setIsReplying(false);
+                  setReplyContent("");
+                }}
+                className="text-xs px-3 py-1.5 rounded font-medium transition-colors"
+                style={{
+                  background: "transparent",
+                  color: "var(--muted)",
+                }}
+              >
+                {t("common.cancel")}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -163,7 +163,8 @@ export default function VoteButtons({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: "0.25rem",
+        gap: "0.125rem",
+        minWidth: "2rem",
       }}
     >
       {/* Upvote Button */}
@@ -174,17 +175,17 @@ export default function VoteButtons({
           background: "none",
           border: "none",
           cursor: user ? (isVoting ? "not-allowed" : "pointer") : "not-allowed",
-          padding: "0.25rem",
+          padding: "0.125rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           opacity: isVoting ? 0.5 : 1,
-          transition: "all 0.2s ease",
-          color: userVote === 1 ? "var(--brand)" : "var(--foreground-secondary)",
+          transition: "all 0.15s ease",
+          color: userVote === 1 ? "var(--brand)" : "var(--muted)",
         }}
         onMouseEnter={(e) => {
           if (user && !isVoting) {
-            e.currentTarget.style.transform = "scale(1.2)";
+            e.currentTarget.style.transform = "scale(1.15)";
           }
         }}
         onMouseLeave={(e) => {
@@ -194,12 +195,12 @@ export default function VoteButtons({
         aria-label="Upvote"
       >
         <svg
-          width="24"
-          height="24"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -210,15 +211,14 @@ export default function VoteButtons({
       {/* Score */}
       <span
         style={{
-          fontSize: "0.875rem",
-          fontWeight: "600",
+          fontSize: "0.75rem",
+          fontWeight: "700",
           color:
             score > 0
-              ? "var(--success)"
+              ? "var(--brand)"
               : score < 0
               ? "var(--danger)"
-              : "var(--foreground)",
-          minWidth: "2rem",
+              : "var(--muted)",
           textAlign: "center",
         }}
       >
@@ -233,17 +233,17 @@ export default function VoteButtons({
           background: "none",
           border: "none",
           cursor: user ? (isVoting ? "not-allowed" : "pointer") : "not-allowed",
-          padding: "0.25rem",
+          padding: "0.125rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           opacity: isVoting ? 0.5 : 1,
-          transition: "all 0.2s ease",
-          color: userVote === -1 ? "var(--danger)" : "var(--foreground-secondary)",
+          transition: "all 0.15s ease",
+          color: userVote === -1 ? "var(--danger)" : "var(--muted)",
         }}
         onMouseEnter={(e) => {
           if (user && !isVoting) {
-            e.currentTarget.style.transform = "scale(1.2)";
+            e.currentTarget.style.transform = "scale(1.15)";
           }
         }}
         onMouseLeave={(e) => {
@@ -253,12 +253,12 @@ export default function VoteButtons({
         aria-label="Downvote"
       >
         <svg
-          width="24"
-          height="24"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
