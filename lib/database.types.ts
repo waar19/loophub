@@ -30,6 +30,10 @@ export type Database = {
           title: string;
           content: string;
           like_count: number;
+          is_hidden: boolean;
+          is_resource: boolean;
+          hidden_at: string | null;
+          hidden_until: string | null;
           created_at: string;
         };
         Insert: {
@@ -39,6 +43,10 @@ export type Database = {
           title: string;
           content: string;
           like_count?: number;
+          is_hidden?: boolean;
+          is_resource?: boolean;
+          hidden_at?: string | null;
+          hidden_until?: string | null;
           created_at?: string;
         };
         Update: {
@@ -48,6 +56,10 @@ export type Database = {
           title?: string;
           content?: string;
           like_count?: number;
+          is_hidden?: boolean;
+          is_resource?: boolean;
+          hidden_at?: string | null;
+          hidden_until?: string | null;
           created_at?: string;
         };
       };
@@ -135,6 +147,29 @@ export type Database = {
           user_id?: string;
           thread_id?: string | null;
           comment_id?: string | null;
+          created_at?: string;
+        };
+      };
+      superlikes: {
+        Row: {
+          id: string;
+          user_id: string;
+          thread_id: string;
+          author_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          thread_id: string;
+          author_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          thread_id?: string;
+          author_id?: string;
           created_at?: string;
         };
       };
