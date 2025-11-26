@@ -123,7 +123,7 @@ export default function ThreadPage({
   if (isLoading && !data) {
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="skeleton h-6 w-48 mb-6" />
           <div className="card mb-8">
             <div className="skeleton h-8 w-3/4 mb-3" />
@@ -146,7 +146,7 @@ export default function ThreadPage({
   if (!data) {
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="card text-center py-12">
             <p style={{ color: "var(--muted)" }}>
               {t("threads.threadNotFound")}
@@ -171,7 +171,7 @@ export default function ThreadPage({
       />
       <ThreadStructuredData thread={thread} author={thread.profile} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <Breadcrumbs
             items={[
               { label: t("common.home"), href: "/" },
@@ -180,12 +180,12 @@ export default function ThreadPage({
             ]}
           />
 
-          <div className="flex gap-8 items-start">
+          <div className="flex gap-4 items-start">
             {/* Main Content */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 space-y-1">
               {/* Thread Header */}
               <div
-                className="card mb-2 p-2"
+                className="card p-2"
                 style={{
                   borderLeft: "2px solid var(--brand)",
                 }}
@@ -234,8 +234,8 @@ export default function ThreadPage({
               </div>
 
               {/* Comments Section */}
-              <div className="mb-2">
-                <div className="flex items-center gap-1.5 mb-1.5">
+              <div>
+                <div className="flex items-center gap-1.5 mb-1">
                   <div
                     className="w-4 h-4 rounded flex items-center justify-center"
                     style={{
@@ -265,7 +265,7 @@ export default function ThreadPage({
                 </div>
 
                 {comments.length === 0 && !isLoading ? (
-                  <div className="card text-center py-3 mb-2">
+                  <div className="card text-center py-2 mb-1">
                     <div
                       className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1"
                       style={{
@@ -291,7 +291,7 @@ export default function ThreadPage({
                     isLoading={isLoadingMore}
                     onLoadMore={handleLoadMore}
                     loader={
-                      <div className="space-y-4 mt-4">
+                      <div className="space-y-1 mt-1">
                         {[1, 2].map((i) => (
                           <CommentSkeleton key={i} />
                         ))}
@@ -299,8 +299,8 @@ export default function ThreadPage({
                     }
                     endMessage={
                       <p
-                        className="text-center py-4"
-                        style={{ color: "var(--muted)" }}
+                        className="text-center py-0.5"
+                        style={{ color: "var(--muted)", fontSize: "0.6875rem" }}
                       >
                         {t("threads.noMoreComments")}
                       </p>
@@ -323,7 +323,7 @@ export default function ThreadPage({
                   borderLeft: "2px solid var(--brand)",
                 }}
               >
-                <div className="flex items-center gap-1.5 mb-2">
+                <div className="flex items-center gap-1.5 mb-1">
                   <div
                     className="w-4 h-4 rounded flex items-center justify-center"
                     style={{
