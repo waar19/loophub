@@ -37,8 +37,8 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium"
                     style={{
-                      background: "var(--brand-light)",
-                      color: "var(--brand-dark)",
+                      background: "var(--brand)",
+                      color: "white",
                     }}
                   >
                     {thread.profile.username.charAt(0).toUpperCase()}
@@ -66,10 +66,10 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
                 className="inline-block"
               >
                 <span
-                  className="badge text-sm"
+                  className="badge text-sm font-semibold"
                   style={{
-                    background: "var(--brand-light)",
-                    color: "var(--brand-dark)",
+                    background: "var(--brand)",
+                    color: "white",
                   }}
                 >
                   {thread.forum.name}

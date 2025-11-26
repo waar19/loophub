@@ -140,8 +140,8 @@ export default function AuthButton() {
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium"
               style={{
-                background: "var(--brand-light)",
-                color: "var(--brand-dark)",
+                background: "var(--brand)",
+                color: "white",
               }}
             >
               {profile?.username?.charAt(0).toUpperCase() || "U"}

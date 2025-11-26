@@ -117,8 +117,8 @@ export default function CommentCard({
               <div
                 className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium shrink-0"
                 style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand-dark)",
+                  background: "var(--brand)",
+                  color: "white",
                 }}
               >
                 {comment.profile.username.charAt(0).toUpperCase()}

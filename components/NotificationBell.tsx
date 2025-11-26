@@ -164,9 +164,11 @@ export default function NotificationBell() {
                       key={notification.id}
                       href={notification.link || "/notifications"}
                       onClick={() => handleNotificationClick(notification.id, notification.read)}
-                      className={`block p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        !notification.read ? "bg-blue-50 dark:bg-blue-900/20" : ""
-                      }`}
+                      className="block p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                      style={!notification.read ? {
+                        background: "var(--brand-light)",
+                        borderLeft: "3px solid var(--brand)"
+                      } : {}}
                     >
                       <div className="flex items-start gap-3">
                         {/* Icon based on notification type */}
