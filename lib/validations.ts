@@ -37,6 +37,22 @@ export const createCommentSchema = z.object({
     .trim(),
 });
 
+// Gamification schemas
+export const superlikeSchema = z.object({
+  thread_id: z.string().uuid("ID de thread inválido"),
+});
+
+export const hidePostSchema = z.object({
+  thread_id: z.string().uuid("ID de thread inválido"),
+});
+
+export const markResourceSchema = z.object({
+  thread_id: z.string().uuid("ID de thread inválido"),
+});
+
 export type CreateForumInput = z.infer<typeof createForumSchema>;
 export type CreateThreadInput = z.infer<typeof createThreadSchema>;
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
+export type SuperlikeInput = z.infer<typeof superlikeSchema>;
+export type HidePostInput = z.infer<typeof hidePostSchema>;
+export type MarkResourceInput = z.infer<typeof markResourceSchema>;
