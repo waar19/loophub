@@ -279,21 +279,37 @@ export default function UsernameChange({
             <br />
             <strong>{t("settings.confirmChangeWarning") || "This action cannot be undone for free."}</strong>
           </p>
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column", width: "100%" }}>
             <button
               onClick={handleChange}
               disabled={isChanging}
               style={{
-                flex: 1,
-                padding: "0.625rem",
-                background: "var(--danger)",
-                color: "#fff",
+                width: "100%",
+                padding: "0.875rem 1.25rem",
+                background: isChanging 
+                  ? "var(--muted)" 
+                  : "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
+                color: "#ffffff",
                 border: "none",
                 borderRadius: "8px",
-                fontSize: "0.9375rem",
-                fontWeight: "500",
+                fontSize: "1rem",
+                fontWeight: "600",
                 cursor: isChanging ? "not-allowed" : "pointer",
-                opacity: isChanging ? 0.6 : 1,
+                opacity: isChanging ? 0.7 : 1,
+                boxShadow: isChanging ? "none" : "0 2px 8px rgba(220, 38, 38, 0.3)",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (!isChanging) {
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.4)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isChanging) {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(220, 38, 38, 0.3)";
+                }
               }}
             >
               {isChanging ? t("settings.changing") || "Changing..." : t("settings.confirmButton") || "Yes, Change Username"}
@@ -305,8 +321,8 @@ export default function UsernameChange({
               }}
               disabled={isChanging}
               style={{
-                flex: 1,
-                padding: "0.625rem",
+                width: "100%",
+                padding: "0.75rem 1.25rem",
                 background: "var(--card-bg)",
                 color: "var(--foreground)",
                 border: "1px solid var(--border)",
@@ -314,6 +330,17 @@ export default function UsernameChange({
                 fontSize: "0.9375rem",
                 fontWeight: "500",
                 cursor: isChanging ? "not-allowed" : "pointer",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (!isChanging) {
+                  e.currentTarget.style.background = "var(--hover-bg)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isChanging) {
+                  e.currentTarget.style.background = "var(--card-bg)";
+                }
               }}
             >
               {t("settings.cancel") || "Cancel"}
