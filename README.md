@@ -4,25 +4,32 @@ Plataforma de comunidad enfocada en **Minimalismo Digital** y **Organización Pe
 
 ## Características
 
-- 🎨 Diseño minimalista y limpio
-- 💬 Foros de discusión con hilos y comentarios
-- 🌙 Modo oscuro integrado
-- 📝 Soporte completo de Markdown
-- 🔄 Paginación con infinite scroll
-- 🚀 Next.js 15 App Router
-- 📦 Supabase PostgreSQL database
-- ✅ Validación con Zod
-- 🎯 SEO optimizado
-- ☁️ Listo para Vercel
+- 🎨 **Diseño Premium**: Interfaz minimalista con modo oscuro automático y transiciones suaves.
+- 💬 **Foros Dinámicos**: Hilos de discusión, comentarios anidados y actualizaciones en tiempo real.
+- ⚡ **Performance**: Optimizado con Next.js 15, Server Components y lazy loading.
+- ♿ **Accesible**: Cumple con estándares WCAG AA, navegación por teclado y soporte para lectores de pantalla.
+- 📱 **Responsive**: Experiencia fluida en móviles, tablets y escritorio.
+- 🔍 **SEO Ready**: Metadatos dinámicos, sitemap XML y datos estructurados (JSON-LD).
+
+## Screenshots
+
+|                  Home (Light)                   |                  Home (Dark)                  |
+| :---------------------------------------------: | :-------------------------------------------: |
+| ![Home Light](/docs/screenshots/home-light.png) | ![Home Dark](/docs/screenshots/home-dark.png) |
+
+|               Thread View               |               Mobile Menu               |
+| :-------------------------------------: | :-------------------------------------: |
+| ![Thread](/docs/screenshots/thread.png) | ![Mobile](/docs/screenshots/mobile.png) |
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
-- **Database**: Supabase (PostgreSQL)
-- **Validation**: Zod
-- **Styling**: Tailwind CSS v4
-- **Markdown**: react-markdown con syntax highlighting
-- **Deployment**: Vercel
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Validation**: [Zod](https://zod.dev/)
+- **Markdown**: `react-markdown` + `react-syntax-highlighter`
+- **SEO**: `next-sitemap` + JSON-LD Structured Data
 
 ## Temáticas
 
