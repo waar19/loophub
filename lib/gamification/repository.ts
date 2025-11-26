@@ -19,7 +19,10 @@ export interface ThreadPost {
   title: string;
   content: string;
   user_id: string | null;
-  like_count: number;
+  like_count: number; // Legacy
+  upvote_count: number;
+  downvote_count: number;
+  score?: number;
   is_hidden: boolean;
   is_resource: boolean;
   created_at: string;
@@ -53,7 +56,7 @@ export async function getThread(threadId: string): Promise<ThreadPost | null> {
   
   const { data, error } = await supabase
     .from("threads")
-    .select("id, title, content, user_id, like_count, is_hidden, is_resource, created_at")
+    .select("id, title, content, user_id, like_count, upvote_count, downvote_count, score, is_hidden, is_resource, created_at")
     .eq("id", threadId)
     .single();
 

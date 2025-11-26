@@ -16,48 +16,62 @@
 
 ## 🎯 FASE 1: Funcionalidades Core de Comunidad (PRIORIDAD ALTA)
 
-### 1. Sistema de Votos (Upvote/Downvote) 🔥
+### 1. ✅ Sistema de Votos (Upvote/Downvote) - COMPLETADO 🎉
 **Prioridad**: CRÍTICA  
 **Tiempo estimado**: 3-4 días  
 **Impacto**: ⭐⭐⭐⭐⭐
+**Estado**: ✅ COMPLETADO (Nov 26, 2025)
 
 **Tareas**:
-- [ ] Migración de base de datos
-  - [ ] Tabla `votes` (user_id, target_type, target_id, vote_type)
-  - [ ] Columnas `upvotes`, `downvotes` en threads
-  - [ ] Columnas `upvotes`, `downvotes` en comments
-  - [ ] Índices para performance
-  - [ ] Triggers para actualizar contadores
-  - [ ] RLS policies
+- [x] Migración de base de datos
+  - [x] Tabla `votes` (renombrada desde `likes`)
+  - [x] Columnas `upvote_count`, `downvote_count`, `score` en threads
+  - [x] Columnas `upvote_count`, `downvote_count`, `score` en comments
+  - [x] 8 triggers para actualizar contadores (INSERT/UPDATE y DELETE)
+  - [x] Triggers para actualizar karma automáticamente
+  - [x] RLS policies actualizadas
 
-- [ ] API Endpoints
-  - [ ] POST `/api/votes` - Crear/actualizar voto
-  - [ ] DELETE `/api/votes` - Eliminar voto
-  - [ ] GET `/api/votes/[id]` - Obtener voto del usuario
+- [x] API Endpoints
+  - [x] POST `/api/votes` - Crear/actualizar voto
+  - [x] DELETE `/api/votes` - Eliminar voto
+  - [x] GET `/api/votes` - Obtener estado de voto
+  - [x] `/api/likes` actualizado para retrocompatibilidad
 
-- [ ] Componentes UI
-  - [ ] `VoteButtons.tsx` - Componente reutilizable de votos
-  - [ ] Integrar en `ThreadCard.tsx`
-  - [ ] Integrar en `CommentCard.tsx`
-  - [ ] Animaciones de votos
-  - [ ] Estados optimistas (UI update antes de API response)
+- [x] Componentes UI
+  - [x] `VoteButtons.tsx` - Componente reutilizable con optimistic UI
+  - [x] Integrado en `ThreadCard.tsx`
+  - [x] Integrado en `CommentCard.tsx`
+  - [x] Animaciones hover (scale 1.2)
+  - [x] Estados optimistas (UI update instantánea)
+  - [x] Colores dinámicos (azul upvote, rojo downvote, verde/rojo score)
 
-- [ ] Lógica de Karma
-  - [ ] Upvote en thread = +1 karma al autor
-  - [ ] Downvote en thread = -1 karma al autor
-  - [ ] Upvote en comment = +1 karma al autor
-  - [ ] Actualizar triggers de karma existentes
+- [x] Lógica de Karma
+  - [x] Upvote = +1 karma al autor
+  - [x] Downvote = -1 karma al autor
+  - [x] Triggers automáticos para threads y comments
+  - [x] Actualizado sistema de karma existente
 
-- [ ] Ordenamiento
-  - [ ] Ordenar threads por "Top" (más votados)
-  - [ ] Ordenar threads por "Hot" (votos recientes)
-  - [ ] Ordenar comentarios por votos
+- [x] Interfaces TypeScript
+  - [x] Actualizadas en `lib/supabase.ts`
+  - [x] Actualizadas en `app/page.tsx`
+  - [x] Actualizadas en `components/HomeContent.tsx`
+  - [x] Actualizadas en `lib/gamification/`
 
-- [ ] Traducciones
-  - [ ] Textos de votos en ES, EN, PT
+- [x] Traducciones
+  - [x] Textos de votos en ES, EN, PT
+  - [x] 8 nuevas claves de traducción
 
-**Archivos a crear**:
-- `supabase/migrations/010_voting_system.sql`
+- [x] Queries actualizadas
+  - [x] Página de perfil de usuario
+  - [x] Sistema de gamificación
+  - [x] Cálculo de karma
+
+**Archivos creados/modificados**:
+- ✅ `supabase/migrations/010_voting_system.sql`
+- ✅ `app/api/votes/route.ts`
+- ✅ `components/VoteButtons.tsx`
+- ✅ `docs/VOTING_SYSTEM.md`
+- ✅ Múltiples queries actualizadas
 - `app/api/votes/route.ts`
 - `components/VoteButtons.tsx`
 - `hooks/useVotes.ts`

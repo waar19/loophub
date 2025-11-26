@@ -261,17 +261,17 @@ export async function calculateTotalKarma(userId: string): Promise<number> {
   // Karma por likes recibidos en threads
   const { data: threads } = await supabase
     .from('threads')
-    .select('like_count')
+    .select('upvote_count')
     .eq('user_id', userId);
-  const threadLikes = threads?.reduce((sum, t) => sum + (t.like_count || 0), 0) || 0;
+  const threadLikes = threads?.reduce((sum, t) => sum + (t.upvote_count || 0), 0) || 0;
   total += threadLikes * KARMA_VALUES.RECEIVE_LIKE;
 
   // Karma por likes recibidos en comentarios
   const { data: comments } = await supabase
     .from('comments')
-    .select('like_count')
+    .select('upvote_count')
     .eq('user_id', userId);
-  const commentLikes = comments?.reduce((sum, c) => sum + (c.like_count || 0), 0) || 0;
+  const commentLikes = comments?.reduce((sum, c) => sum + (c.upvote_count || 0), 0) || 0;
   total += commentLikes * KARMA_VALUES.RECEIVE_LIKE;
 
   // Karma por threads marcados como recurso
