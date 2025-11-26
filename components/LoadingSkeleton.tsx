@@ -33,3 +33,26 @@ export function CommentSkeleton() {
     </div>
   );
 }
+
+export function ThreadSkeleton() {
+  return (
+    <div className="card mb-4">
+      <div className="flex items-start justify-between mb-2">
+        <div className="space-y-2 w-3/4">
+          <div className="skeleton h-6 w-full" />
+          <div className="skeleton h-4 w-1/2" />
+        </div>
+        <div className="skeleton h-6 w-16" />
+      </div>
+      <div className="space-y-2 mb-4">
+        <div className="skeleton h-4 w-full" />
+        <div className="skeleton h-4 w-5/6" />
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="skeleton h-4 w-20" />
+        <div className="skeleton h-4 w-20" />
+        <div className="skeleton h-4 w-20" />
+      </div>
+    </div>
+  );
+}
