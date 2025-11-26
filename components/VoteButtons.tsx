@@ -163,8 +163,8 @@ export default function VoteButtons({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: "0.125rem",
-        minWidth: "2rem",
+        gap: "0.0625rem",
+        minWidth: "1.5rem",
       }}
     >
       {/* Upvote Button */}
@@ -195,8 +195,8 @@ export default function VoteButtons({
         aria-label="Upvote"
       >
         <svg
-          width="16"
-          height="16"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
@@ -211,7 +211,7 @@ export default function VoteButtons({
       {/* Score */}
       <span
         style={{
-          fontSize: "0.75rem",
+          fontSize: "0.6875rem",
           fontWeight: "700",
           color:
             score > 0
@@ -220,6 +220,7 @@ export default function VoteButtons({
               ? "var(--danger)"
               : "var(--muted)",
           textAlign: "center",
+          lineHeight: "1",
         }}
       >
         {score}
@@ -253,8 +254,8 @@ export default function VoteButtons({
         aria-label="Downvote"
       >
         <svg
-          width="16"
-          height="16"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"
