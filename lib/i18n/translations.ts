@@ -172,6 +172,10 @@ export const translations = {
       errorMarking: "Error al marcar notificación como leída",
       errorMarkingAll: "Error al marcar todas como leídas",
       allMarkedRead: "Todas las notificaciones marcadas como leídas",
+      justNow: "Ahora",
+      upvote: "Voto positivo",
+      downvote: "Voto negativo",
+      voteMilestone: "Hito de votos",
     },
     // Admin
     admin: {
@@ -465,6 +469,10 @@ export const translations = {
       errorMarking: "Error marking notification as read",
       errorMarkingAll: "Error marking all as read",
       allMarkedRead: "All notifications marked as read",
+      justNow: "Just now",
+      upvote: "Upvote",
+      downvote: "Downvote",
+      voteMilestone: "Vote milestone",
     },
     // Admin
     admin: {
@@ -759,6 +767,10 @@ export const translations = {
       errorMarking: "Erro ao marcar notificação como lida",
       errorMarkingAll: "Erro ao marcar todas como lidas",
       allMarkedRead: "Todas as notificações marcadas como lidas",
+      justNow: "Agora",
+      upvote: "Voto positivo",
+      downvote: "Voto negativo",
+      voteMilestone: "Marco de votos",
     },
     // Admin
     admin: {
