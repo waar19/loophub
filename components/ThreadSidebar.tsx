@@ -14,37 +14,37 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
 
   return (
     <aside className="hidden xl:block w-80 shrink-0">
-      <div className="sticky top-24 space-y-6">
+      <div className="sticky top-24 space-y-3">
         {/* Thread Info Card */}
-        <div className="card">
+        <div className="card p-4">
           <h3
-            className="text-sm font-semibold mb-4 uppercase tracking-wider"
+            className="text-xs font-semibold mb-3 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             Información del Hilo
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-2.5">
             {/* Author */}
             {thread.profile?.username && (
               <div>
                 <p
-                  className="text-xs font-medium mb-2"
+                  className="text-xs font-medium mb-1.5"
                   style={{ color: "var(--muted)" }}
                 >
                   Autor
                 </p>
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium"
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
                     style={{
-                      background: "var(--brand-light)",
-                      color: "var(--brand-dark)",
+                      background: "var(--brand)",
+                      color: "white",
                     }}
                   >
                     {thread.profile.username.charAt(0).toUpperCase()}
                   </div>
                   <span
-                    className="text-sm font-medium"
+                    className="text-xs font-medium"
                     style={{ color: "var(--foreground)" }}
                   >
                     {thread.profile.username}
@@ -56,7 +56,7 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {/* Forum */}
             <div>
               <p
-                className="text-xs font-medium mb-2"
+                className="text-xs font-medium mb-1.5"
                 style={{ color: "var(--muted)" }}
               >
                 Foro
@@ -66,10 +66,10 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
                 className="inline-block"
               >
                 <span
-                  className="badge text-sm"
+                  className="badge text-xs font-semibold px-2 py-0.5"
                   style={{
-                    background: "var(--brand-light)",
-                    color: "var(--brand-dark)",
+                    background: "var(--brand)",
+                    color: "white",
                   }}
                 >
                   {thread.forum.name}
@@ -80,12 +80,12 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {/* Date */}
             <div>
               <p
-                className="text-xs font-medium mb-2"
+                className="text-xs font-medium mb-1.5"
                 style={{ color: "var(--muted)" }}
               >
                 Publicado
               </p>
-              <p className="text-sm" style={{ color: "var(--foreground)" }}>
+              <p className="text-xs" style={{ color: "var(--foreground)" }}>
                 {date}
               </p>
             </div>
@@ -94,12 +94,12 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {thread._count && (
               <div>
                 <p
-                  className="text-xs font-medium mb-2"
+                  className="text-xs font-medium mb-1.5"
                   style={{ color: "var(--muted)" }}
                 >
                   Comentarios
                 </p>
-                <p className="text-sm" style={{ color: "var(--foreground)" }}>
+                <p className="text-xs" style={{ color: "var(--foreground)" }}>
                   {thread._count.comments || 0}
                 </p>
               </div>
@@ -108,17 +108,17 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
         </div>
 
         {/* Related Links */}
-        <div className="card">
+        <div className="card p-4">
           <h3
-            className="text-sm font-semibold mb-4 uppercase tracking-wider"
+            className="text-xs font-semibold mb-3 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             Enlaces Relacionados
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Link
               href={`/forum/${thread.forum.slug}`}
-              className="block text-sm transition-colors"
+              className="block text-xs transition-colors"
               style={{ color: "var(--muted)" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "var(--brand)";
@@ -131,7 +131,7 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             </Link>
             <Link
               href={`/forum/${thread.forum.slug}/new`}
-              className="block text-sm transition-colors"
+              className="block text-xs transition-colors"
               style={{ color: "var(--muted)" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "var(--brand)";
@@ -146,14 +146,14 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
         </div>
 
         {/* Forum Rules */}
-        <div className="card">
+        <div className="card p-4">
           <h3
-            className="text-sm font-semibold mb-4 uppercase tracking-wider"
+            className="text-xs font-semibold mb-3 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             Reglas del Foro
           </h3>
-          <ul className="space-y-2 text-xs" style={{ color: "var(--muted)" }}>
+          <ul className="space-y-1.5 text-xs" style={{ color: "var(--muted)" }}>
             <li>• Mantén las discusiones respetuosas</li>
             <li>• Busca antes de crear duplicados</li>
             <li>• Usa títulos descriptivos</li>

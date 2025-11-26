@@ -72,6 +72,14 @@ export const translations = {
       copy: "Copiar",
       copied: "¡Copiado!",
       shareOn: "Compartir en",
+      reply: "Responder",
+      replies: "respuestas",
+      oneReply: "respuesta",
+      cancelReply: "Cancelar",
+      postReply: "Publicar Respuesta",
+      replyPlaceholder: "Escribe tu respuesta... (Markdown soportado)",
+      posting: "Publicando...",
+      maxDepthReached: "Nivel máximo de respuestas alcanzado",
     },
     // Voting
     voting: {
@@ -172,6 +180,10 @@ export const translations = {
       errorMarking: "Error al marcar notificación como leída",
       errorMarkingAll: "Error al marcar todas como leídas",
       allMarkedRead: "Todas las notificaciones marcadas como leídas",
+      justNow: "Ahora",
+      upvote: "Voto positivo",
+      downvote: "Voto negativo",
+      voteMilestone: "Hito de votos",
     },
     // Admin
     admin: {
@@ -296,6 +308,11 @@ export const translations = {
       hoursAgo: "Hace {count} {count, plural, one {hora} other {horas}}",
       daysAgo: "Hace {count} {count, plural, one {día} other {días}}",
     },
+    // Footer
+    footer: {
+      tagline: "Minimalismo Digital • Organización Personal • Productividad Realista",
+      rights: "Todos los derechos reservados.",
+    },
   },
   en: {
     // Navigation
@@ -365,6 +382,14 @@ export const translations = {
       copy: "Copy",
       copied: "Copied!",
       shareOn: "Share on",
+      reply: "Reply",
+      replies: "replies",
+      oneReply: "reply",
+      cancelReply: "Cancel",
+      postReply: "Post Reply",
+      replyPlaceholder: "Write your reply... (Markdown supported)",
+      posting: "Posting...",
+      maxDepthReached: "Maximum nesting depth reached",
     },
     // Voting
     voting: {
@@ -465,6 +490,10 @@ export const translations = {
       errorMarking: "Error marking notification as read",
       errorMarkingAll: "Error marking all as read",
       allMarkedRead: "All notifications marked as read",
+      justNow: "Just now",
+      upvote: "Upvote",
+      downvote: "Downvote",
+      voteMilestone: "Vote milestone",
     },
     // Admin
     admin: {
@@ -589,6 +618,11 @@ export const translations = {
       hoursAgo: "{count} {count, plural, one {hour} other {hours}} ago",
       daysAgo: "{count} {count, plural, one {day} other {days}} ago",
     },
+    // Footer
+    footer: {
+      tagline: "Digital Minimalism • Personal Organization • Realistic Productivity",
+      rights: "All rights reserved.",
+    },
   },
   pt: {
     // Navigation
@@ -659,6 +693,14 @@ export const translations = {
       copy: "Copiar",
       copied: "Copiado!",
       shareOn: "Compartilhar em",
+      reply: "Responder",
+      replies: "respostas",
+      oneReply: "resposta",
+      cancelReply: "Cancelar",
+      postReply: "Publicar Resposta",
+      replyPlaceholder: "Escreva sua resposta... (Markdown suportado)",
+      posting: "Publicando...",
+      maxDepthReached: "Profundidade máxima de aninhamento atingida",
     },
     // Voting
     voting: {
@@ -759,6 +801,10 @@ export const translations = {
       errorMarking: "Erro ao marcar notificação como lida",
       errorMarkingAll: "Erro ao marcar todas como lidas",
       allMarkedRead: "Todas as notificações marcadas como lidas",
+      justNow: "Agora",
+      upvote: "Voto positivo",
+      downvote: "Voto negativo",
+      voteMilestone: "Marco de votos",
     },
     // Admin
     admin: {
@@ -882,6 +928,11 @@ export const translations = {
       minutesAgo: "Há {count} {count, plural, one {minuto} other {minutos}}",
       hoursAgo: "Há {count} {count, plural, one {hora} other {horas}}",
       daysAgo: "Há {count} {count, plural, one {dia} other {dias}}",
+    },
+    // Footer
+    footer: {
+      tagline: "Minimalismo Digital • Organização Pessoal • Produtividade Realista",
+      rights: "Todos os direitos reservados.",
     },
   },
 } as const;

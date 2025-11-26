@@ -98,8 +98,8 @@ export default function ThreadCard({
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
                   style={{
-                    background: "var(--brand-light)",
-                    color: "var(--brand-dark)",
+                    background: "var(--brand)",
+                    color: "white",
                   }}
                 >
                   {thread.profile?.username.charAt(0).toUpperCase()}
@@ -113,10 +113,10 @@ export default function ThreadCard({
             {thread.forum && (
               <Tooltip content={t("common.inThisForum")} position="top">
                 <span
-                  className="badge text-xs"
+                  className="badge text-xs font-semibold"
                   style={{
-                    background: "var(--brand-light)",
-                    color: "var(--brand-dark)",
+                    background: "var(--brand)",
+                    color: "white",
                   }}
                 >
                   {thread.forum.name}

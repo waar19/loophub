@@ -81,6 +81,8 @@
 - `components/CommentCard.tsx`
 - `lib/i18n/translations.ts`
 
+**Estado**: ✅ COMPLETADO
+
 ---
 
 ### 2. Notificaciones Persistentes con Realtime 🔥
@@ -89,35 +91,34 @@
 **Impacto**: ⭐⭐⭐⭐⭐
 
 **Tareas**:
-- [ ] Migración de base de datos
-  - [ ] Tabla `notifications` completa (ya existe parcialmente)
-  - [ ] Columna `read` boolean
-  - [ ] Columna `type` (comment_reply, thread_comment, mention, vote, etc.)
-  - [ ] Columna `data` jsonb (metadata flexible)
-  - [ ] RLS policies
-  - [ ] Índices para queries eficientes
+- [x] Migración de base de datos
+  - [x] Tabla `notifications` completa (extendida desde migration 005)
+  - [x] Columna `read` boolean
+  - [x] Columna `type` (comment_reply, thread_comment, mention, upvote, downvote, vote_milestone)
+  - [x] RLS policies
+  - [x] Índices para queries eficientes
+  - [x] Habilitar Realtime publication
 
-- [ ] Triggers automáticos
-  - [ ] Notificar cuando alguien comenta en tu thread
-  - [ ] Notificar cuando responden a tu comentario
-  - [ ] Notificar cuando te mencionan
-  - [ ] Notificar cuando te votan (opcional)
+- [x] Triggers automáticos
+  - [x] Notificar cuando alguien comenta en tu thread (ya existía)
+  - [x] Notificar cuando te votan (primer upvote + cada 5 votos)
+  - [x] Smart notifications (no spam, solo milestones)
+  - [x] Funciones `notify_thread_upvote()` y `notify_comment_upvote()`
 
-- [ ] API Endpoints (mejorar existentes)
-  - [ ] GET `/api/notifications` - Listar notificaciones
-  - [ ] PUT `/api/notifications/[id]` - Marcar como leída
-  - [ ] PUT `/api/notifications/read-all` - Marcar todas como leídas
-  - [ ] DELETE `/api/notifications/[id]` - Eliminar notificación
+- [x] API Endpoints (mejorados)
+  - [x] GET `/api/notifications` - Listar notificaciones
+  - [x] PATCH `/api/notifications/[id]` - Marcar como leída
+  - [x] POST `/api/notifications/read-all` - Marcar todas como leídas (optimizado con función RPC)
 
-- [ ] Supabase Realtime
-  - [ ] Configurar canal de notificaciones
-  - [ ] Hook `useRealtimeNotifications.ts`
-  - [ ] Suscribirse a cambios en tiempo real
-  - [ ] Actualizar badge automáticamente
+- [x] Supabase Realtime
+  - [x] Hook `useRealtimeNotifications.ts` creado
+  - [x] Suscripción a INSERT/UPDATE en tiempo real
+  - [x] Actualizar badge automáticamente
+  - [x] Soporte para notificaciones del navegador
 
-- [ ] Componentes UI
-  - [ ] Mejorar `NotificationBell.tsx` (ya existe)
-  - [ ] Dropdown de notificaciones en header
+- [x] Componentes UI
+  - [x] `NotificationBell.tsx` completamente rediseñado
+  - [x] Dropdown de notificaciones en header
   - [ ] Página `/notifications` completa
   - [ ] Item de notificación con avatar, texto, tiempo
   - [ ] "Ver todas" link al dropdown

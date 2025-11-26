@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import CommentCard from "@/components/CommentCard";
+import CommentThread from "@/components/CommentThread";
 import SimpleForm from "@/components/SimpleForm";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import { CommentSkeleton } from "@/components/LoadingSkeleton";
@@ -307,15 +307,12 @@ export default function ThreadPage({
                       </p>
                     }
                   >
-                    <div className="space-y-4">
-                      {comments.map((comment) => (
-                        <CommentCard
-                          key={comment.id}
-                          comment={comment}
-                          onUpdate={() => fetchData(1, false)}
-                        />
-                      ))}
-                    </div>
+                    <CommentThread
+                      comments={comments}
+                      threadId={id}
+                      onCommentAdded={() => fetchData(1, false)}
+                      onCommentDeleted={() => fetchData(1, false)}
+                    />
                   </InfiniteScroll>
                 )}
               </div>

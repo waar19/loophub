@@ -59,11 +59,14 @@ export async function GET(
     const userIds = extractUserIds(comments || []);
     const profilesMap = await getProfilesMap(userIds);
 
-    // Transform comments with profiles (include user_id for ownership checks)
+    // Transform comments with profiles (include user_id, parent_id, depth, reply_count for client-side logic)
     const commentsWithProfiles = (comments || []).map((comment: any) => ({
       ...comment,
       profile: comment.user_id ? profilesMap[comment.user_id] : null,
       user_id: comment.user_id, // Keep user_id for client-side ownership checks
+      parent_id: comment.parent_id, // For threading
+      depth: comment.depth || 0, // Nesting level
+      reply_count: comment.reply_count || 0, // Number of replies
     }));
 
     return NextResponse.json({
@@ -116,7 +119,29 @@ export async function POST(
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
     }
 
-    // Create comment with user_id
+    // If parent_id is provided, verify parent comment exists and belongs to same thread
+    if (body.parent_id) {
+      const { data: parentComment, error: parentError } = await supabase
+        .from("comments")
+        .select("id, thread_id, depth")
+        .eq("id", body.parent_id)
+        .single();
+
+      if (parentError || !parentComment) {
+        return NextResponse.json({ error: "Parent comment not found" }, { status: 404 });
+      }
+
+      if (parentComment.thread_id !== id) {
+        return NextResponse.json({ error: "Parent comment belongs to different thread" }, { status: 400 });
+      }
+
+      // Check depth limit
+      if (parentComment.depth >= 5) {
+        return NextResponse.json({ error: "Maximum nesting depth reached" }, { status: 400 });
+      }
+    }
+
+    // Create comment with user_id and parent_id
     const { data: comment, error: commentError } = await supabase
       .from("comments")
       .insert([
@@ -124,6 +149,7 @@ export async function POST(
           ...validatedData,
           thread_id: id,
           user_id: user.id,
+          parent_id: body.parent_id || null,
         },
       ])
       .select()

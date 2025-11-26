@@ -75,31 +75,41 @@ export type Database = {
           id: string;
           thread_id: string;
           user_id: string | null;
+          parent_id: string | null;
           content: string;
           like_count: number; // Legacy - renamed to upvote_count
           upvote_count: number;
           downvote_count: number;
           score?: number;
+          depth: number;
+          reply_count: number;
           created_at: string;
+          updated_at?: string;
         };
         Insert: {
           id?: string;
           thread_id: string;
           user_id?: string | null;
+          parent_id?: string | null;
           content: string;
           like_count?: number;
           upvote_count?: number;
           downvote_count?: number;
+          depth?: number;
+          reply_count?: number;
           created_at?: string;
         };
         Update: {
           id?: string;
           thread_id?: string;
           user_id?: string | null;
+          parent_id?: string | null;
           content?: string;
           like_count?: number;
           upvote_count?: number;
           downvote_count?: number;
+          depth?: number;
+          reply_count?: number;
           created_at?: string;
         };
       };

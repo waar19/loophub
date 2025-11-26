@@ -7,15 +7,14 @@ export async function POST(request: Request) {
     const { user } = await requireAuth();
     const supabase = await createClient();
 
-    const { error } = await supabase
-      .from("notifications")
-      .update({ read: true })
-      .eq("user_id", user.id)
-      .eq("read", false);
+    // Use the database function for better performance
+    const { data, error } = await supabase.rpc('mark_all_notifications_read', {
+      p_user_id: user.id
+    });
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, count: data || 0 });
   } catch (error) {
     return handleApiError(error, "Error al marcar todas las notificaciones como leídas");
   }
