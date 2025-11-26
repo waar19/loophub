@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
+import KarmaProgress from "@/components/KarmaProgress";
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -105,16 +106,19 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container max-w-2xl mx-auto py-8 px-4">
-      <div className="card">
-        <h1
-          className="text-2xl font-bold mb-6"
-          style={{ color: "var(--foreground)" }}
-        >
-          {t("settings.title")}
-        </h1>
+    <div className="container max-w-4xl mx-auto py-8 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Settings Form */}
+        <div className="lg:col-span-2">
+          <div className="card">
+            <h1
+              className="text-2xl font-bold mb-6"
+              style={{ color: "var(--foreground)" }}
+            >
+              {t("settings.title")}
+            </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
           {/* Username (Read-only) */}
           <div>
             <label
@@ -278,6 +282,13 @@ export default function SettingsPage() {
               </code>
             </p>
           </div>
+        </div>
+          </div>
+        </div>
+
+        {/* Karma Progress Sidebar */}
+        <div className="lg:col-span-1">
+          <KarmaProgress />
         </div>
       </div>
     </div>
