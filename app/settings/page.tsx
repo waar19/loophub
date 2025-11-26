@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/contexts/ToastContext";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { showToast } = useToast();
+  const { t } = useTranslations();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -20,6 +22,9 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
+    // Wait for auth to load
+    if (authLoading) return;
+
     if (!user) {
       router.push("/login");
       return;
@@ -40,14 +45,14 @@ export default function SettingsPage() {
         }
       } catch (error) {
         console.error("Error loading profile:", error);
-        showToast("Error al cargar el perfil", "error");
+        showToast(t("settings.errorLoad"), "error");
       } finally {
         setIsLoading(false);
       }
     };
 
     loadProfile();
-  }, [user, router, showToast]);
+  }, [user, authLoading, router, showToast, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,14 +66,14 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        showToast("Perfil actualizado exitosamente", "success");
+        showToast(t("settings.updated"), "success");
       } else {
         const data = await res.json();
-        showToast(data.error || "Error al actualizar el perfil", "error");
+        showToast(data.error || t("settings.errorUpdate"), "error");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      showToast("Error al actualizar el perfil", "error");
+      showToast(t("settings.errorUpdate"), "error");
     } finally {
       setIsSaving(false);
     }
@@ -106,7 +111,7 @@ export default function SettingsPage() {
           className="text-2xl font-bold mb-6"
           style={{ color: "var(--foreground)" }}
         >
-          Configuración del Perfil
+          {t("settings.title")}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -117,7 +122,7 @@ export default function SettingsPage() {
               className="block text-sm font-medium mb-2"
               style={{ color: "var(--foreground)" }}
             >
-              Nombre de usuario
+              {t("settings.username")}
             </label>
             <input
               type="text"
@@ -133,7 +138,7 @@ export default function SettingsPage() {
               }}
             />
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              El nombre de usuario no se puede cambiar
+              {t("settings.usernameReadonly")}
             </p>
           </div>
 
@@ -144,7 +149,7 @@ export default function SettingsPage() {
               className="block text-sm font-medium mb-2"
               style={{ color: "var(--foreground)" }}
             >
-              Biografía
+              {t("settings.bio")}
             </label>
             <textarea
               id="bio"
@@ -153,7 +158,7 @@ export default function SettingsPage() {
               onChange={handleChange}
               rows={4}
               maxLength={500}
-              placeholder="Cuéntanos sobre ti..."
+              placeholder={t("settings.bioPlaceholder")}
               className="input w-full"
               style={{
                 background: "var(--card-background)",
@@ -162,7 +167,7 @@ export default function SettingsPage() {
               }}
             />
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              {formData.bio.length}/500 caracteres
+              {formData.bio.length}/500 {t("settings.bioCount")}
             </p>
           </div>
 
@@ -173,7 +178,7 @@ export default function SettingsPage() {
               className="block text-sm font-medium mb-2"
               style={{ color: "var(--foreground)" }}
             >
-              Sitio web
+              {t("settings.website")}
             </label>
             <input
               type="url"
@@ -181,7 +186,7 @@ export default function SettingsPage() {
               name="website"
               value={formData.website}
               onChange={handleChange}
-              placeholder="https://ejemplo.com"
+              placeholder={t("settings.websitePlaceholder")}
               className="input w-full"
               style={{
                 background: "var(--card-background)",
@@ -198,7 +203,7 @@ export default function SettingsPage() {
               className="block text-sm font-medium mb-2"
               style={{ color: "var(--foreground)" }}
             >
-              Ubicación
+              {t("settings.location")}
             </label>
             <input
               type="text"
@@ -206,7 +211,7 @@ export default function SettingsPage() {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              placeholder="Ciudad, País"
+              placeholder={t("settings.locationPlaceholder")}
               maxLength={100}
               className="input w-full"
               style={{
@@ -229,7 +234,7 @@ export default function SettingsPage() {
                 opacity: isSaving ? 0.6 : 1,
               }}
             >
-              {isSaving ? "Guardando..." : "Guardar cambios"}
+              {isSaving ? t("settings.saving") : t("settings.save")}
             </button>
 
             <button
@@ -242,7 +247,7 @@ export default function SettingsPage() {
                 color: "var(--foreground)",
               }}
             >
-              Cancelar
+              {t("settings.cancel")}
             </button>
           </div>
         </form>
@@ -256,15 +261,12 @@ export default function SettingsPage() {
             className="text-lg font-semibold mb-3"
             style={{ color: "var(--foreground)" }}
           >
-            Información adicional
+            {t("settings.additionalInfo")}
           </h2>
           <div className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
+            <p>• {t("settings.reputationInfo")}</p>
             <p>
-              • Tu reputación (Karma) se gana automáticamente cuando otros
-              usuarios dan me gusta a tus threads y comentarios.
-            </p>
-            <p>
-              • Tu perfil público es visible en{" "}
+              • {t("settings.profilePublic")}{" "}
               <code
                 className="px-1 py-0.5 rounded text-xs"
                 style={{
