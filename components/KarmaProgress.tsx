@@ -42,16 +42,28 @@ export default function KarmaProgress() {
   return (
     <div className="card space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{t('gamification.karmaProgress')}</h2>
-          <div
-            className="px-3 py-1 rounded-lg font-bold text-xs"
+          <h2 
+            className="text-lg sm:text-xl lg:text-2xl font-bold"
             style={{ 
-              backgroundColor: levelColor,
-              color: 'white',
+              background: `linear-gradient(135deg, var(--foreground) 0%, ${levelColor} 100%)`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
             }}
           >
+            {t('gamification.karmaProgress')}
+          </h2>
+          <div
+            className="px-3 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1.5"
+            style={{ 
+              background: `linear-gradient(135deg, ${levelColor} 0%, ${levelColor}dd 100%)`,
+              color: 'white',
+              boxShadow: `0 2px 8px ${levelColor}40`
+            }}
+          >
+            <span>⭐</span>
             {formatKarma(permissions.karma)}
           </div>
         </div>
@@ -145,27 +157,64 @@ export default function KarmaProgress() {
       )}
 
       {/* Tips para ganar karma */}
-      <div className="p-3 sm:p-4 rounded-lg" style={{ background: 'var(--accent-light)', borderColor: 'var(--accent)', border: '1px solid' }}>
-        <h4 className="font-semibold mb-2 text-sm sm:text-base" style={{ color: 'var(--brand)' }}>💡 {t('gamification.howToEarn')}</h4>
-        <ul className="text-xs sm:text-sm space-y-1" style={{ color: 'var(--foreground)' }}>
-          <li>• {t('gamification.earnThreads')} ({t('gamification.earnThreadsDetail')})</li>
-          <li>• {t('gamification.earnComments')} ({t('gamification.earnCommentsDetail')})</li>
-          <li>• {t('gamification.earnLikes')} ({t('gamification.earnLikesDetail')})</li>
-          {permissions.level >= 2 && <li>• Marca threads útiles como recursos (+10 karma al autor)</li>}
-          {permissions.level >= 3 && <li>• Da superlikes a contenido excepcional (+2 karma al autor)</li>}
+      <div 
+        className="p-3 sm:p-4 rounded-xl"
+        style={{ 
+          background: 'linear-gradient(135deg, var(--accent-light) 0%, transparent 100%)',
+          borderColor: 'var(--accent)',
+          borderWidth: '1px',
+          borderStyle: 'solid'
+        }}
+      >
+        <h4 className="font-semibold mb-2 text-sm sm:text-base flex items-center gap-2" style={{ color: 'var(--brand)' }}>
+          💡 {t('gamification.howToEarn')}
+        </h4>
+        <ul className="text-xs sm:text-sm space-y-1.5" style={{ color: 'var(--foreground)' }}>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-500 font-bold">•</span>
+            <span>{t('gamification.earnThreads')} <strong className="text-blue-500">({t('gamification.earnThreadsDetail')})</strong></span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-green-500 font-bold">•</span>
+            <span>{t('gamification.earnComments')} <strong className="text-green-500">({t('gamification.earnCommentsDetail')})</strong></span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-orange-500 font-bold">•</span>
+            <span>{t('gamification.earnLikes')} <strong className="text-orange-500">({t('gamification.earnLikesDetail')})</strong></span>
+          </li>
+          {permissions.level >= 2 && (
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-500 font-bold">•</span>
+              <span>Marca threads útiles como recursos <strong className="text-cyan-500">(+10 karma)</strong></span>
+            </li>
+          )}
+          {permissions.level >= 3 && (
+            <li className="flex items-start gap-2">
+              <span className="text-purple-500 font-bold">•</span>
+              <span>Da superlikes a contenido excepcional <strong className="text-purple-500">(+2 karma)</strong></span>
+            </li>
+          )}
         </ul>
       </div>
 
       {/* Siguiente milestone */}
       {permissions.level < 5 && (
-        <div className="p-3 sm:p-4 rounded-lg" style={{ background: 'var(--card-bg)', borderColor: 'var(--brand)', border: '1px solid' }}>
+        <div 
+          className="p-3 sm:p-4 rounded-xl relative overflow-hidden"
+          style={{ 
+            background: `linear-gradient(135deg, ${levelColor}15 0%, ${levelColor}05 100%)`,
+            borderColor: levelColor,
+            borderWidth: '2px',
+            borderStyle: 'solid'
+          }}
+        >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xl sm:text-2xl">🎯</span>
-            <h4 className="font-semibold text-sm sm:text-base" style={{ color: 'var(--brand)' }}>Próximo objetivo</h4>
+            <h4 className="font-semibold text-sm sm:text-base" style={{ color: levelColor }}>{t('gamification.nextGoal')}</h4>
           </div>
           <p className="text-xs sm:text-sm" style={{ color: 'var(--foreground)' }}>
-            {t('gamification.unlockFeatures')}: <strong>{formatKarma(permissions.karma + permissions.karmaToNextLevel)} karma</strong> para
-            desbloquear el {t('gamification.level').toLowerCase()} <strong>{permissions.level + 1}</strong>.
+            <strong style={{ color: levelColor }}>{formatKarma(permissions.karma + permissions.karmaToNextLevel)}</strong> {t('profile.karma').toLowerCase()} para
+            desbloquear <strong>{permissions.levelName.replace('Nivel', t('gamification.level'))} {permissions.level + 1}</strong>
           </p>
         </div>
       )}

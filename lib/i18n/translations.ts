@@ -231,6 +231,7 @@ export const translations = {
       earnLikes: "Recibe likes en tu contenido",
       earnLikesDetail: "+1 karma por like",
       unlockFeatures: "Sube de nivel para desbloquear nuevas funciones",
+      nextGoal: "Pr\u00f3ximo objetivo",
     },
     // Onboarding
     onboarding: {
@@ -494,6 +495,7 @@ export const translations = {
       earnLikes: "Receive likes on your content",
       earnLikesDetail: "+1 karma per like",
       unlockFeatures: "Level up to unlock new features",
+      nextGoal: "Next Goal",
     },
     // Onboarding
     onboarding: {
@@ -755,9 +757,10 @@ export const translations = {
       earnThreadsDetail: "+5 karma cada",
       earnComments: "Participe com comentários úteis",
       earnCommentsDetail: "+2 karma cada",
-      earnLikes: "Receba likes em seu conteúdo",
+      earnLikes: "Receba likes em seu conte\u00fado",
       earnLikesDetail: "+1 karma por like",
-      unlockFeatures: "Suba de nível para desbloquear novos recursos",
+      unlockFeatures: "Suba de n\u00edvel para desbloquear novos recursos",
+      nextGoal: "Pr\u00f3ximo Objetivo",
     },
     // Onboarding
     onboarding: {
