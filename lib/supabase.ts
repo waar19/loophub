@@ -35,14 +35,21 @@ export interface Thread {
 export interface Comment {
   id: string;
   thread_id: string;
+  parent_id?: string | null;
   content: string;
   like_count: number; // Legacy field, still used
   upvote_count: number;
   downvote_count: number;
   score?: number;
+  depth: number;
+  reply_count: number;
   created_at: string;
+  updated_at?: string;
   user_id?: string;
   profile?: {
     username: string;
+    avatar_url?: string;
+    reputation?: number;
   };
+  replies?: Comment[]; // For nested structure
 }

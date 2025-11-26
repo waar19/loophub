@@ -72,6 +72,14 @@ export const translations = {
       copy: "Copiar",
       copied: "¡Copiado!",
       shareOn: "Compartir en",
+      reply: "Responder",
+      replies: "respuestas",
+      oneReply: "respuesta",
+      cancelReply: "Cancelar",
+      postReply: "Publicar Respuesta",
+      replyPlaceholder: "Escribe tu respuesta... (Markdown soportado)",
+      posting: "Publicando...",
+      maxDepthReached: "Nivel máximo de respuestas alcanzado",
     },
     // Voting
     voting: {
@@ -369,6 +377,14 @@ export const translations = {
       copy: "Copy",
       copied: "Copied!",
       shareOn: "Share on",
+      reply: "Reply",
+      replies: "replies",
+      oneReply: "reply",
+      cancelReply: "Cancel",
+      postReply: "Post Reply",
+      replyPlaceholder: "Write your reply... (Markdown supported)",
+      posting: "Posting...",
+      maxDepthReached: "Maximum nesting depth reached",
     },
     // Voting
     voting: {
@@ -667,6 +683,14 @@ export const translations = {
       copy: "Copiar",
       copied: "Copiado!",
       shareOn: "Compartilhar em",
+      reply: "Responder",
+      replies: "respostas",
+      oneReply: "resposta",
+      cancelReply: "Cancelar",
+      postReply: "Publicar Resposta",
+      replyPlaceholder: "Escreva sua resposta... (Markdown suportado)",
+      posting: "Publicando...",
+      maxDepthReached: "Profundidade máxima de aninhamento atingida",
     },
     // Voting
     voting: {
