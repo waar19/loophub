@@ -185,14 +185,14 @@ export default function ThreadPage({
             <div className="flex-1 min-w-0">
               {/* Thread Header */}
               <div
-                className="card mb-8 p-6"
+                className="card mb-6 p-4"
                 style={{
-                  borderLeft: "4px solid var(--brand)",
+                  borderLeft: "3px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex items-start justify-between gap-4 mb-3">
                   <h1
-                    className="text-2xl sm:text-3xl font-bold leading-tight flex-1"
+                    className="text-xl sm:text-2xl font-bold leading-tight flex-1"
                     style={{
                       color: "var(--foreground)",
                     }}
@@ -211,13 +211,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="text-sm leading-relaxed markdown-content mb-4">
+                <div className="text-sm leading-relaxed markdown-content mb-3">
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-4 border-t"
+                  className="pt-3 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -233,10 +233,10 @@ export default function ThreadPage({
               </div>
 
               {/* Comments Section */}
-              <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
+                    className="w-6 h-6 rounded flex items-center justify-center text-sm"
                     style={{
                       background: "var(--brand)",
                       color: "white",
@@ -245,13 +245,13 @@ export default function ThreadPage({
                     💬
                   </div>
                   <h2
-                    className="text-xl font-bold"
+                    className="text-base font-semibold"
                     style={{ color: "var(--foreground)" }}
                   >
                     {t("threads.comments")}
                   </h2>
                   <div
-                    className="px-2.5 py-1 rounded-lg text-xs font-bold"
+                    className="px-2 py-0.5 rounded text-xs font-semibold"
                     style={{
                       background: "var(--brand)",
                       color: "white",

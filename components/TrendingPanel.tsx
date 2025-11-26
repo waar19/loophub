@@ -143,7 +143,7 @@ export default function TrendingPanel() {
         {/* Trending Threads */}
         <div>
           <h3
-            className="text-sm font-semibold mb-4"
+            className="text-sm font-semibold mb-3"
             style={{ color: "var(--foreground)" }}
           >
             {t("home.featuredThreads")}
@@ -155,12 +155,12 @@ export default function TrendingPanel() {
               ))}
             </div>
           ) : trending.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {trending.map((thread) => (
                 <Link
                   key={thread.id}
                   href={`/thread/${thread.id}`}
-                  className="block p-3 rounded-lg border transition-colors"
+                  className="block p-2 rounded border transition-colors"
                   style={{
                     borderColor: "var(--border)",
                     background: "var(--card-bg)",
@@ -210,7 +210,7 @@ export default function TrendingPanel() {
         {/* Recent Comments */}
         <div>
           <h3
-            className="text-sm font-semibold mb-4"
+            className="text-sm font-semibold mb-3"
             style={{ color: "var(--foreground)" }}
           >
             {t("notifications.title")}
@@ -227,7 +227,7 @@ export default function TrendingPanel() {
                 <Link
                   key={comment.id}
                   href={`/thread/${comment.threads.id}`}
-                  className="block p-3 rounded-lg border transition-colors"
+                  className="block p-2 rounded border transition-colors"
                   style={{
                     borderColor: "var(--border)",
                     background: "var(--card-bg)",
