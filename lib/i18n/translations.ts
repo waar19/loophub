@@ -308,6 +308,11 @@ export const translations = {
       hoursAgo: "Hace {count} {count, plural, one {hora} other {horas}}",
       daysAgo: "Hace {count} {count, plural, one {día} other {días}}",
     },
+    // Footer
+    footer: {
+      tagline: "Minimalismo Digital • Organización Personal • Productividad Realista",
+      rights: "Todos los derechos reservados.",
+    },
   },
   en: {
     // Navigation
@@ -612,6 +617,11 @@ export const translations = {
       minutesAgo: "{count} {count, plural, one {minute} other {minutes}} ago",
       hoursAgo: "{count} {count, plural, one {hour} other {hours}} ago",
       daysAgo: "{count} {count, plural, one {day} other {days}} ago",
+    },
+    // Footer
+    footer: {
+      tagline: "Digital Minimalism • Personal Organization • Realistic Productivity",
+      rights: "All rights reserved.",
     },
   },
   pt: {
@@ -918,6 +928,11 @@ export const translations = {
       minutesAgo: "Há {count} {count, plural, one {minuto} other {minutos}}",
       hoursAgo: "Há {count} {count, plural, one {hora} other {horas}}",
       daysAgo: "Há {count} {count, plural, one {dia} other {dias}}",
+    },
+    // Footer
+    footer: {
+      tagline: "Minimalismo Digital • Organização Pessoal • Produtividade Realista",
+      rights: "Todos os direitos reservados.",
     },
   },
 } as const;

@@ -157,8 +157,6 @@ export default function NotificationBell() {
             ) : (
               <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                 {recentNotifications.map((notification) => {
-                  console.log('Notification:', notification); // Debug
-                  
                   return (
                     <Link
                       key={notification.id}
