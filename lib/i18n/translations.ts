@@ -232,6 +232,23 @@ export const translations = {
       earnLikesDetail: "+1 karma por like",
       unlockFeatures: "Sube de nivel para desbloquear nuevas funciones",
     },
+    // Onboarding
+    onboarding: {
+      welcome: "¡Bienvenido a LoopHub!",
+      chooseUsername: "Elige un nombre de usuario único para tu perfil",
+      username: "Nombre de usuario",
+      usernamePlaceholder: "tu_nombre_genial",
+      checking: "Verificando disponibilidad",
+      usernameAvailable: "¡Nombre de usuario disponible!",
+      usernameMinLength: "Mínimo 3 caracteres",
+      requirements: "Requisitos",
+      characters: "caracteres",
+      onlyAlphanumeric: "Solo letras, números y guiones bajos",
+      mustBeUnique: "Debe ser único",
+      creating: "Creando perfil...",
+      continue: "Continuar",
+      cannotChange: "No podrás cambiar tu nombre de usuario después",
+    },
     // Errors
     errors: {
       generic: "Algo salió mal",
@@ -477,6 +494,23 @@ export const translations = {
       earnLikes: "Receive likes on your content",
       earnLikesDetail: "+1 karma per like",
       unlockFeatures: "Level up to unlock new features",
+    },
+    // Onboarding
+    onboarding: {
+      welcome: "Welcome to LoopHub!",
+      chooseUsername: "Choose a unique username for your profile",
+      username: "Username",
+      usernamePlaceholder: "your_cool_name",
+      checking: "Checking availability",
+      usernameAvailable: "Username available!",
+      usernameMinLength: "Minimum 3 characters",
+      requirements: "Requirements",
+      characters: "characters",
+      onlyAlphanumeric: "Only letters, numbers, and underscores",
+      mustBeUnique: "Must be unique",
+      creating: "Creating profile...",
+      continue: "Continue",
+      cannotChange: "You won't be able to change your username later",
     },
     // Errors
     errors: {
@@ -724,6 +758,23 @@ export const translations = {
       earnLikes: "Receba likes em seu conteúdo",
       earnLikesDetail: "+1 karma por like",
       unlockFeatures: "Suba de nível para desbloquear novos recursos",
+    },
+    // Onboarding
+    onboarding: {
+      welcome: "Bem-vindo ao LoopHub!",
+      chooseUsername: "Escolha um nome de usuário único para seu perfil",
+      username: "Nome de usuário",
+      usernamePlaceholder: "seu_nome_legal",
+      checking: "Verificando disponibilidade",
+      usernameAvailable: "Nome de usuário disponível!",
+      usernameMinLength: "Mínimo 3 caracteres",
+      requirements: "Requisitos",
+      characters: "caracteres",
+      onlyAlphanumeric: "Apenas letras, números e underscores",
+      mustBeUnique: "Deve ser único",
+      creating: "Criando perfil...",
+      continue: "Continuar",
+      cannotChange: "Você não poderá alterar seu nome de usuário depois",
     },
     // Errors
     errors: {
