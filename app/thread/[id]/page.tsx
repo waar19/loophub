@@ -185,21 +185,16 @@ export default function ThreadPage({
             <div className="flex-1 min-w-0">
               {/* Thread Header */}
               <div
-                className="card mb-12"
+                className="card mb-8 p-6"
                 style={{
                   borderLeft: "4px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-4 mb-6">
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <h1
-                    className="text-3xl sm:text-4xl font-extrabold leading-tight flex-1"
+                    className="text-2xl sm:text-3xl font-bold leading-tight flex-1"
                     style={{
                       color: "var(--foreground)",
-                      background:
-                        "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
                     }}
                   >
                     {thread.title}
@@ -216,13 +211,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="text-lg leading-relaxed markdown-content mb-6">
+                <div className="text-sm leading-relaxed markdown-content mb-4">
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-6 border-t"
+                  className="pt-4 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -238,10 +233,10 @@ export default function ThreadPage({
               </div>
 
               {/* Comments Section */}
-              <div className="mb-12">
-                <div className="flex items-center gap-3 mb-8">
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
                     style={{
                       background: "var(--brand)",
                       color: "white",
@@ -250,16 +245,16 @@ export default function ThreadPage({
                     💬
                   </div>
                   <h2
-                    className="text-3xl font-bold"
+                    className="text-xl font-bold"
                     style={{ color: "var(--foreground)" }}
                   >
                     {t("threads.comments")}
                   </h2>
                   <div
-                    className="px-3 py-1 rounded-lg text-sm font-bold"
+                    className="px-2.5 py-1 rounded-lg text-xs font-bold"
                     style={{
-                      background: "var(--brand-light)",
-                      color: "var(--brand)",
+                      background: "var(--brand)",
+                      color: "white",
                     }}
                   >
                     {data.pagination.total}
@@ -267,9 +262,9 @@ export default function ThreadPage({
                 </div>
 
                 {comments.length === 0 && !isLoading ? (
-                  <div className="card text-center py-16 mb-8">
+                  <div className="card text-center py-12 mb-6">
                     <div
-                      className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+                      className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"
                       style={{
                         background: "var(--brand-light)",
                       }}
@@ -277,12 +272,12 @@ export default function ThreadPage({
                       💭
                     </div>
                     <h3
-                      className="text-2xl font-bold mb-3"
+                      className="text-xl font-bold mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
                       {t("threads.noComments")}
                     </h3>
-                    <p style={{ color: "var(--muted)" }} className="text-lg">
+                    <p style={{ color: "var(--muted)" }} className="text-sm">
                       {t("threads.beFirst")}
                     </p>
                   </div>
