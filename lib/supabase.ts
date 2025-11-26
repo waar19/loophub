@@ -18,7 +18,10 @@ export interface Thread {
   forum_id: string;
   title: string;
   content: string;
-  like_count: number;
+  like_count: number; // Legacy field, still used
+  upvote_count: number;
+  downvote_count: number;
+  score?: number;
   created_at: string;
   user_id?: string;
   profile?: {
@@ -33,7 +36,10 @@ export interface Comment {
   id: string;
   thread_id: string;
   content: string;
-  like_count: number;
+  like_count: number; // Legacy field, still used
+  upvote_count: number;
+  downvote_count: number;
+  score?: number;
   created_at: string;
   user_id?: string;
   profile?: {

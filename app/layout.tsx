@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AppLayout from "@/components/AppLayout";
+import OnboardingGuard from "@/components/OnboardingGuard";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { TranslationsProvider } from "@/components/TranslationsProvider";
 import { WebsiteStructuredData } from "@/components/StructuredData";
@@ -114,7 +115,9 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <TranslationsProvider>
           <ToastProvider>
-            <AppLayout>{children}</AppLayout>
+            <OnboardingGuard>
+              <AppLayout>{children}</AppLayout>
+            </OnboardingGuard>
           </ToastProvider>
         </TranslationsProvider>
       </body>

@@ -8,6 +8,7 @@ import SearchBar from "./SearchBar";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "./NotificationBell";
 import LanguageSelector from "./LanguageSelector";
+import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 
 interface Forum {
@@ -19,6 +20,7 @@ interface Forum {
 
 export default function Header() {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [forums, setForums] = useState<Forum[]>([]);
   const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
 
@@ -91,7 +93,7 @@ export default function Header() {
         {/* Right side actions */}
         <div className="flex items-center gap-3">
           <LanguageSelector />
-          <NotificationBell />
+          {user && <NotificationBell />}
           <DarkModeToggle />
           <AuthButton />
         </div>

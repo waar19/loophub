@@ -29,7 +29,10 @@ export type Database = {
           user_id: string | null;
           title: string;
           content: string;
-          like_count: number;
+          like_count: number; // Legacy - renamed to upvote_count
+          upvote_count: number;
+          downvote_count: number;
+          score?: number;
           is_hidden: boolean;
           is_resource: boolean;
           hidden_at: string | null;
@@ -43,6 +46,8 @@ export type Database = {
           title: string;
           content: string;
           like_count?: number;
+          upvote_count?: number;
+          downvote_count?: number;
           is_hidden?: boolean;
           is_resource?: boolean;
           hidden_at?: string | null;
@@ -56,6 +61,8 @@ export type Database = {
           title?: string;
           content?: string;
           like_count?: number;
+          upvote_count?: number;
+          downvote_count?: number;
           is_hidden?: boolean;
           is_resource?: boolean;
           hidden_at?: string | null;
@@ -69,7 +76,10 @@ export type Database = {
           thread_id: string;
           user_id: string | null;
           content: string;
-          like_count: number;
+          like_count: number; // Legacy - renamed to upvote_count
+          upvote_count: number;
+          downvote_count: number;
+          score?: number;
           created_at: string;
         };
         Insert: {
@@ -78,6 +88,8 @@ export type Database = {
           user_id?: string | null;
           content: string;
           like_count?: number;
+          upvote_count?: number;
+          downvote_count?: number;
           created_at?: string;
         };
         Update: {
@@ -86,6 +98,8 @@ export type Database = {
           user_id?: string | null;
           content?: string;
           like_count?: number;
+          upvote_count?: number;
+          downvote_count?: number;
           created_at?: string;
         };
       };

@@ -1,21 +1,31 @@
 import { NextResponse } from "next/server";
 import { requireAuth, handleApiError } from "@/lib/api-helpers";
 
-// DEPRECATED: Use /api/votes instead for full voting functionality
-// This endpoint is kept for backwards compatibility
-// It only supports upvotes (likes), not downvotes
+type VoteType = 1 | -1; // 1 = upvote, -1 = downvote
 
-// POST - Create a like (upvote only)
+// POST - Create or update a vote (upvote/downvote) on a thread or comment
 export async function POST(request: Request) {
   try {
     const { user, supabase } = await requireAuth();
     const body = await request.json();
-    const { threadId, commentId } = body;
+    const { threadId, commentId, voteType } = body as { 
+      threadId?: string; 
+      commentId?: string; 
+      voteType: VoteType 
+    };
 
     // Validate that either threadId or commentId is provided, but not both
     if ((!threadId && !commentId) || (threadId && commentId)) {
       return NextResponse.json(
         { error: "Either threadId or commentId must be provided, but not both" },
+        { status: 400 }
+      );
+    }
+
+    // Validate voteType
+    if (voteType !== 1 && voteType !== -1) {
+      return NextResponse.json(
+        { error: "voteType must be 1 (upvote) or -1 (downvote)" },
         { status: 400 }
       );
     }
@@ -29,49 +39,74 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     if (existingVote) {
-      // If it's already an upvote, return error
-      if (existingVote.vote_type === 1) {
+      // If user already voted with the same type, do nothing
+      if (existingVote.vote_type === voteType) {
         return NextResponse.json(
-          { error: "You already liked this content" },
+          { error: "You already voted this way" },
           { status: 400 }
         );
       }
-      
-      // If it was a downvote, change it to upvote
-      await supabase
+
+      // Update the existing vote (change from upvote to downvote or vice versa)
+      const { data: updatedVote, error: updateError } = await supabase
         .from("votes")
-        .update({ vote_type: 1 })
-        .eq("id", existingVote.id);
-    } else {
-      // Create a new upvote
-      await supabase
-        .from("votes")
-        .insert({
-          user_id: user.id,
-          thread_id: threadId || null,
-          comment_id: commentId || null,
-          vote_type: 1,
-        });
+        .update({ vote_type: voteType })
+        .eq("id", existingVote.id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      // Get updated counts
+      const { data: content } = await supabase
+        .from(threadId ? "threads" : "comments")
+        .select("upvote_count, downvote_count, score")
+        .eq("id", threadId || commentId)
+        .single();
+
+      return NextResponse.json({
+        success: true,
+        vote: updatedVote,
+        upvotes: content?.upvote_count || 0,
+        downvotes: content?.downvote_count || 0,
+        score: content?.score || 0,
+      });
     }
+
+    // Create a new vote
+    const { data: vote, error: voteError } = await supabase
+      .from("votes")
+      .insert({
+        user_id: user.id,
+        thread_id: threadId || null,
+        comment_id: commentId || null,
+        vote_type: voteType,
+      })
+      .select()
+      .single();
+
+    if (voteError) throw voteError;
 
     // Get updated counts
     const { data: content } = await supabase
       .from(threadId ? "threads" : "comments")
-      .select("upvote_count, score")
+      .select("upvote_count, downvote_count, score")
       .eq("id", threadId || commentId)
       .single();
 
     return NextResponse.json({
       success: true,
-      likeCount: content?.upvote_count || 0,
+      vote,
+      upvotes: content?.upvote_count || 0,
+      downvotes: content?.downvote_count || 0,
       score: content?.score || 0,
     });
   } catch (error) {
-    return handleApiError(error, "Failed to create like");
+    return handleApiError(error, "Failed to vote");
   }
 }
 
-// DELETE - Remove a like (unlike)
+// DELETE - Remove a vote
 export async function DELETE(request: Request) {
   try {
     const { user, supabase } = await requireAuth();
@@ -99,26 +134,29 @@ export async function DELETE(request: Request) {
       query.eq("comment_id", commentId);
     }
 
-    await query;
+    const { error: deleteError } = await query;
+
+    if (deleteError) throw deleteError;
 
     // Get updated counts
     const { data: content } = await supabase
       .from(threadId ? "threads" : "comments")
-      .select("upvote_count, score")
+      .select("upvote_count, downvote_count, score")
       .eq("id", threadId || commentId)
       .single();
 
     return NextResponse.json({
       success: true,
-      likeCount: content?.upvote_count || 0,
+      upvotes: content?.upvote_count || 0,
+      downvotes: content?.downvote_count || 0,
       score: content?.score || 0,
     });
   } catch (error) {
-    return handleApiError(error, "Failed to remove like");
+    return handleApiError(error, "Failed to remove vote");
   }
 }
 
-// GET - Check if user has liked content and get like count
+// GET - Check user's vote status and get vote counts
 export async function GET(request: Request) {
   try {
     const { user, supabase } = await requireAuth();
@@ -134,7 +172,7 @@ export async function GET(request: Request) {
       );
     }
 
-    // Check if user has liked (upvoted) this content
+    // Check if user has voted on this content
     const { data: existingVote } = await supabase
       .from("votes")
       .select("vote_type")
@@ -145,16 +183,17 @@ export async function GET(request: Request) {
     // Get vote counts
     const { data: content } = await supabase
       .from(threadId ? "threads" : "comments")
-      .select("upvote_count, score")
+      .select("upvote_count, downvote_count, score")
       .eq("id", threadId || commentId)
       .single();
 
     return NextResponse.json({
-      isLiked: existingVote?.vote_type === 1,
-      likeCount: content?.upvote_count || 0,
+      userVote: existingVote?.vote_type || null, // null, 1, or -1
+      upvotes: content?.upvote_count || 0,
+      downvotes: content?.downvote_count || 0,
       score: content?.score || 0,
     });
   } catch (error) {
-    return handleApiError(error, "Failed to get like status");
+    return handleApiError(error, "Failed to get vote status");
   }
 }

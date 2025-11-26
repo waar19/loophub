@@ -35,6 +35,9 @@ export default async function UserProfilePage({
       title,
       content,
       like_count,
+      upvote_count,
+      downvote_count,
+      score,
       created_at,
       forums(name, slug)
     `
@@ -51,6 +54,9 @@ export default async function UserProfilePage({
       id,
       content,
       like_count,
+      upvote_count,
+      downvote_count,
+      score,
       created_at,
       thread:threads(id, title)
     `
@@ -245,18 +251,31 @@ export default async function UserProfilePage({
                       })}
                     </span>
 
-                    {thread.like_count > 0 && (
+                    {(thread.score !== undefined && thread.score !== null && thread.score !== 0) && (
                       <div className="flex items-center gap-1">
                         <svg
                           className="w-4 h-4"
-                          fill="currentColor"
+                          fill="none"
+                          stroke="currentColor"
                           viewBox="0 0 24 24"
-                          style={{ color: "var(--brand)" }}
+                          strokeWidth={2}
+                          style={{ 
+                            color: thread.score > 0 ? "var(--success)" : thread.score < 0 ? "var(--danger)" : "var(--muted)" 
+                          }}
                         >
-                          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d={thread.score > 0 
+                              ? "M5 15l7-7 7 7" 
+                              : "M19 9l-7 7-7-7"
+                            }
+                          />
                         </svg>
-                        <span style={{ color: "var(--muted)" }}>
-                          {thread.like_count}
+                        <span style={{ 
+                          color: thread.score > 0 ? "var(--success)" : thread.score < 0 ? "var(--danger)" : "var(--muted)" 
+                        }}>
+                          {thread.score}
                         </span>
                       </div>
                     )}
@@ -315,18 +334,31 @@ export default async function UserProfilePage({
                       day: "numeric",
                     })}
                   </span>
-                  {comment.like_count > 0 && (
+                  {(comment.score !== undefined && comment.score !== null && comment.score !== 0) && (
                     <div className="flex items-center gap-1">
                       <svg
                         className="w-3 h-3"
-                        fill="currentColor"
+                        fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
-                        style={{ color: "var(--brand)" }}
+                        strokeWidth={2}
+                        style={{ 
+                          color: comment.score > 0 ? "var(--success)" : comment.score < 0 ? "var(--danger)" : "var(--muted)" 
+                        }}
                       >
-                        <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d={comment.score > 0 
+                            ? "M5 15l7-7 7 7" 
+                            : "M19 9l-7 7-7-7"
+                          }
+                        />
                       </svg>
-                      <span style={{ color: "var(--muted)" }}>
-                        {comment.like_count}
+                      <span style={{ 
+                        color: comment.score > 0 ? "var(--success)" : comment.score < 0 ? "var(--danger)" : "var(--muted)" 
+                      }}>
+                        {comment.score}
                       </span>
                     </div>
                   )}
