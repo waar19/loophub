@@ -44,7 +44,10 @@ export default function EditCommentButton({
         router.refresh();
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al actualizar el comentario";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error al actualizar el comentario";
       showError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -53,9 +56,12 @@ export default function EditCommentButton({
 
   if (isEditing) {
     return (
-      <div className="card mt-4" style={{
-        borderLeft: "4px solid var(--brand)",
-      }}>
+      <div
+        className="card mt-4"
+        style={{
+          borderLeft: "4px solid var(--brand)",
+        }}
+      >
         <div className="flex items-center justify-between mb-4">
           <h4 className="font-semibold" style={{ color: "var(--foreground)" }}>
             Editar Comentario
@@ -92,14 +98,14 @@ export default function EditCommentButton({
     <Tooltip content="Editar comentario" position="top">
       <button
         onClick={() => setIsEditing(true)}
+        aria-label="Editar comentario"
         className="text-xs transition-colors"
         style={{ color: "var(--muted)" }}
-        onMouseEnter={(e) => e.currentTarget.style.color = "var(--brand)"}
-        onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--brand)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
       >
         Editar
       </button>
     </Tooltip>
   );
 }
-

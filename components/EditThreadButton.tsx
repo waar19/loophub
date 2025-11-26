@@ -46,7 +46,8 @@ export default function EditThreadButton({
         router.refresh();
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al actualizar el hilo";
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al actualizar el hilo";
       showError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -55,11 +56,17 @@ export default function EditThreadButton({
 
   if (isEditing) {
     return (
-      <div className="card mb-8" style={{
-        borderLeft: "4px solid var(--brand)",
-      }}>
+      <div
+        className="card mb-8"
+        style={{
+          borderLeft: "4px solid var(--brand)",
+        }}
+      >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold" style={{ color: "var(--foreground)" }}>
+          <h3
+            className="text-xl font-bold"
+            style={{ color: "var(--foreground)" }}
+          >
             Editar Hilo
           </h3>
           <button
@@ -103,14 +110,14 @@ export default function EditThreadButton({
     <Tooltip content="Editar hilo" position="top">
       <button
         onClick={() => setIsEditing(true)}
+        aria-label="Editar hilo"
         className="text-xs transition-colors"
         style={{ color: "var(--muted)" }}
-        onMouseEnter={(e) => e.currentTarget.style.color = "var(--brand)"}
-        onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--brand)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
       >
         Editar
       </button>
     </Tooltip>
   );
 }
-

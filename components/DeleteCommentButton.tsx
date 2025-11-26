@@ -41,7 +41,10 @@ export default function DeleteCommentButton({
         router.refresh();
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al eliminar el comentario";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error al eliminar el comentario";
       showError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -53,14 +56,18 @@ export default function DeleteCommentButton({
       <button
         onClick={handleDelete}
         disabled={isLoading}
+        aria-label="Eliminar comentario"
         className="text-xs font-medium disabled:opacity-50 transition-colors"
         style={{ color: "#ef4444" }}
-        onMouseEnter={(e) => !isLoading && (e.currentTarget.style.color = "#dc2626")}
-        onMouseLeave={(e) => !isLoading && (e.currentTarget.style.color = "#ef4444")}
+        onMouseEnter={(e) =>
+          !isLoading && (e.currentTarget.style.color = "#dc2626")
+        }
+        onMouseLeave={(e) =>
+          !isLoading && (e.currentTarget.style.color = "#ef4444")
+        }
       >
         {isLoading ? "Eliminando..." : "Eliminar"}
       </button>
     </Tooltip>
   );
 }
-

@@ -35,7 +35,9 @@ export default function ReportButton({
       if (error) throw error;
 
       setSuccess(true);
-      showSuccess("Reporte enviado correctamente. Gracias por tu contribución.");
+      showSuccess(
+        "Reporte enviado correctamente. Gracias por tu contribución."
+      );
       setTimeout(() => {
         setIsOpen(false);
         setSuccess(false);
@@ -54,10 +56,11 @@ export default function ReportButton({
       <Tooltip content="Reportar contenido" position="top">
         <button
           onClick={() => setIsOpen(true)}
+          aria-label="Reportar contenido"
           className="text-xs transition-colors"
           style={{ color: "var(--muted)" }}
-          onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
-          onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
         >
           Report
         </button>
@@ -66,18 +69,18 @@ export default function ReportButton({
   }
 
   return (
-    <div 
+    <div
       className="fixed inset-0 flex items-center justify-center z-50 p-4"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
     >
-      <div 
+      <div
         className="rounded-lg p-6 max-w-sm w-full shadow-xl"
-        style={{ 
+        style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)"
+          border: "1px solid var(--border)",
         }}
       >
-        <h3 
+        <h3
           className="text-lg font-bold mb-4"
           style={{ color: "var(--foreground)" }}
         >
@@ -85,16 +88,13 @@ export default function ReportButton({
         </h3>
 
         {success ? (
-          <div 
-            className="text-center py-4"
-            style={{ color: "#22c55e" }}
-          >
+          <div className="text-center py-4" style={{ color: "#22c55e" }}>
             Report submitted successfully!
           </div>
         ) : (
           <form onSubmit={handleReport}>
             <div className="mb-4">
-              <label 
+              <label
                 className="block text-sm font-medium mb-2"
                 style={{ color: "var(--foreground)" }}
               >
@@ -105,7 +105,7 @@ export default function ReportButton({
                 style={{
                   background: "var(--card-bg)",
                   color: "var(--foreground)",
-                  borderColor: "var(--border)"
+                  borderColor: "var(--border)",
                 }}
                 rows={3}
                 value={reason}
@@ -119,14 +119,19 @@ export default function ReportButton({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
+                aria-label="Cancelar reporte"
                 className="px-3 py-1.5 text-sm border rounded transition-colors"
                 style={{
                   background: "var(--card-bg)",
                   color: "var(--foreground)",
-                  borderColor: "var(--border)"
+                  borderColor: "var(--border)",
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--border)"}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--card-bg)"}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "var(--border)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "var(--card-bg)")
+                }
                 disabled={loading}
               >
                 Cancel
