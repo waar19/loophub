@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import DeleteCommentButton from "@/components/DeleteCommentButton";
 import { useState, useEffect } from "react";
 import Tooltip from "./Tooltip";
+import Link from "next/link";
 // Lazy load MarkdownRenderer
 const MarkdownRenderer = dynamic(
   () => import("@/components/MarkdownRenderer"),
@@ -103,26 +104,31 @@ export default function CommentCard({ comment, onUpdate }: CommentCardProps) {
         <div className="flex items-center gap-3">
           {comment.profile?.username && (
             <>
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0"
-                style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand-dark)",
-                }}
+              <Link
+                href={`/u/${comment.profile.username}`}
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
               >
-                {comment.profile.username.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <span
-                  className="text-sm font-medium block"
-                  style={{ color: "var(--foreground)" }}
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0"
+                  style={{
+                    background: "var(--brand-light)",
+                    color: "var(--brand-dark)",
+                  }}
                 >
-                  {comment.profile.username}
-                </span>
-                <span className="text-xs" style={{ color: "var(--muted)" }}>
-                  {date}
-                </span>
-              </div>
+                  {comment.profile.username.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <span
+                    className="text-sm font-medium block hover:underline"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {comment.profile.username}
+                  </span>
+                  <span className="text-xs" style={{ color: "var(--muted)" }}>
+                    {date}
+                  </span>
+                </div>
+              </Link>
             </>
           )}
         </div>

@@ -6,6 +6,7 @@ import { useTranslations } from "@/components/TranslationsProvider";
 import Tooltip from "./Tooltip";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 interface ThreadCardProps {
   thread: Thread & {
@@ -25,6 +26,7 @@ export default function ThreadCard({
 }: ThreadCardProps) {
   const { t } = useTranslations();
   const { user } = useAuth();
+  const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(thread.like_count || 0);
   const [isLoading, setIsLoading] = useState(false);
@@ -187,7 +189,14 @@ export default function ThreadCard({
 
             {/* Author */}
             {thread.profile?.username && (
-              <div className="flex items-center gap-2">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push(`/u/${thread.profile.username}`);
+                }}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+              >
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
                   style={{
@@ -197,10 +206,10 @@ export default function ThreadCard({
                 >
                   {thread.profile.username.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm" style={{ color: "var(--muted)" }}>
+                <span className="text-sm hover:underline" style={{ color: "var(--muted)" }}>
                   {thread.profile.username}
                 </span>
-              </div>
+              </button>
             )}
 
             {thread.forum && (
