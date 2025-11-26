@@ -80,6 +80,14 @@ export const translations = {
       replyPlaceholder: "Escribe tu respuesta... (Markdown soportado)",
       posting: "Publicando...",
       maxDepthReached: "Nivel máximo de respuestas alcanzado",
+      threadInfo: "Información del Hilo",
+      published: "Publicado",
+      relatedLinks: "Enlaces Relacionados",
+      viewAllThreads: "Ver todos los hilos de",
+      forumRules: "Reglas del Foro",
+      rule1: "Mantén las discusiones respetuosas",
+      rule2: "Busca antes de crear duplicados",
+      rule3: "Usa títulos descriptivos",
     },
     // Voting
     voting: {
@@ -162,6 +170,7 @@ export const translations = {
       noForumsAvailable: "No hay foros disponibles",
       home: "Inicio",
       anonymous: "Anónimo",
+      forum: "Foro",
     },
     // Notifications
     notifications: {
@@ -207,6 +216,7 @@ export const translations = {
       recentComments: "Comentarios Recientes",
       joined: "Se unió",
       admin: "Administrador",
+      author: "Autor",
     },
     // Settings
     settings: {
@@ -390,6 +400,14 @@ export const translations = {
       replyPlaceholder: "Write your reply... (Markdown supported)",
       posting: "Posting...",
       maxDepthReached: "Maximum nesting depth reached",
+      threadInfo: "Thread Information",
+      published: "Published",
+      relatedLinks: "Related Links",
+      viewAllThreads: "View all threads in",
+      forumRules: "Forum Rules",
+      rule1: "Keep discussions respectful",
+      rule2: "Search before creating duplicates",
+      rule3: "Use descriptive titles",
     },
     // Voting
     voting: {
@@ -471,6 +489,7 @@ export const translations = {
       noForumsAvailable: "No forums available",
       home: "Home",
       anonymous: "Anonymous",
+      forum: "Forum",
     },
     // Notifications
     notifications: {
@@ -517,6 +536,7 @@ export const translations = {
       recentComments: "Recent Comments",
       joined: "Joined",
       admin: "Admin",
+      author: "Author",
     },
     // Settings
     settings: {
@@ -701,6 +721,14 @@ export const translations = {
       replyPlaceholder: "Escreva sua resposta... (Markdown suportado)",
       posting: "Publicando...",
       maxDepthReached: "Profundidade máxima de aninhamento atingida",
+      threadInfo: "Informações do Tópico",
+      published: "Publicado",
+      relatedLinks: "Links Relacionados",
+      viewAllThreads: "Ver todos os tópicos em",
+      forumRules: "Regras do Fórum",
+      rule1: "Mantenha as discussões respeitosas",
+      rule2: "Pesquise antes de criar duplicatas",
+      rule3: "Use títulos descritivos",
     },
     // Voting
     voting: {
@@ -783,6 +811,7 @@ export const translations = {
       noForumsAvailable: "Nenhum fórum disponível",
       home: "Início",
       anonymous: "Anônimo",
+      forum: "Fórum",
     },
     // Notifications
     notifications: {
@@ -828,6 +857,7 @@ export const translations = {
       recentComments: "Comentários Recentes",
       joined: "Entrou em",
       admin: "Administrador",
+      author: "Autor",
     },
     // Settings
     settings: {
