@@ -185,12 +185,12 @@ export default function ThreadPage({
             <div className="flex-1 min-w-0">
               {/* Thread Header */}
               <div
-                className="card mb-3 p-2"
+                className="card mb-2 p-2"
                 style={{
                   borderLeft: "2px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-2 mb-1">
+                <div className="flex items-start justify-between gap-2">
                   <h1
                     className="font-semibold leading-tight flex-1"
                     style={{
@@ -212,13 +212,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="leading-relaxed markdown-content mb-1.5" style={{ fontSize: "0.8125rem" }}>
+                <div className="leading-relaxed markdown-content" style={{ fontSize: "0.8125rem" }}>
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-1.5 border-t"
+                  className="pt-1 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -234,8 +234,8 @@ export default function ThreadPage({
               </div>
 
               {/* Comments Section */}
-              <div className="mb-3">
-                <div className="flex items-center gap-1.5 mb-2">
+              <div className="mb-2">
+                <div className="flex items-center gap-1.5 mb-1.5">
                   <div
                     className="w-4 h-4 rounded flex items-center justify-center"
                     style={{
@@ -265,9 +265,9 @@ export default function ThreadPage({
                 </div>
 
                 {comments.length === 0 && !isLoading ? (
-                  <div className="card text-center py-4 mb-3">
+                  <div className="card text-center py-3 mb-2">
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1.5"
+                      className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1"
                       style={{
                         background: "var(--brand-light)",
                         fontSize: "1.25rem",
@@ -276,7 +276,7 @@ export default function ThreadPage({
                       💭
                     </div>
                     <h3
-                      className="font-semibold mb-0.5"
+                      className="font-semibold"
                       style={{ color: "var(--foreground)", fontSize: "0.875rem" }}
                     >
                       {t("threads.noComments")}

@@ -108,7 +108,7 @@ export default function CommentCard({
   };
 
   return (
-    <div className="flex gap-1 py-1">
+    <div className="flex gap-1 py-0.5">
       {/* Voting column - left side like Reddit */}
       <div className="flex flex-col items-center gap-0.5 pt-0.5">
         <VoteButtons
@@ -121,7 +121,7 @@ export default function CommentCard({
       {/* Content column */}
       <div className="flex-1 min-w-0">
         {/* Header - compact single line */}
-        <div className="flex items-center gap-1 mb-0.5">
+        <div className="flex items-center gap-1">
           {comment.profile?.username && (
             <Link
               href={`/u/${comment.profile.username}`}
@@ -154,7 +154,7 @@ export default function CommentCard({
         </div>
         
         {/* Comment content - compact prose */}
-        <div className="prose prose-sm max-w-none mb-1" style={{ fontSize: "0.75rem", lineHeight: "1.4" }}>
+        <div className="prose prose-sm max-w-none" style={{ fontSize: "0.75rem", lineHeight: "1.4" }}>
           <MarkdownRenderer content={comment.content} />
         </div>
 

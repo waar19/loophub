@@ -69,7 +69,7 @@ export default function CommentThread({
             style={{
               width: "1px",
               background: "var(--border)",
-              marginLeft: `${(depth - 1) * 12 + 6}px`,
+              marginLeft: `${(depth - 1) * 8 + 4}px`,
               opacity: 0.25,
             }}
           />
@@ -78,8 +78,8 @@ export default function CommentThread({
         {/* Comment card with indentation */}
         <div
           style={{
-            marginLeft: depth > 0 ? `${depth * 12}px` : "0",
-            paddingLeft: depth > 0 ? "6px" : "0",
+            marginLeft: depth > 0 ? `${depth * 8}px` : "0",
+            paddingLeft: depth > 0 ? "4px" : "0",
           }}
           className="relative"
         >
@@ -105,11 +105,11 @@ export default function CommentThread({
         {/* Max depth reached indicator */}
         {!canReply && hasReplies && (
           <div
-            className="italic py-0.5"
+            className="italic"
             style={{
               color: "var(--muted)",
-              marginLeft: `${(depth + 1) * 12}px`,
-              paddingLeft: "6px",
+              marginLeft: `${(depth + 1) * 8}px`,
+              paddingLeft: "4px",
               fontSize: "0.6875rem",
             }}
           >
@@ -141,7 +141,7 @@ export default function CommentThread({
   }
 
   return (
-    <div className="space-y-0.5">
+    <div>
       {commentTree.map((comment) => renderComment(comment, 0))}
     </div>
   );
