@@ -6,10 +6,13 @@ import ThreadCard from "@/components/ThreadCard";
 import ForumCard from "@/components/ForumCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
+import { motion } from "framer-motion";
+
 interface Thread {
   id: string;
   title: string;
   content: string;
+  like_count: number;
   created_at: string;
   forum_id: string;
   user_id?: string;
@@ -42,6 +45,21 @@ interface HomeContentProps {
   forums: Forum[];
 }
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
 export default function HomeContent({
   recentThreads,
   featuredThreads,
@@ -55,7 +73,12 @@ export default function HomeContent({
         <Breadcrumbs items={[{ label: t("nav.home"), href: "/" }]} />
 
         {/* Hero Section */}
-        <div className="mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
+        >
           <h1
             className="text-4xl sm:text-5xl font-extrabold mb-4"
             style={{
@@ -75,7 +98,7 @@ export default function HomeContent({
           >
             {t("home.welcomeSubtitle")}
           </p>
-        </div>
+        </motion.div>
 
         {/* Forums List */}
         {forums.length > 0 && (
@@ -97,11 +120,18 @@ export default function HomeContent({
                 {t("home.forums")}
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               {forums.map((forum) => (
-                <ForumCard key={forum.id} forum={forum} />
+                <motion.div key={forum.id} variants={item}>
+                  <ForumCard forum={forum} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
         )}
 
@@ -127,16 +157,22 @@ export default function HomeContent({
                 {t("home.featuredThreads")}
               </h2>
             </div>
-            <div className="space-y-4">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="space-y-4"
+            >
               {featuredThreads.map((thread) => (
-                <ThreadCard
-                  key={thread.id}
-                  thread={thread}
-                  forumSlug={thread.forum?.slug || ""}
-                  featured
-                />
+                <motion.div key={thread.id} variants={item}>
+                  <ThreadCard
+                    thread={thread}
+                    forumSlug={thread.forum?.slug || ""}
+                    featured
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
         )}
 
@@ -164,15 +200,21 @@ export default function HomeContent({
               <p style={{ color: "var(--muted)" }}>{t("home.noThreads")}</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="space-y-4"
+            >
               {recentThreads.map((thread) => (
-                <ThreadCard
-                  key={thread.id}
-                  thread={thread}
-                  forumSlug={thread.forum?.slug || ""}
-                />
+                <motion.div key={thread.id} variants={item}>
+                  <ThreadCard
+                    thread={thread}
+                    forumSlug={thread.forum?.slug || ""}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </section>
       </div>
