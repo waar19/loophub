@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
 import KarmaProgress from "@/components/KarmaProgress";
+import UsernameChange from "@/components/UsernameChange";
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -15,6 +16,7 @@ export default function SettingsPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [canChangeUsername, setCanChangeUsername] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     bio: "",
@@ -43,6 +45,7 @@ export default function SettingsPage() {
             website: data.website || "",
             location: data.location || "",
           });
+          setCanChangeUsername(data.can_change_username ?? false);
         }
       } catch (error) {
         console.error("Error loading profile:", error);
@@ -288,7 +291,15 @@ export default function SettingsPage() {
 
         {/* Karma Progress Sidebar */}
         <div className="lg:col-span-1 order-1 lg:order-2">
-          <div className="lg:sticky lg:top-4">
+          <div className="lg:sticky lg:top-4 space-y-4">
+            <UsernameChange
+              currentUsername={formData.username}
+              canChange={canChangeUsername}
+              onUsernameChanged={(newUsername) => {
+                setFormData({ ...formData, username: newUsername });
+                setCanChangeUsername(false);
+              }}
+            />
             <KarmaProgress />
           </div>
         </div>

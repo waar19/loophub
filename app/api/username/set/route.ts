@@ -59,29 +59,40 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update profile with new username
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ username })
-      .eq('id', user.id);
+    // Use the change_username function to handle initial setup
+    const { data, error } = await supabase.rpc('change_username', {
+      new_username_param: username
+    });
 
-    if (updateError) {
-      // Check if it's a duplicate username error
-      if (updateError.code === '23505') {
-        return NextResponse.json(
-          { error: "Username is already taken" },
-          { status: 409 }
-        );
-      }
-      
-      console.error('Error setting username:', updateError);
+    if (error) {
+      console.error('Error setting username:', error);
       return NextResponse.json(
-        { error: "Error setting username" },
+        { error: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ success: true });
+    // The function returns a JSON object with the result
+    const result = data as {
+      success: boolean;
+      error?: string;
+      message?: string;
+      can_change?: boolean;
+      new_username?: string;
+    };
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      username: result.new_username,
+      can_change: result.can_change
+    });
 
   } catch (error) {
     console.error('Error in set username:', error);
