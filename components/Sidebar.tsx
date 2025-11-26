@@ -53,11 +53,11 @@ export default function Sidebar({ forums }: SidebarProps) {
       }}
       aria-label="Navegación principal de foros"
     >
-      <nav className="p-6 space-y-1">
-        <div className="mb-6">
+      <nav className="p-4 space-y-1">
+        <div className="mb-4">
           <Link
             href="/"
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm font-medium transition-colors ${
               pathname === "/" ? "" : ""
             }`}
             style={
@@ -85,7 +85,7 @@ export default function Sidebar({ forums }: SidebarProps) {
             }}
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -103,12 +103,12 @@ export default function Sidebar({ forums }: SidebarProps) {
 
         <div className="mb-4">
           <h3
-            className="px-3 text-xs font-semibold uppercase tracking-wider mb-3"
+            className="px-2 text-xs font-semibold uppercase tracking-wider mb-2"
             style={{ color: "var(--muted)" }}
           >
             {t("nav.forums")}
           </h3>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {forums.length === 0 ? (
               <p className="px-3 text-sm" style={{ color: "var(--muted)" }}>
                 {t("common.noForumsAvailable")}
@@ -121,7 +121,7 @@ export default function Sidebar({ forums }: SidebarProps) {
                   <Link
                     key={forum.id}
                     href={`/forum/${forum.slug}`}
-                    className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center justify-between gap-2 px-2 py-1.5 rounded text-sm transition-colors ${
                       active ? "" : ""
                     }`}
                     style={

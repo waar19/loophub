@@ -64,17 +64,17 @@ export default function Header() {
         boxShadow: "var(--shadow-sm)",
       }}
     >
-      <div className="h-full flex items-center justify-between px-4 sm:px-6 relative">
+      <div className="h-full flex items-center justify-between px-3 sm:px-4 relative">
         {/* Left side: Mobile menu + Logo */}
-        <div className="flex items-center gap-3 relative z-10">
+        <div className="flex items-center gap-2 relative z-10">
           <MobileMenu forums={forums} threadCounts={threadCounts} />
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold text-xl"
+            className="flex items-center gap-2 font-bold text-lg"
             style={{ color: "var(--foreground)" }}
           >
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white shrink-0"
+              className="w-7 h-7 rounded flex items-center justify-center font-bold text-white shrink-0"
               style={{ background: "var(--brand)" }}
             >
               L
@@ -85,13 +85,13 @@ export default function Header() {
 
         {/* Search Bar - Only on home and forum pages */}
         {(pathname === "/" || pathname?.startsWith("/forum/")) && (
-          <div className="flex-1 max-w-2xl mx-8 hidden md:block">
+          <div className="flex-1 max-w-2xl mx-6 hidden md:block">
             <SearchBar />
           </div>
         )}
 
         {/* Right side actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <LanguageSelector />
           {user && <NotificationBell />}
           <DarkModeToggle />

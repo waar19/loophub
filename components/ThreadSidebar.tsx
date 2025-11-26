@@ -1,41 +1,46 @@
+"use client";
+
 import Link from "next/link";
 import { Thread, Forum } from "@/lib/supabase";
+import { useTranslations } from "./TranslationsProvider";
 
 interface ThreadSidebarProps {
   thread: Thread & { forum: Forum };
 }
 
 export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
-  const date = new Date(thread.created_at).toLocaleDateString("es-ES", {
+  const { t, locale } = useTranslations();
+  
+  const date = new Date(thread.created_at).toLocaleDateString(locale === "es" ? "es-ES" : locale === "pt" ? "pt-BR" : "en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
   return (
-    <aside className="hidden xl:block w-80 shrink-0">
-      <div className="sticky top-24 space-y-3">
+    <aside className="hidden xl:block w-56 shrink-0">
+      <div className="sticky top-20 space-y-1.5">
         {/* Thread Info Card */}
-        <div className="card p-4">
+        <div className="card p-2">
           <h3
-            className="text-xs font-semibold mb-3 uppercase tracking-wider"
+            className="text-xs font-semibold mb-1.5 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
-            Información del Hilo
+            {t("threads.threadInfo")}
           </h3>
-          <div className="space-y-2.5">
+          <div className="space-y-1.5">
             {/* Author */}
             {thread.profile?.username && (
               <div>
                 <p
-                  className="text-xs font-medium mb-1.5"
+                  className="text-xs font-medium mb-0.5"
                   style={{ color: "var(--muted)" }}
                 >
-                  Autor
+                  {t("profile.author")}
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
+                    className="w-4 h-4 rounded-full flex items-center justify-center text-xs font-medium"
                     style={{
                       background: "var(--brand)",
                       color: "white",
@@ -56,17 +61,17 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {/* Forum */}
             <div>
               <p
-                className="text-xs font-medium mb-1.5"
+                className="text-xs font-medium mb-0.5"
                 style={{ color: "var(--muted)" }}
               >
-                Foro
+                {t("common.forum")}
               </p>
               <Link
                 href={`/forum/${thread.forum.slug}`}
                 className="inline-block"
               >
                 <span
-                  className="badge text-xs font-semibold px-2 py-0.5"
+                  className="badge text-xs font-semibold px-1.5 py-0.5"
                   style={{
                     background: "var(--brand)",
                     color: "white",
@@ -80,10 +85,10 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {/* Date */}
             <div>
               <p
-                className="text-xs font-medium mb-1.5"
+                className="text-xs font-medium mb-0.5"
                 style={{ color: "var(--muted)" }}
               >
-                Publicado
+                {t("threads.published")}
               </p>
               <p className="text-xs" style={{ color: "var(--foreground)" }}>
                 {date}
@@ -94,12 +99,12 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {thread._count && (
               <div>
                 <p
-                  className="text-xs font-medium mb-1.5"
+                  className="text-xs font-medium mb-0.5"
                   style={{ color: "var(--muted)" }}
                 >
-                  Comentarios
+                  {t("threads.comments")}
                 </p>
-                <p className="text-xs" style={{ color: "var(--foreground)" }}>
+                <p className="text-xs font-semibold" style={{ color: "var(--brand)" }}>
                   {thread._count.comments || 0}
                 </p>
               </div>
@@ -108,14 +113,14 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
         </div>
 
         {/* Related Links */}
-        <div className="card p-4">
+        <div className="card p-2">
           <h3
-            className="text-xs font-semibold mb-3 uppercase tracking-wider"
+            className="text-xs font-semibold mb-1.5 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
-            Enlaces Relacionados
+            {t("threads.relatedLinks")}
           </h3>
-          <div className="space-y-1.5">
+          <div className="space-y-0.5">
             <Link
               href={`/forum/${thread.forum.slug}`}
               className="block text-xs transition-colors"
@@ -127,7 +132,7 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
                 e.currentTarget.style.color = "var(--muted)";
               }}
             >
-              Ver todos los hilos de {thread.forum.name}
+              {t("threads.viewAllThreads")} {thread.forum.name}
             </Link>
             <Link
               href={`/forum/${thread.forum.slug}/new`}
@@ -140,23 +145,23 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
                 e.currentTarget.style.color = "var(--muted)";
               }}
             >
-              Crear nuevo hilo
+              {t("threads.createNewThread")}
             </Link>
           </div>
         </div>
 
         {/* Forum Rules */}
-        <div className="card p-4">
+        <div className="card p-2">
           <h3
-            className="text-xs font-semibold mb-3 uppercase tracking-wider"
+            className="text-xs font-semibold mb-1.5 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
-            Reglas del Foro
+            {t("threads.forumRules")}
           </h3>
-          <ul className="space-y-1.5 text-xs" style={{ color: "var(--muted)" }}>
-            <li>• Mantén las discusiones respetuosas</li>
-            <li>• Busca antes de crear duplicados</li>
-            <li>• Usa títulos descriptivos</li>
+          <ul className="space-y-0.5 text-xs" style={{ color: "var(--muted)" }}>
+            <li>• {t("threads.rule1")}</li>
+            <li>• {t("threads.rule2")}</li>
+            <li>• {t("threads.rule3")}</li>
           </ul>
         </div>
       </div>
