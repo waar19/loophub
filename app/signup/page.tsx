@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import { useTranslations } from "@/components/TranslationsProvider";
+import MetaHead from "@/components/MetaHead";
 
 export default function SignupPage() {
   const { t } = useTranslations();
@@ -58,129 +59,127 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16">
-      <div
-        className="card"
-        style={{
-          borderLeft: "4px solid var(--brand)",
-        }}
-      >
-        <div className="flex items-center gap-3 mb-8">
-          <div
-            className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
-            style={{
-              background: "var(--brand)",
-              color: "white",
-            }}
-          >
-            ✨
-          </div>
-          <h1
-            className="text-4xl font-extrabold"
-            style={{
-              background:
-                "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            {t("auth.signup")}
-          </h1>
-        </div>
-
-        <form onSubmit={handleSignup} className="space-y-4">
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium mb-2"
-            >
-              {t("auth.username")}
-            </label>
-            <input
-              id="username"
-              type="text"
-              className="input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              disabled={loading}
-              placeholder="johndoe"
-            />
-            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              Solo letras, números y guiones bajos
-            </p>
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2">
-              {t("auth.email")}
-            </label>
-            <input
-              id="email"
-              type="email"
-              className="input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium mb-2"
-            >
-              {t("auth.password")}
-            </label>
-            <input
-              id="password"
-              type="password"
-              className="input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading}
-              minLength={6}
-            />
-            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              Mínimo 6 caracteres
-            </p>
-          </div>
-
-          {error && (
+    <>
+      <MetaHead
+        title="Loophub - Sign Up"
+        description="Create an account on Loophub"
+      />
+      <div className="max-w-md mx-auto mt-16">
+        <div className="card" style={{ borderLeft: "4px solid var(--brand)" }}>
+          <div className="flex items-center gap-3 mb-8">
             <div
-              className="p-3 rounded border"
+              className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+              style={{ background: "var(--brand)", color: "white" }}
+            >
+              ✨
+            </div>
+            <h1
+              className="text-4xl font-extrabold"
               style={{
-                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                color: "#ef4444",
-                borderColor: "rgba(239, 68, 68, 0.3)",
+                background:
+                  "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
             >
-              {error}
+              {t("auth.signup")}
+            </h1>
+          </div>
+
+          <form onSubmit={handleSignup} className="space-y-4">
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium mb-2"
+              >
+                {t("auth.username")}
+              </label>
+              <input
+                id="username"
+                type="text"
+                className="input"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                disabled={loading}
+                placeholder="johndoe"
+              />
+              <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+                Solo letras, números y guiones bajos
+              </p>
             </div>
-          )}
 
-          <button
-            type="submit"
-            className="btn btn-primary w-full"
-            disabled={loading}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium mb-2">
+                {t("auth.email")}
+              </label>
+              <input
+                id="email"
+                type="email"
+                className="input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-2"
+              >
+                {t("auth.password")}
+              </label>
+              <input
+                id="password"
+                type="password"
+                className="input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+                minLength={6}
+              />
+              <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+                Mínimo 6 caracteres
+              </p>
+            </div>
+
+            {error && (
+              <div
+                className="p-3 rounded border"
+                style={{
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  color: "#ef4444",
+                  borderColor: "rgba(239, 68, 68, 0.3)",
+                }}
+              >
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={loading}
+            >
+              {loading ? t("common.loading") : t("auth.signup")}
+            </button>
+          </form>
+
+          <p
+            className="mt-6 text-center text-sm"
+            style={{ color: "var(--muted)" }}
           >
-            {loading ? t("common.loading") : t("auth.signup")}
-          </button>
-        </form>
-
-        <p
-          className="mt-6 text-center text-sm"
-          style={{ color: "var(--muted)" }}
-        >
-          {t("auth.haveAccount")}{" "}
-          <Link href="/login" style={{ color: "var(--accent)" }}>
-            {t("auth.loginHere")}
-          </Link>
-        </p>
+            {t("auth.haveAccount")}{" "}
+            <Link href="/login" style={{ color: "var(--accent)" }}>
+              {t("auth.loginHere")}
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

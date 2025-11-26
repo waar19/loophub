@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import DeleteButton from "@/components/DeleteButton";
 
 export default async function AdminDashboard() {
@@ -29,10 +29,10 @@ export default async function AdminDashboard() {
         <Link
           href="/"
           className="btn"
-          style={{ 
-            background: "var(--card-bg)", 
+          style={{
+            background: "var(--card-bg)",
             color: "var(--foreground)",
-            border: "1px solid var(--border)" 
+            border: "1px solid var(--border)",
           }}
         >
           Back to Site
@@ -49,11 +49,11 @@ export default async function AdminDashboard() {
                 <div key={report.id} className="border-b pb-2 last:border-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span 
+                      <span
                         className="text-xs font-bold uppercase px-2 py-1 rounded mr-2"
                         style={{
                           background: "rgba(239, 68, 68, 0.1)",
-                          color: "#ef4444"
+                          color: "#ef4444",
                         }}
                       >
                         {report.content_type}
@@ -62,10 +62,7 @@ export default async function AdminDashboard() {
                         {report.reason}
                       </span>
                     </div>
-                    <span 
-                      className="text-xs"
-                      style={{ color: "var(--muted)" }}
-                    >
+                    <span className="text-xs" style={{ color: "var(--muted)" }}>
                       {new Date(report.created_at).toLocaleDateString()}
                     </span>
                   </div>
@@ -76,10 +73,7 @@ export default async function AdminDashboard() {
               ))}
             </div>
           ) : (
-            <p 
-              className="text-sm"
-              style={{ color: "var(--muted)" }}
-            >
+            <p className="text-sm" style={{ color: "var(--muted)" }}>
               No reports found.
             </p>
           )}
@@ -101,10 +95,7 @@ export default async function AdminDashboard() {
                   >
                     {thread.title}
                   </Link>
-                  <div 
-                    className="text-xs"
-                    style={{ color: "var(--muted)" }}
-                  >
+                  <div className="text-xs" style={{ color: "var(--muted)" }}>
                     by {thread.profile?.username || "Unknown"} •{" "}
                     {new Date(thread.created_at).toLocaleDateString()}
                   </div>

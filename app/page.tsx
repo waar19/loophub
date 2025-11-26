@@ -1,6 +1,7 @@
 import HomeContent from "@/components/HomeContent";
 
 import { createClient } from "@/lib/supabase-server";
+import MetaHead from "@/components/MetaHead";
 import {
   getProfilesMap,
   getCommentCountsMap,
@@ -158,10 +159,16 @@ export default async function HomePage() {
   ]);
 
   return (
-    <HomeContent
-      recentThreads={recentThreads}
-      featuredThreads={featuredThreads}
-      forums={forums}
-    />
+    <>
+      <MetaHead
+        title="Loophub - Home"
+        description="Explore the latest threads and forums on Loophub"
+      />
+      <HomeContent
+        recentThreads={recentThreads}
+        featuredThreads={featuredThreads}
+        forums={forums}
+      />
+    </>
   );
 }

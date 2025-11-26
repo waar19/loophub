@@ -10,6 +10,7 @@ import TrendingPanel from "@/components/TrendingPanel";
 import ThreadSortFilter from "@/components/ThreadSortFilter";
 import { Thread } from "@/lib/supabase";
 import { useTranslations } from "@/components/TranslationsProvider";
+import MetaHead from "@/components/MetaHead";
 
 interface Forum {
   id: string;
@@ -149,238 +150,250 @@ export default function ForumPage({
   const forumIcon = forumIcons[slug] || "💬";
 
   return (
-    <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <Breadcrumbs
-          items={[
-            { label: t("common.home"), href: "/" },
-            { label: forum.name, href: `/forum/${slug}` },
-          ]}
-        />
+    <>
+      <MetaHead
+        title={`${forum.name} - Loophub`}
+        description={
+          forum.description ||
+          `Explore discussions in ${forum.name} forum on Loophub`
+        }
+      />
+      <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <Breadcrumbs
+            items={[
+              { label: t("common.home"), href: "/" },
+              { label: forum.name, href: `/forum/${slug}` },
+            ]}
+          />
 
-        {/* Forum Header */}
-        <div
-          className="card mb-12 overflow-hidden"
-          style={{
-            borderLeft: `4px solid ${forumColor}`,
-            background: `linear-gradient(to right, ${forumColor}15, var(--card-bg))`,
-            boxShadow: `0 4px 12px ${forumColor}20, var(--shadow-md)`,
-          }}
-        >
-          <div className="flex items-start gap-6">
-            <div
-              className="w-20 h-20 rounded-xl flex items-center justify-center text-4xl shrink-0 transition-transform hover:scale-110"
-              style={{
-                background: `linear-gradient(135deg, ${forumColor} 0%, ${forumColor}CC 100%)`,
-                boxShadow: `0 4px 12px ${forumColor}40`,
-              }}
-            >
-              {forumIcon}
-            </div>
-            <div className="flex-1">
-              <h1
-                className="text-3xl sm:text-4xl font-extrabold mb-3"
+          {/* Forum Header */}
+          <div
+            className="card mb-12 overflow-hidden"
+            style={{
+              borderLeft: `4px solid ${forumColor}`,
+              background: `linear-gradient(to right, ${forumColor}15, var(--card-bg))`,
+              boxShadow: `0 4px 12px ${forumColor}20, var(--shadow-md)`,
+            }}
+          >
+            <div className="flex items-start gap-6">
+              <div
+                className="w-20 h-20 rounded-xl flex items-center justify-center text-4xl shrink-0 transition-transform hover:scale-110"
                 style={{
-                  color: "var(--foreground)",
-                  background: `linear-gradient(135deg, var(--foreground) 0%, ${forumColor} 100%)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  background: `linear-gradient(135deg, ${forumColor} 0%, ${forumColor}CC 100%)`,
+                  boxShadow: `0 4px 12px ${forumColor}40`,
                 }}
               >
-                {forum.name}
-              </h1>
-              {forum.description && (
-                <p
-                  className="text-lg mb-6 leading-relaxed"
-                  style={{ color: "var(--muted)" }}
+                {forumIcon}
+              </div>
+              <div className="flex-1">
+                <h1
+                  className="text-3xl sm:text-4xl font-extrabold mb-3"
+                  style={{
+                    color: "var(--foreground)",
+                    background: `linear-gradient(135deg, var(--foreground) 0%, ${forumColor} 100%)`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
                 >
-                  {forum.description}
-                </p>
-              )}
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
+                  {forum.name}
+                </h1>
+                {forum.description && (
+                  <p
+                    className="text-lg mb-6 leading-relaxed"
+                    style={{ color: "var(--muted)" }}
+                  >
+                    {forum.description}
+                  </p>
+                )}
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                      style={{
+                        background: "var(--brand)",
+                        color: "white",
+                        boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
+                      }}
+                    >
+                      📝
+                    </div>
+                    <span
+                      className="text-base font-semibold"
+                      style={{ color: "var(--foreground)" }}
+                    >
+                      {pagination.total}{" "}
+                      {pagination.total === 1
+                        ? t("threads.thread")
+                        : t("threads.threads")}
+                    </span>
+                  </div>
+                  <Link href={`/forum/${slug}/new`} className="btn btn-primary">
+                    + {t("threads.newThread")}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Threads List */}
+          {threads.length === 0 ? (
+            <div className="card text-center py-16 mb-12">
+              <div
+                className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+                style={{
+                  background: "var(--brand-light)",
+                }}
+              >
+                💭
+              </div>
+              <h3
+                className="text-2xl font-bold mb-3"
+                style={{ color: "var(--foreground)" }}
+              >
+                {t("threads.noThreads")}
+              </h3>
+              <p style={{ color: "var(--muted)" }} className="mb-6 text-lg">
+                {t("threads.beFirstDiscussion")}
+              </p>
+              <Link href={`/forum/${slug}/new`} className="btn btn-primary">
+                {t("threads.createFirstThread")}
+              </Link>
+            </div>
+          ) : (
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
                     style={{
                       background: "var(--brand)",
                       color: "white",
-                      boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
                     }}
                   >
-                    📝
+                    📋
                   </div>
-                  <span
-                    className="text-base font-semibold"
+                  <h2
+                    className="text-3xl font-bold"
                     style={{ color: "var(--foreground)" }}
                   >
-                    {pagination.total}{" "}
-                    {pagination.total === 1
-                      ? t("threads.thread")
-                      : t("threads.threads")}
-                  </span>
+                    {t("threads.title")}
+                  </h2>
                 </div>
-                <Link href={`/forum/${slug}/new`} className="btn btn-primary">
-                  + {t("threads.newThread")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Threads List */}
-        {threads.length === 0 ? (
-          <div className="card text-center py-16 mb-12">
-            <div
-              className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
-              style={{
-                background: "var(--brand-light)",
-              }}
-            >
-              💭
-            </div>
-            <h3
-              className="text-2xl font-bold mb-3"
-              style={{ color: "var(--foreground)" }}
-            >
-              {t("threads.noThreads")}
-            </h3>
-            <p style={{ color: "var(--muted)" }} className="mb-6 text-lg">
-              {t("threads.beFirstDiscussion")}
-            </p>
-            <Link href={`/forum/${slug}/new`} className="btn btn-primary">
-              {t("threads.createFirstThread")}
-            </Link>
-          </div>
-        ) : (
-          <div className="mb-12">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-                  style={{
-                    background: "var(--brand)",
-                    color: "white",
+                <ThreadSortFilter
+                  currentSort={sortBy}
+                  onSortChange={(sort) => {
+                    setSortBy(sort);
+                    setPage(1);
+                    setData(null);
                   }}
-                >
-                  📋
-                </div>
-                <h2
-                  className="text-3xl font-bold"
-                  style={{ color: "var(--foreground)" }}
-                >
-                  {t("threads.title")}
-                </h2>
+                />
               </div>
-              <ThreadSortFilter
-                currentSort={sortBy}
-                onSortChange={(sort) => {
-                  setSortBy(sort);
-                  setPage(1);
-                  setData(null);
-                }}
-              />
-            </div>
-            <InfiniteScroll
-              hasMore={pagination.hasMore}
-              isLoading={isLoadingMore}
-              onLoadMore={handleLoadMore}
-              loader={
-                <div className="space-y-4 mt-4">
-                  {[1, 2].map((i) => (
-                    <LoadingSkeleton key={i} />
+              <InfiniteScroll
+                hasMore={pagination.hasMore}
+                isLoading={isLoadingMore}
+                onLoadMore={handleLoadMore}
+                loader={
+                  <div className="space-y-4 mt-4">
+                    {[1, 2].map((i) => (
+                      <LoadingSkeleton key={i} />
+                    ))}
+                  </div>
+                }
+                endMessage={
+                  <p
+                    className="text-center mt-6 text-lg"
+                    style={{ color: "var(--muted)" }}
+                  >
+                    {t("threads.noMoreThreads")}
+                  </p>
+                }
+              >
+                <div className="space-y-4">
+                  {threads.map((thread) => (
+                    <ThreadCard
+                      key={thread.id}
+                      thread={thread}
+                      forumSlug={slug}
+                    />
                   ))}
                 </div>
-              }
-              endMessage={
-                <p
-                  className="text-center mt-6 text-lg"
-                  style={{ color: "var(--muted)" }}
-                >
-                  {t("threads.noMoreThreads")}
-                </p>
-              }
-            >
-              <div className="space-y-4">
-                {threads.map((thread) => (
-                  <ThreadCard
-                    key={thread.id}
-                    thread={thread}
-                    forumSlug={slug}
-                  />
-                ))}
-              </div>
-            </InfiniteScroll>
-          </div>
-        )}
-
-        {/* Forum Rules */}
-        <div
-          className="card mt-12"
-          style={{
-            borderLeft: `4px solid var(--brand)`,
-          }}
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-              style={{
-                background: "var(--brand)",
-                color: "white",
-              }}
-            >
-              📜
+              </InfiniteScroll>
             </div>
-            <h3
-              className="text-2xl font-bold"
-              style={{ color: "var(--foreground)" }}
-            >
-              {t("forums.rules")}
-            </h3>
-          </div>
-          <ul className="space-y-3 text-base" style={{ color: "var(--muted)" }}>
-            <li className="flex items-start gap-3">
-              <span
-                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand)",
-                }}
-              >
-                1
-              </span>
-              <span>{t("forums.rule1")}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span
-                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand)",
-                }}
-              >
-                2
-              </span>
-              <span>{t("forums.rule2")}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span
-                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand)",
-                }}
-              >
-                3
-              </span>
-              <span>{t("forums.rule3")}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
+          )}
 
-      {/* Trending Panel */}
-      <TrendingPanel />
-    </div>
+          {/* Forum Rules */}
+          <div
+            className="card mt-12"
+            style={{
+              borderLeft: `4px solid var(--brand)`,
+            }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                style={{
+                  background: "var(--brand)",
+                  color: "white",
+                }}
+              >
+                📜
+              </div>
+              <h3
+                className="text-2xl font-bold"
+                style={{ color: "var(--foreground)" }}
+              >
+                {t("forums.rules")}
+              </h3>
+            </div>
+            <ul
+              className="space-y-3 text-base"
+              style={{ color: "var(--muted)" }}
+            >
+              <li className="flex items-start gap-3">
+                <span
+                  className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{
+                    background: "var(--brand-light)",
+                    color: "var(--brand)",
+                  }}
+                >
+                  1
+                </span>
+                <span>{t("forums.rule1")}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span
+                  className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{
+                    background: "var(--brand-light)",
+                    color: "var(--brand)",
+                  }}
+                >
+                  2
+                </span>
+                <span>{t("forums.rule2")}</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span
+                  className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{
+                    background: "var(--brand-light)",
+                    color: "var(--brand)",
+                  }}
+                >
+                  3
+                </span>
+                <span>{t("forums.rule3")}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Trending Panel */}
+        <TrendingPanel />
+      </div>
+    </>
   );
 }
