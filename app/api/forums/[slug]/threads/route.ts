@@ -10,8 +10,7 @@ import {
   handleApiError,
   checkRateLimit,
 } from "@/lib/api-helpers";
-import { cache, CACHE_KEYS, CACHE_TTL } from "@/lib/cache";
-
+import { cache, CACHE_KEYS } from "@/lib/cache";
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
@@ -21,7 +20,10 @@ export async function GET(
     const { slug } = await params;
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100); // Max 100 per page
+    const limit = Math.min(
+      parseInt(searchParams.get("limit") || "20", 10),
+      100
+    ); // Max 100 per page
     const offset = (page - 1) * limit;
     const sortBy = searchParams.get("sort") || "newest"; // newest, oldest, most_comments, least_comments
     const order = searchParams.get("order") || "desc"; // asc, desc
@@ -51,7 +53,7 @@ export async function GET(
     // Determine sort column and direction
     let sortColumn = "created_at";
     let ascending = false;
-    
+
     switch (sortBy) {
       case "oldest":
         sortColumn = "created_at";
@@ -88,7 +90,7 @@ export async function GET(
     // Get profiles and comment counts using helper functions
     const userIds = extractUserIds(threads || []);
     const threadIds = extractThreadIds(
-      (threads || []).map((t: any) => ({ thread_id: t.id }))
+      (threads || []).map((t) => ({ thread_id: t.id }))
     );
 
     const [profilesMap, commentCountsMap] = await Promise.all([
@@ -97,7 +99,8 @@ export async function GET(
     ]);
 
     // Transform threads with comment counts and profiles
-    let threadsWithCount = (threads || []).map((thread: any) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const threadsWithCount = (threads || []).map((thread: any) => ({
       ...thread,
       profile: thread.user_id ? profilesMap[thread.user_id] : null,
       _count: {
@@ -120,7 +123,9 @@ export async function GET(
 
     return NextResponse.json({
       forum,
-        threads: threadsWithCount.map((thread: any) => ({
+      threads:
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        threadsWithCount.map((thread: any) => ({
           ...thread,
           user_id: thread.user_id, // Keep user_id for client-side ownership checks
         })) || [],
@@ -129,32 +134,37 @@ export async function GET(
         limit,
         total: totalCount || 0,
         totalPages: Math.ceil((totalCount || 0) / limit),
-        hasMore: (offset + limit) < (totalCount || 0),
+        hasMore: offset + limit < (totalCount || 0),
       },
     });
   } catch (error) {
     console.error("Error fetching threads:", error);
-    
+
     // Better error handling for Supabase errors
     let errorMessage = "Unknown error";
     if (error instanceof Error) {
       errorMessage = error.message;
-    } else if (typeof error === 'object' && error !== null) {
+    } else if (typeof error === "object" && error !== null) {
       // Handle Supabase error objects
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const supabaseError = error as any;
       if (supabaseError.message) {
         errorMessage = supabaseError.message;
       } else if (supabaseError.code) {
-        errorMessage = `Error ${supabaseError.code}: ${supabaseError.message || 'Database error'}`;
+        errorMessage = `Error ${supabaseError.code}: ${
+          supabaseError.message || "Database error"
+        }`;
       }
     }
-    
+
     return NextResponse.json(
-      { 
-        error: "Failed to fetch threads", 
+      {
+        error: "Failed to fetch threads",
         details: errorMessage,
         // Include full error in development
-        ...(process.env.NODE_ENV === 'development' && { fullError: JSON.stringify(error) })
+        ...(process.env.NODE_ENV === "development" && {
+          fullError: JSON.stringify(error),
+        }),
       },
       { status: 500 }
     );
@@ -214,6 +224,9 @@ export async function POST(
         { status: 401 }
       );
     }
-    return handleApiError(error, "Error al crear el hilo. Por favor intenta de nuevo.");
+    return handleApiError(
+      error,
+      "Error al crear el hilo. Por favor intenta de nuevo."
+    );
   }
 }

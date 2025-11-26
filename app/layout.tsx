@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     default: "LoopHub - Minimalismo Digital y Organización Personal",
     template: "%s | LoopHub",
   },
-  description: "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
+  description:
+    "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
   keywords: [
     "minimalismo digital",
     "organización personal",
@@ -43,7 +44,8 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "LoopHub",
     title: "LoopHub - Minimalismo Digital y Organización Personal",
-    description: "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
+    description:
+      "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
     images: [
       {
         url: `${baseUrl}/og-image.png`, // Update with your actual OG image
@@ -56,7 +58,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "LoopHub - Minimalismo Digital y Organización Personal",
-    description: "Comunidad enfocada en minimalismo digital, organización personal, productividad realista",
+    description:
+      "Comunidad enfocada en minimalismo digital, organización personal, productividad realista",
     creator: "@loophub",
     images: [
       {
@@ -90,6 +93,23 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <WebsiteStructuredData />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var savedTheme = localStorage.getItem("theme");
+                  var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                  if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add("dark");
+                  } else {
+                    document.documentElement.classList.remove("dark");
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.variable} antialiased`}>
         <TranslationsProvider>

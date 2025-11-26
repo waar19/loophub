@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase-server";
+
 import { createCommentSchema } from "@/lib/validations";
 import { requireAuth, handleApiError } from "@/lib/api-helpers";
 
@@ -105,4 +105,3 @@ export async function DELETE(
     return handleApiError(error, "Error al eliminar el comentario");
   }
 }
-

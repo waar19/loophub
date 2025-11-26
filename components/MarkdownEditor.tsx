@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import MarkdownRenderer from "./MarkdownRenderer";
+import dynamic from "next/dynamic";
+// Lazy load MarkdownRenderer
+const MarkdownRenderer = dynamic(() => import("./MarkdownRenderer"), {
+  loading: () => <div className="skeleton h-40 w-full" />,
+});
 
 interface MarkdownEditorProps {
   value: string;
@@ -31,20 +35,18 @@ export default function MarkdownEditor({
             type="button"
             onClick={() => setMode("edit")}
             className={`px-3 py-1 text-sm rounded transition-colors ${
-              mode === "edit"
-                ? ""
-                : ""
+              mode === "edit" ? "" : ""
             }`}
             style={
               mode === "edit"
                 ? {
                     background: "var(--accent)",
-                    color: "white"
+                    color: "white",
                   }
                 : {
                     background: "var(--card-bg)",
                     color: "var(--foreground)",
-                    border: "1px solid var(--border)"
+                    border: "1px solid var(--border)",
                   }
             }
             onMouseEnter={(e) => {
@@ -64,20 +66,18 @@ export default function MarkdownEditor({
             type="button"
             onClick={() => setMode("preview")}
             className={`px-3 py-1 text-sm rounded transition-colors ${
-              mode === "preview"
-                ? ""
-                : ""
+              mode === "preview" ? "" : ""
             }`}
             style={
               mode === "preview"
                 ? {
                     background: "var(--accent)",
-                    color: "white"
+                    color: "white",
                   }
                 : {
                     background: "var(--card-bg)",
                     color: "var(--foreground)",
-                    border: "1px solid var(--border)"
+                    border: "1px solid var(--border)",
                   }
             }
             onMouseEnter={(e) => {
@@ -97,20 +97,18 @@ export default function MarkdownEditor({
             type="button"
             onClick={() => setMode("split")}
             className={`px-3 py-1 text-sm rounded transition-colors ${
-              mode === "split"
-                ? ""
-                : ""
+              mode === "split" ? "" : ""
             }`}
             style={
               mode === "split"
                 ? {
                     background: "var(--accent)",
-                    color: "white"
+                    color: "white",
                   }
                 : {
                     background: "var(--card-bg)",
                     color: "var(--foreground)",
-                    border: "1px solid var(--border)"
+                    border: "1px solid var(--border)",
                   }
             }
             onMouseEnter={(e) => {
@@ -128,10 +126,7 @@ export default function MarkdownEditor({
           </button>
         </div>
         {maxLength && (
-          <span
-            className="text-xs"
-            style={{ color: "var(--muted)" }}
-          >
+          <span className="text-xs" style={{ color: "var(--muted)" }}>
             {value.length} / {maxLength}
           </span>
         )}
@@ -175,4 +170,3 @@ export default function MarkdownEditor({
     </div>
   );
 }
-

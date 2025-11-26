@@ -34,14 +34,23 @@ export default function DeleteButton({ id, type }: DeleteButtonProps) {
   };
 
   return (
-    <Tooltip content="Eliminar permanentemente" position="top" disabled={loading}>
+    <Tooltip
+      content="Eliminar permanentemente"
+      position="top"
+      disabled={loading}
+    >
       <button
         onClick={handleDelete}
         disabled={loading}
+        aria-label="Eliminar elemento"
         className="text-xs font-medium disabled:opacity-50 transition-colors"
         style={{ color: "#ef4444" }}
-        onMouseEnter={(e) => !loading && (e.currentTarget.style.color = "#dc2626")}
-        onMouseLeave={(e) => !loading && (e.currentTarget.style.color = "#ef4444")}
+        onMouseEnter={(e) =>
+          !loading && (e.currentTarget.style.color = "#dc2626")
+        }
+        onMouseLeave={(e) =>
+          !loading && (e.currentTarget.style.color = "#ef4444")
+        }
       >
         {loading ? "Deleting..." : "Delete"}
       </button>
