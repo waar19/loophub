@@ -40,30 +40,35 @@ export default function KarmaProgress() {
   const nextLevelName = permissions.level < 5 ? `${t('gamification.level')} ${permissions.level + 1}` : t('gamification.maxLevel');
 
   return (
-    <div className="card space-y-6">
+    <div className="card space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{t('gamification.karmaProgress')}</h2>
-        <div
-          className="px-4 py-2 rounded-full text-white font-bold"
-          style={{ backgroundColor: levelColor }}
-        >
-          {formatKarma(permissions.karma)} {t('profile.karma').toLowerCase()}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{t('gamification.karmaProgress')}</h2>
+          <div
+            className="px-3 py-1 rounded-lg font-bold text-xs"
+            style={{ 
+              backgroundColor: levelColor,
+              color: 'white',
+            }}
+          >
+            {formatKarma(permissions.karma)}
+          </div>
         </div>
       </div>
 
       {/* Nivel actual y progreso */}
       <div className="space-y-3">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-2">
           <div>
-            <div className="text-sm" style={{ color: 'var(--muted)' }}>{t('gamification.currentLevel')}</div>
-            <div className="text-xl font-bold" style={{ color: levelColor }}>
+            <div className="text-xs sm:text-sm" style={{ color: 'var(--muted)' }}>{t('gamification.currentLevel')}</div>
+            <div className="text-base sm:text-lg lg:text-xl font-bold" style={{ color: levelColor }}>
               {permissions.levelName}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm" style={{ color: 'var(--muted)' }}>{t('gamification.nextLevel')}</div>
-            <div className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>{nextLevelName}</div>
+            <div className="text-xs sm:text-sm" style={{ color: 'var(--muted)' }}>{t('gamification.nextLevel')}</div>
+            <div className="text-base sm:text-lg lg:text-xl font-bold" style={{ color: 'var(--foreground)' }}>{nextLevelName}</div>
           </div>
         </div>
 
@@ -82,12 +87,12 @@ export default function KarmaProgress() {
                 {permissions.progressToNextLevel.toFixed(1)}%
               </div>
             </div>
-            <div className="flex justify-between text-sm" style={{ color: 'var(--muted)' }}>
-              <span>{formatKarma(permissions.karma)} {t('gamification.currentLevel').toLowerCase()}</span>
-              <span className="font-semibold">
+            <div className="flex flex-wrap justify-between gap-2 text-xs sm:text-sm" style={{ color: 'var(--muted)' }}>
+              <span className="whitespace-nowrap">{formatKarma(permissions.karma)} actual</span>
+              <span className="font-semibold whitespace-nowrap">
                 {permissions.karmaToNextLevel} {t('gamification.karmaRemaining')}
               </span>
-              <span>{formatKarma(permissions.karma + permissions.karmaToNextLevel)} necesario</span>
+              <span className="hidden sm:inline whitespace-nowrap">{formatKarma(permissions.karma + permissions.karmaToNextLevel)} necesario</span>
             </div>
           </div>
         )}
@@ -96,7 +101,7 @@ export default function KarmaProgress() {
       {/* Desglose de karma */}
       {breakdown && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-lg" style={{ color: 'var(--foreground)' }}>{t('gamification.karmaBreakdown')}</h3>
+          <h3 className="font-semibold text-base sm:text-lg" style={{ color: 'var(--foreground)' }}>{t('gamification.karmaBreakdown')}</h3>
           
           <div className="space-y-2">
             <KarmaSource
@@ -140,9 +145,9 @@ export default function KarmaProgress() {
       )}
 
       {/* Tips para ganar karma */}
-      <div className="p-4 rounded-lg" style={{ background: 'var(--accent-light)', borderColor: 'var(--accent)', border: '1px solid' }}>
-        <h4 className="font-semibold mb-2" style={{ color: 'var(--brand)' }}>💡 {t('gamification.howToEarn')}</h4>
-        <ul className="text-sm space-y-1" style={{ color: 'var(--foreground)' }}>
+      <div className="p-3 sm:p-4 rounded-lg" style={{ background: 'var(--accent-light)', borderColor: 'var(--accent)', border: '1px solid' }}>
+        <h4 className="font-semibold mb-2 text-sm sm:text-base" style={{ color: 'var(--brand)' }}>💡 {t('gamification.howToEarn')}</h4>
+        <ul className="text-xs sm:text-sm space-y-1" style={{ color: 'var(--foreground)' }}>
           <li>• {t('gamification.earnThreads')} ({t('gamification.earnThreadsDetail')})</li>
           <li>• {t('gamification.earnComments')} ({t('gamification.earnCommentsDetail')})</li>
           <li>• {t('gamification.earnLikes')} ({t('gamification.earnLikesDetail')})</li>
@@ -153,12 +158,12 @@ export default function KarmaProgress() {
 
       {/* Siguiente milestone */}
       {permissions.level < 5 && (
-        <div className="p-4 rounded-lg" style={{ background: 'var(--card-bg)', borderColor: 'var(--brand)', border: '1px solid' }}>
+        <div className="p-3 sm:p-4 rounded-lg" style={{ background: 'var(--card-bg)', borderColor: 'var(--brand)', border: '1px solid' }}>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl">🎯</span>
-            <h4 className="font-semibold" style={{ color: 'var(--brand)' }}>Próximo objetivo</h4>
+            <span className="text-xl sm:text-2xl">🎯</span>
+            <h4 className="font-semibold text-sm sm:text-base" style={{ color: 'var(--brand)' }}>Próximo objetivo</h4>
           </div>
-          <p className="text-sm" style={{ color: 'var(--foreground)' }}>
+          <p className="text-xs sm:text-sm" style={{ color: 'var(--foreground)' }}>
             {t('gamification.unlockFeatures')}: <strong>{formatKarma(permissions.karma + permissions.karmaToNextLevel)} karma</strong> para
             desbloquear el {t('gamification.level').toLowerCase()} <strong>{permissions.level + 1}</strong>.
           </p>

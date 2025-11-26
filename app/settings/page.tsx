@@ -106,19 +106,19 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto py-8 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="container max-w-6xl mx-auto py-4 sm:py-8 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Main Settings Form */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 order-2 lg:order-1">
           <div className="card">
             <h1
-              className="text-2xl font-bold mb-6"
+              className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6"
               style={{ color: "var(--foreground)" }}
             >
               {t("settings.title")}
             </h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Username (Read-only) */}
           <div>
             <label
@@ -258,16 +258,16 @@ export default function SettingsPage() {
 
         {/* Additional Info */}
         <div
-          className="mt-8 pt-6 border-t"
+          className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t"
           style={{ borderColor: "var(--border)" }}
         >
           <h2
-            className="text-lg font-semibold mb-3"
+            className="text-base sm:text-lg font-semibold mb-2 sm:mb-3"
             style={{ color: "var(--foreground)" }}
           >
             {t("settings.additionalInfo")}
           </h2>
-          <div className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
+          <div className="space-y-2 text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
             <p>• {t("settings.reputationInfo")}</p>
             <p>
               • {t("settings.profilePublic")}{" "}
@@ -287,8 +287,10 @@ export default function SettingsPage() {
         </div>
 
         {/* Karma Progress Sidebar */}
-        <div className="lg:col-span-1">
-          <KarmaProgress />
+        <div className="lg:col-span-1 order-1 lg:order-2">
+          <div className="lg:sticky lg:top-4">
+            <KarmaProgress />
+          </div>
         </div>
       </div>
     </div>

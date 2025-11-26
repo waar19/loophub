@@ -149,19 +149,19 @@ export default function OnboardingPage() {
         title="Welcome to LoopHub - Choose Your Username"
         description="Complete your profile by choosing a unique username"
       />
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12">
         <div className="max-w-md w-full">
           <div className="card" style={{ borderLeft: "4px solid var(--brand)" }}>
             {/* Header */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6 sm:mb-8">
               <div
-                className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-4xl mb-4"
+                className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full flex items-center justify-center text-3xl sm:text-4xl mb-3 sm:mb-4"
                 style={{ background: "var(--brand)", color: "white" }}
               >
                 👋
               </div>
               <h1
-                className="text-3xl font-extrabold mb-2"
+                className="text-2xl sm:text-3xl font-extrabold mb-2"
                 style={{
                   background: "linear-gradient(135deg, var(--foreground) 0%, var(--brand) 100%)",
                   WebkitBackgroundClip: "text",
@@ -170,13 +170,13 @@ export default function OnboardingPage() {
               >
                 {t("onboarding.welcome")}
               </h1>
-              <p style={{ color: "var(--muted)" }}>
+              <p className="text-sm sm:text-base" style={{ color: "var(--muted)" }}>
                 {t("onboarding.chooseUsername")}
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div>
                 <label
                   htmlFor="username"
@@ -229,7 +229,7 @@ export default function OnboardingPage() {
                 <p className="text-sm font-medium mb-2" style={{ color: "var(--foreground)" }}>
                   {t("onboarding.requirements")}:
                 </p>
-                <ul className="text-sm space-y-1" style={{ color: "var(--muted)" }}>
+                <ul className="text-xs sm:text-sm space-y-1" style={{ color: "var(--muted)" }}>
                   <li className={username.length >= 3 && username.length <= 30 ? "text-green-600" : ""}>
                     • 3-30 {t("onboarding.characters")}
                   </li>
@@ -245,7 +245,7 @@ export default function OnboardingPage() {
               {/* Submit button */}
               <button
                 type="submit"
-                className="btn-primary w-full"
+                className="btn-primary w-full text-sm sm:text-base"
                 disabled={isSubmitting || isChecking || !isAvailable}
               >
                 {isSubmitting ? t("onboarding.creating") : t("onboarding.continue")}
@@ -253,8 +253,8 @@ export default function OnboardingPage() {
             </form>
 
             {/* Info footer */}
-            <div className="mt-6 pt-6" style={{ borderTop: "1px solid var(--border)" }}>
-              <p className="text-sm text-center" style={{ color: "var(--muted)" }}>
+            <div className="mt-4 sm:mt-6 pt-4 sm:pt-6" style={{ borderTop: "1px solid var(--border)" }}>
+              <p className="text-xs sm:text-sm text-center" style={{ color: "var(--muted)" }}>
                 💡 {t("onboarding.cannotChange")}
               </p>
             </div>
