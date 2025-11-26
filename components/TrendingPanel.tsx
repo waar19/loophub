@@ -182,10 +182,10 @@ export default function TrendingPanel() {
                   </p>
                   <div className="flex items-center gap-2 text-xs">
                     <span
-                      className="badge"
+                      className="badge font-semibold"
                       style={{
-                        background: "var(--brand-light)",
-                        color: "var(--brand-dark)",
+                        background: "var(--brand)",
+                        color: "white",
                       }}
                     >
                       {thread.forum_name}
