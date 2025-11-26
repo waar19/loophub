@@ -91,13 +91,13 @@ export default function SimpleForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-2" noValidate>
       {fields.map((field) => (
         <div key={field.name}>
           <label
             htmlFor={field.name}
-            className="block text-sm font-medium mb-2"
-            style={{ color: "var(--foreground)" }}
+            className="block font-medium mb-1"
+            style={{ color: "var(--foreground)", fontSize: "0.75rem" }}
           >
             {field.label}
             {field.required && (
@@ -146,16 +146,17 @@ export default function SimpleForm({
 
       {error && (
         <div
-          className="p-3 rounded border"
+          className="p-2 rounded border"
           style={{
             backgroundColor: "rgba(239, 68, 68, 0.1)",
             color: "var(--error)",
             borderColor: "rgba(239, 68, 68, 0.3)",
+            fontSize: "0.75rem",
           }}
         >
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-1.5">
             <svg
-              className="w-5 h-5 shrink-0 mt-0.5"
+              className="w-4 h-4 shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -177,6 +178,7 @@ export default function SimpleForm({
         className="btn btn-primary w-full"
         disabled={isSubmitting}
         aria-busy={isSubmitting}
+        style={{ fontSize: "0.8125rem", padding: "0.375rem 0.75rem" }}
       >
         {isSubmitting ? "Enviando..." : submitText}
       </button>

@@ -20,7 +20,7 @@ export default function MarkdownEditor({
   value,
   onChange,
   placeholder = "Write your content in Markdown...",
-  minHeight = "200px",
+  minHeight = "120px",
   maxLength,
   required = false,
 }: MarkdownEditorProps) {
@@ -29,16 +29,16 @@ export default function MarkdownEditor({
   return (
     <div>
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex gap-2">
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex gap-1">
           <button
             type="button"
             onClick={() => setMode("edit")}
-            className={`px-3 py-1 text-sm rounded transition-colors ${
+            className={`px-2 py-0.5 rounded transition-colors ${
               mode === "edit" ? "" : ""
             }`}
-            style={
-              mode === "edit"
+            style={{
+              ...(mode === "edit"
                 ? {
                     background: "var(--accent)",
                     color: "white",
@@ -47,8 +47,9 @@ export default function MarkdownEditor({
                     background: "var(--card-bg)",
                     color: "var(--foreground)",
                     border: "1px solid var(--border)",
-                  }
-            }
+                  }),
+              fontSize: "0.6875rem",
+            }}
             onMouseEnter={(e) => {
               if (mode !== "edit") {
                 e.currentTarget.style.backgroundColor = "var(--border)";
@@ -65,11 +66,11 @@ export default function MarkdownEditor({
           <button
             type="button"
             onClick={() => setMode("preview")}
-            className={`px-3 py-1 text-sm rounded transition-colors ${
+            className={`px-2 py-0.5 rounded transition-colors ${
               mode === "preview" ? "" : ""
             }`}
-            style={
-              mode === "preview"
+            style={{
+              ...(mode === "preview"
                 ? {
                     background: "var(--accent)",
                     color: "white",
@@ -78,8 +79,9 @@ export default function MarkdownEditor({
                     background: "var(--card-bg)",
                     color: "var(--foreground)",
                     border: "1px solid var(--border)",
-                  }
-            }
+                  }),
+              fontSize: "0.6875rem",
+            }}
             onMouseEnter={(e) => {
               if (mode !== "preview") {
                 e.currentTarget.style.backgroundColor = "var(--border)";
@@ -96,11 +98,11 @@ export default function MarkdownEditor({
           <button
             type="button"
             onClick={() => setMode("split")}
-            className={`px-3 py-1 text-sm rounded transition-colors ${
+            className={`px-2 py-0.5 rounded transition-colors ${
               mode === "split" ? "" : ""
             }`}
-            style={
-              mode === "split"
+            style={{
+              ...(mode === "split"
                 ? {
                     background: "var(--accent)",
                     color: "white",
@@ -109,8 +111,9 @@ export default function MarkdownEditor({
                     background: "var(--card-bg)",
                     color: "var(--foreground)",
                     border: "1px solid var(--border)",
-                  }
-            }
+                  }),
+              fontSize: "0.6875rem",
+            }}
             onMouseEnter={(e) => {
               if (mode !== "split") {
                 e.currentTarget.style.backgroundColor = "var(--border)";
@@ -126,14 +129,14 @@ export default function MarkdownEditor({
           </button>
         </div>
         {maxLength && (
-          <span className="text-xs" style={{ color: "var(--muted)" }}>
+          <span style={{ color: "var(--muted)", fontSize: "0.625rem" }}>
             {value.length} / {maxLength}
           </span>
         )}
       </div>
 
       {/* Editor/Preview */}
-      <div className="flex gap-4" style={{ minHeight }}>
+      <div className="flex gap-2" style={{ minHeight }}>
         {(mode === "edit" || mode === "split") && (
           <div className="flex-1">
             <textarea
@@ -142,10 +145,10 @@ export default function MarkdownEditor({
               placeholder={placeholder}
               required={required}
               maxLength={maxLength}
-              className="textarea w-full font-mono text-sm"
-              style={{ minHeight }}
+              className="textarea w-full font-mono"
+              style={{ minHeight, fontSize: "0.75rem" }}
             />
-            <div className="mt-2 text-xs" style={{ color: "var(--muted)" }}>
+            <div className="mt-1" style={{ color: "var(--muted)", fontSize: "0.625rem" }}>
               <p>Markdown supported. Use **bold**, *italic*, `code`, etc.</p>
             </div>
           </div>
