@@ -41,7 +41,8 @@ export default function SimpleForm({
     setError(null);
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
     const data: Record<string, string> = {};
 
     fields.forEach((field) => {
@@ -73,7 +74,10 @@ export default function SimpleForm({
 
     try {
       await onSubmit(data);
-      e.currentTarget.reset();
+      // Reset form only if submission was successful
+      if (formElement) {
+        formElement.reset();
+      }
       setFieldValues({});
       setError(null);
     } catch (err) {
