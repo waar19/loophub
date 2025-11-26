@@ -3,8 +3,15 @@
 import { Comment } from "@/lib/supabase";
 import ReportButton from "@/components/ReportButton";
 import EditCommentButton from "@/components/EditCommentButton";
+import dynamic from "next/dynamic";
 import DeleteCommentButton from "@/components/DeleteCommentButton";
-import MarkdownRenderer from "@/components/MarkdownRenderer";
+// Lazy load MarkdownRenderer
+const MarkdownRenderer = dynamic(
+  () => import("@/components/MarkdownRenderer"),
+  {
+    loading: () => <div className="skeleton h-12 w-full" />,
+  }
+);
 import { useAuth } from "@/hooks/useAuth";
 
 interface CommentCardProps {
@@ -15,7 +22,7 @@ interface CommentCardProps {
 export default function CommentCard({ comment, onUpdate }: CommentCardProps) {
   const { user } = useAuth();
   const isOwner = user?.id === comment.user_id;
-  
+
   const date = new Date(comment.created_at).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "short",
@@ -56,10 +63,7 @@ export default function CommentCard({ comment, onUpdate }: CommentCardProps) {
                 >
                   {comment.profile.username}
                 </span>
-                <span
-                  className="text-xs"
-                  style={{ color: "var(--muted)" }}
-                >
+                <span className="text-xs" style={{ color: "var(--muted)" }}>
                   {date}
                 </span>
               </div>

@@ -1,11 +1,18 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import CommentCard from "@/components/CommentCard";
 import SimpleForm from "@/components/SimpleForm";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import { CommentSkeleton } from "@/components/LoadingSkeleton";
-import MarkdownRenderer from "@/components/MarkdownRenderer";
+// Lazy load MarkdownRenderer
+const MarkdownRenderer = dynamic(
+  () => import("@/components/MarkdownRenderer"),
+  {
+    loading: () => <div className="skeleton h-20 w-full" />,
+  }
+);
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ThreadSidebar from "@/components/ThreadSidebar";
 import TrendingPanel from "@/components/TrendingPanel";
@@ -46,37 +53,40 @@ export default function ThreadPage({
   const { user } = useAuth();
   const { t } = useTranslations();
 
+  const fetchData = useCallback(
+    async (pageNum: number = 1, append: boolean = false) => {
+      try {
+        if (!append) setIsLoading(true);
+        else setIsLoadingMore(true);
+
+        const res = await fetch(
+          `/api/threads/${id}/comments?page=${pageNum}&limit=20`
+        );
+        if (!res.ok) throw new Error("Failed to fetch thread");
+        const threadData: ThreadData = await res.json();
+
+        if (append && data) {
+          setData({
+            ...threadData,
+            comments: [...data.comments, ...threadData.comments],
+          });
+        } else {
+          setData(threadData);
+          setPage(1);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+        setIsLoadingMore(false);
+      }
+    },
+    [id, data]
+  );
+
   useEffect(() => {
     fetchData();
-  }, [id]);
-
-  const fetchData = async (pageNum: number = 1, append: boolean = false) => {
-    try {
-      if (!append) setIsLoading(true);
-      else setIsLoadingMore(true);
-
-      const res = await fetch(
-        `/api/threads/${id}/comments?page=${pageNum}&limit=20`
-      );
-      if (!res.ok) throw new Error("Failed to fetch thread");
-      const threadData: ThreadData = await res.json();
-
-      if (append && data) {
-        setData({
-          ...threadData,
-          comments: [...data.comments, ...threadData.comments],
-        });
-      } else {
-        setData(threadData);
-        setPage(1);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  };
+  }, [id, fetchData]);
 
   const handleLoadMore = () => {
     if (!isLoadingMore && data?.pagination.hasMore) {
