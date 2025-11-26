@@ -156,63 +156,65 @@ export default function NotificationBell() {
               </div>
             ) : (
               <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-                {recentNotifications.map((notification) => (
-                  <Link
-                    key={notification.id}
-                    href={notification.link || "/notifications"}
-                    onClick={() => handleNotificationClick(notification.id, notification.read)}
-                    className={`block p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                      !notification.read ? "bg-blue-50 dark:bg-blue-900/20" : ""
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      {/* Icon based on notification type */}
-                      <div className="text-2xl shrink-0">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          {!notification.read && (
-                            <div
-                              className="w-2 h-2 rounded-full shrink-0"
-                              style={{ background: "var(--brand)" }}
-                            />
-                          )}
-                          <h4
-                            className="font-semibold text-sm"
-                            style={{ color: "var(--foreground)" }}
-                          >
-                            {notification.title}
-                          </h4>
+                {recentNotifications.map((notification) => {
+                  console.log('Notification:', notification); // Debug
+                  
+                  return (
+                    <Link
+                      key={notification.id}
+                      href={notification.link || "/notifications"}
+                      onClick={() => handleNotificationClick(notification.id, notification.read)}
+                      className={`block p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                        !notification.read ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Icon based on notification type */}
+                        <div className="text-2xl shrink-0">
+                          {getNotificationIcon(notification.type)}
                         </div>
                         
-                        <p
-                          className="text-sm mb-2 line-clamp-2"
-                          style={{ color: "var(--muted)" }}
-                        >
-                          {notification.message}
-                        </p>
-                        
-                        <div className="flex items-center gap-2">
-                          {notification.related_user_avatar && (
-                            <img
-                              src={notification.related_user_avatar}
-                              alt={notification.related_user_username || ''}
-                              className="w-4 h-4 rounded-full"
-                            />
-                          )}
-                          <time
-                            className="text-xs"
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            {!notification.read && (
+                              <div
+                                className="w-2 h-2 rounded-full shrink-0"
+                                style={{ background: "var(--brand)" }}
+                              />
+                            )}
+                            <h4
+                              className="font-semibold text-sm"
+                              style={{ color: "var(--foreground)" }}
+                            >
+                              {notification.title || 'Sin título'}
+                            </h4>
+                          </div>
+                          
+                          <p
+                            className="text-sm mb-2 line-clamp-2"
                             style={{ color: "var(--muted)" }}
                           >
-                            {formatTimeAgo(notification.created_at)}
-                          </time>
+                            {notification.message || 'Sin mensaje'}
+                          </p>
+                          
+                          <div className="flex items-center gap-2">
+                            {notification.related_user_username && (
+                              <span className="text-xs font-medium" style={{ color: "var(--brand)" }}>
+                                @{notification.related_user_username}
+                              </span>
+                            )}
+                            <time
+                              className="text-xs"
+                              style={{ color: "var(--muted)" }}
+                            >
+                              {formatTimeAgo(notification.created_at)}
+                            </time>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>

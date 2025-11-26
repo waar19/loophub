@@ -51,25 +51,46 @@ export function useRealtimeNotifications() {
       setUnreadCount(count || 0);
 
       // Get recent notifications (last 10)
-      const { data: notifications } = await supabase
+      const { data: notifications, error: notifError } = await supabase
         .from('notifications')
-        .select(`
-          *,
-          profiles!notifications_related_user_id_fkey (
-            username,
-            avatar_url
-          )
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
+      if (notifError) {
+        console.error('Error fetching notifications:', notifError);
+      }
+
       if (notifications) {
-        const mapped = notifications.map((n: Notification & { profiles?: { username: string; avatar_url: string | null } | null }) => ({
-          ...n,
-          related_user_username: n.profiles?.username,
-          related_user_avatar: n.profiles?.avatar_url,
-        }));
+        // Fetch related user profiles
+        const userIds = notifications
+          .filter(n => n.related_user_id)
+          .map(n => n.related_user_id);
+
+        let profilesMap = new Map();
+        
+        if (userIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, username, avatar_url')
+            .in('id', userIds);
+
+          if (profiles) {
+            profiles.forEach(p => {
+              profilesMap.set(p.id, p);
+            });
+          }
+        }
+
+        const mapped = notifications.map((n: Notification) => {
+          const profile = n.related_user_id ? profilesMap.get(n.related_user_id) : null;
+          return {
+            ...n,
+            related_user_username: profile?.username,
+            related_user_avatar: profile?.avatar_url,
+          };
+        });
         setRecentNotifications(mapped);
       }
     } catch (error) {
