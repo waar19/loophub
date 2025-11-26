@@ -5,9 +5,9 @@ import ReportButton from "@/components/ReportButton";
 import EditCommentButton from "@/components/EditCommentButton";
 import dynamic from "next/dynamic";
 import DeleteCommentButton from "@/components/DeleteCommentButton";
-import { useState, useEffect } from "react";
 import Tooltip from "./Tooltip";
 import Link from "next/link";
+import VoteButtons from "./VoteButtons";
 // Lazy load MarkdownRenderer
 const MarkdownRenderer = dynamic(
   () => import("@/components/MarkdownRenderer"),
@@ -25,60 +25,6 @@ interface CommentCardProps {
 export default function CommentCard({ comment, onUpdate }: CommentCardProps) {
   const { user } = useAuth();
   const isOwner = user?.id === comment.user_id;
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(comment.like_count || 0);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    // Check if user has liked this comment
-    if (user) {
-      fetch(`/api/likes?commentId=${comment.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setIsLiked(data.isLiked);
-          setLikeCount(data.likeCount);
-        })
-        .catch(console.error);
-    }
-  }, [user, comment.id]);
-
-  const handleLike = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!user || isLoading) return;
-
-    setIsLoading(true);
-    try {
-      if (isLiked) {
-        // Unlike
-        const res = await fetch(`/api/likes?commentId=${comment.id}`, {
-          method: "DELETE",
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setIsLiked(false);
-          setLikeCount(data.likeCount);
-        }
-      } else {
-        // Like
-        const res = await fetch("/api/likes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ commentId: comment.id }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setIsLiked(true);
-          setLikeCount(data.likeCount);
-        }
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const date = new Date(comment.created_at).toLocaleDateString("es-ES", {
     year: "numeric",
@@ -133,62 +79,12 @@ export default function CommentCard({ comment, onUpdate }: CommentCardProps) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Like button */}
-          {user && (
-            <Tooltip
-              content={isLiked ? "Quitar me gusta" : "Me gusta"}
-              position="top"
-            >
-              <button
-                onClick={handleLike}
-                disabled={isLoading}
-                className="flex items-center gap-1 text-sm transition-all hover:scale-110"
-                style={{
-                  color: isLiked ? "var(--brand)" : "var(--muted)",
-                }}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill={isLiked ? "currentColor" : "none"}
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={isLiked ? 0 : 2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-                {likeCount > 0 && (
-                  <span className="font-medium">{likeCount}</span>
-                )}
-              </button>
-            </Tooltip>
-          )}
-
-          {/* Like count for non-authenticated users */}
-          {!user && likeCount > 0 && (
-            <Tooltip content="Me gusta" position="top">
-              <div className="flex items-center gap-1 text-sm">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  style={{ color: "var(--muted)" }}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-                <span style={{ color: "var(--muted)" }}>{likeCount}</span>
-              </div>
-            </Tooltip>
-          )}
+          {/* Vote buttons */}
+          <VoteButtons
+            commentId={comment.id}
+            initialUpvotes={comment.upvote_count || 0}
+            initialDownvotes={comment.downvote_count || 0}
+          />
 
           {isOwner && (
             <>

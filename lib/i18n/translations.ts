@@ -73,6 +73,17 @@ export const translations = {
       copied: "¡Copiado!",
       shareOn: "Compartir en",
     },
+    // Voting
+    voting: {
+      upvote: "Voto positivo",
+      downvote: "Voto negativo",
+      score: "Puntuación",
+      removeUpvote: "Quitar voto positivo",
+      removeDownvote: "Quitar voto negativo",
+      votes: "votos",
+      errorVoting: "Error al votar. Por favor, intenta de nuevo.",
+      mustLogin: "Debes iniciar sesión para votar",
+    },
     // Forums
     forums: {
       forum: "Foro",
@@ -354,6 +365,17 @@ export const translations = {
       copy: "Copy",
       copied: "Copied!",
       shareOn: "Share on",
+    },
+    // Voting
+    voting: {
+      upvote: "Upvote",
+      downvote: "Downvote",
+      score: "Score",
+      removeUpvote: "Remove upvote",
+      removeDownvote: "Remove downvote",
+      votes: "votes",
+      errorVoting: "Error voting. Please try again.",
+      mustLogin: "You must log in to vote",
     },
     // Forums
     forums: {
@@ -637,6 +659,17 @@ export const translations = {
       copy: "Copiar",
       copied: "Copiado!",
       shareOn: "Compartilhar em",
+    },
+    // Voting
+    voting: {
+      upvote: "Voto positivo",
+      downvote: "Voto negativo",
+      score: "Pontuação",
+      removeUpvote: "Remover voto positivo",
+      removeDownvote: "Remover voto negativo",
+      votes: "votos",
+      errorVoting: "Erro ao votar. Por favor, tente novamente.",
+      mustLogin: "Você deve fazer login para votar",
     },
     // Forums
     forums: {

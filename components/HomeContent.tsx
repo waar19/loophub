@@ -13,6 +13,9 @@ interface Thread {
   title: string;
   content: string;
   like_count: number;
+  upvote_count: number;
+  downvote_count: number;
+  score?: number;
   created_at: string;
   forum_id: string;
   user_id?: string;
