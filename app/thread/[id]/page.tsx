@@ -185,14 +185,14 @@ export default function ThreadPage({
             <div className="flex-1 min-w-0">
               {/* Thread Header */}
               <div
-                className="card mb-6 p-4"
+                className="card mb-4 p-3"
                 style={{
                   borderLeft: "3px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="flex items-start justify-between gap-3 mb-2">
                   <h1
-                    className="text-xl sm:text-2xl font-bold leading-tight flex-1"
+                    className="text-lg sm:text-xl font-bold leading-tight flex-1"
                     style={{
                       color: "var(--foreground)",
                     }}
@@ -200,7 +200,7 @@ export default function ThreadPage({
                     {thread.title}
                   </h1>
                   {user?.id === thread.user_id && (
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <EditThreadButton
                         threadId={thread.id}
                         currentTitle={thread.title}
@@ -211,13 +211,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="text-sm leading-relaxed markdown-content mb-3">
+                <div className="text-sm leading-relaxed markdown-content mb-2">
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-3 border-t"
+                  className="pt-2 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -233,10 +233,10 @@ export default function ThreadPage({
               </div>
 
               {/* Comments Section */}
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4">
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-3">
                   <div
-                    className="w-6 h-6 rounded flex items-center justify-center text-sm"
+                    className="w-5 h-5 rounded flex items-center justify-center text-xs"
                     style={{
                       background: "var(--brand)",
                       color: "white",
@@ -245,13 +245,13 @@ export default function ThreadPage({
                     💬
                   </div>
                   <h2
-                    className="text-base font-semibold"
+                    className="text-sm font-semibold"
                     style={{ color: "var(--foreground)" }}
                   >
                     {t("threads.comments")}
                   </h2>
                   <div
-                    className="px-2 py-0.5 rounded text-xs font-semibold"
+                    className="px-1.5 py-0.5 rounded text-xs font-semibold"
                     style={{
                       background: "var(--brand)",
                       color: "white",
@@ -262,9 +262,9 @@ export default function ThreadPage({
                 </div>
 
                 {comments.length === 0 && !isLoading ? (
-                  <div className="card text-center py-12 mb-6">
+                  <div className="card text-center py-6 mb-4">
                     <div
-                      className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"
+                      className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mx-auto mb-2"
                       style={{
                         background: "var(--brand-light)",
                       }}
@@ -272,12 +272,12 @@ export default function ThreadPage({
                       💭
                     </div>
                     <h3
-                      className="text-xl font-bold mb-2"
+                      className="text-base font-semibold mb-1"
                       style={{ color: "var(--foreground)" }}
                     >
                       {t("threads.noComments")}
                     </h3>
-                    <p style={{ color: "var(--muted)" }} className="text-sm">
+                    <p style={{ color: "var(--muted)" }} className="text-xs">
                       {t("threads.beFirst")}
                     </p>
                   </div>
@@ -314,14 +314,14 @@ export default function ThreadPage({
 
               {/* Comment Form */}
               <div
-                className="card"
+                className="card p-3"
                 style={{
-                  borderLeft: "4px solid var(--brand)",
+                  borderLeft: "3px solid var(--brand)",
                 }}
               >
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-2 mb-3">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                    className="w-6 h-6 rounded flex items-center justify-center text-sm"
                     style={{
                       background: "var(--brand)",
                       color: "white",
@@ -330,7 +330,7 @@ export default function ThreadPage({
                     ✍️
                   </div>
                   <h3
-                    className="text-2xl font-bold"
+                    className="text-base font-semibold"
                     style={{ color: "var(--foreground)" }}
                   >
                     {t("threads.addComment")}

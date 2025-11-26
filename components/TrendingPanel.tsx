@@ -111,21 +111,21 @@ export default function TrendingPanel() {
 
   return (
     <aside
-      className="hidden xl:block w-80 fixed right-0 top-0 bottom-0 overflow-y-auto border-l"
+      className="hidden xl:block w-72 fixed right-0 top-0 bottom-0 overflow-y-auto border-l"
       style={{
         marginTop: "var(--header-height)",
         background: "var(--card-bg)",
         borderColor: "var(--border)",
       }}
     >
-      <div className="p-6 space-y-8">
+      <div className="p-4 space-y-4">
         {/* Create Thread Button */}
         <Link
           href="/forum/general/new"
-          className="btn btn-primary w-full justify-center"
+          className="btn btn-primary w-full justify-center text-sm py-2"
         >
           <svg
-            className="w-5 h-5"
+            className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -143,24 +143,24 @@ export default function TrendingPanel() {
         {/* Trending Threads */}
         <div>
           <h3
-            className="text-sm font-semibold mb-3"
-            style={{ color: "var(--foreground)" }}
+            className="text-xs font-semibold mb-2 uppercase tracking-wider"
+            style={{ color: "var(--muted)" }}
           >
             {t("home.featuredThreads")}
           </h3>
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="skeleton h-16" />
               ))}
             </div>
           ) : trending.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {trending.map((thread) => (
                 <Link
                   key={thread.id}
                   href={`/thread/${thread.id}`}
-                  className="block p-2 rounded border transition-colors"
+                  className="block p-1.5 rounded border transition-colors"
                   style={{
                     borderColor: "var(--border)",
                     background: "var(--card-bg)",
@@ -175,14 +175,14 @@ export default function TrendingPanel() {
                   }}
                 >
                   <p
-                    className="text-sm font-medium mb-1 line-clamp-2"
+                    className="text-xs font-medium mb-1 line-clamp-2"
                     style={{ color: "var(--foreground)" }}
                   >
                     {thread.title}
                   </p>
-                  <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1.5 text-xs">
                     <span
-                      className="badge font-semibold"
+                      className="badge font-semibold text-xs px-1 py-0"
                       style={{
                         background: "var(--brand)",
                         color: "white",
@@ -210,24 +210,24 @@ export default function TrendingPanel() {
         {/* Recent Comments */}
         <div>
           <h3
-            className="text-sm font-semibold mb-3"
-            style={{ color: "var(--foreground)" }}
+            className="text-xs font-semibold mb-2 uppercase tracking-wider"
+            style={{ color: "var(--muted)" }}
           >
             {t("notifications.title")}
           </h3>
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="skeleton h-20" />
               ))}
             </div>
           ) : recentComments.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-1.5">
               {recentComments.map((comment) => (
                 <Link
                   key={comment.id}
                   href={`/thread/${comment.threads.id}`}
-                  className="block p-2 rounded border transition-colors"
+                  className="block p-1.5 rounded border transition-colors"
                   style={{
                     borderColor: "var(--border)",
                     background: "var(--card-bg)",
@@ -242,12 +242,12 @@ export default function TrendingPanel() {
                   }}
                 >
                   <p
-                    className="text-xs mb-2 line-clamp-2"
+                    className="text-xs mb-1 line-clamp-2"
                     style={{ color: "var(--muted)" }}
                   >
-                    {comment.content.substring(0, 100)}...
+                    {comment.content.substring(0, 80)}...
                   </p>
-                  <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1.5 text-xs">
                     <span style={{ color: "var(--foreground)" }}>
                       {comment.profiles?.username || t("common.anonymous")}
                     </span>
