@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import CommentCard from "@/components/CommentCard";
 import SimpleForm from "@/components/SimpleForm";
 import InfiniteScroll from "@/components/InfiniteScroll";
@@ -17,6 +16,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "@/components/TranslationsProvider";
 import MetaHead from "@/components/MetaHead";
+import { ThreadStructuredData } from "@/components/StructuredData";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -42,7 +42,6 @@ export default function ThreadPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
-  const router = useRouter();
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const { t } = useTranslations();
@@ -160,6 +159,7 @@ export default function ThreadPage({
           .substring(0, 155)
           .trim()}
       />
+      <ThreadStructuredData thread={thread} author={thread.profile} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <Breadcrumbs

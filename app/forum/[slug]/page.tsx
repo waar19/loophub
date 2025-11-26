@@ -11,6 +11,7 @@ import ThreadSortFilter from "@/components/ThreadSortFilter";
 import { Thread } from "@/lib/supabase";
 import { useTranslations } from "@/components/TranslationsProvider";
 import MetaHead from "@/components/MetaHead";
+import { ForumStructuredData } from "@/components/StructuredData";
 
 interface Forum {
   id: string;
@@ -158,6 +159,7 @@ export default function ForumPage({
           `Explore discussions in ${forum.name} forum on Loophub`
         }
       />
+      <ForumStructuredData forum={forum} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <Breadcrumbs
