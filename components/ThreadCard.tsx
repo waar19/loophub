@@ -193,7 +193,7 @@ export default function ThreadCard({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  router.push(`/u/${thread.profile.username}`);
+                  router.push(`/u/${thread.profile?.username}`);
                 }}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
               >
@@ -204,10 +204,10 @@ export default function ThreadCard({
                     color: "var(--brand-dark)",
                   }}
                 >
-                  {thread.profile.username.charAt(0).toUpperCase()}
+                  {thread.profile?.username.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-sm hover:underline" style={{ color: "var(--muted)" }}>
-                  {thread.profile.username}
+                  {thread.profile?.username}
                 </span>
               </button>
             )}
