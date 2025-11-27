@@ -71,7 +71,7 @@ export default async function UserProfilePage({
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       {/* Profile Header */}
-      <div className="card mb-8">
+      <div className="card mb-8 p-8">
         <div className="flex items-start gap-6">
           {/* Avatar */}
           <div
@@ -213,13 +213,13 @@ export default async function UserProfilePage({
       </div>
 
       {/* User's Threads */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {threads && threads.length > 0 ? (
           threads.map((thread) => (
             <Link
               key={thread.id}
               href={`/thread/${thread.id}`}
-              className="card card-interactive block"
+              className="card card-interactive block p-6"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -231,17 +231,19 @@ export default async function UserProfilePage({
                   </h3>
 
                   <div className="flex items-center gap-3 flex-wrap text-sm">
-                    {thread.forums && Array.isArray(thread.forums) && thread.forums[0] && (
-                      <span
-                        className="badge text-xs"
-                        style={{
-                          background: "var(--brand-light)",
-                          color: "var(--brand-dark)",
-                        }}
-                      >
-                        {thread.forums[0].name}
-                      </span>
-                    )}
+                    {thread.forums &&
+                      Array.isArray(thread.forums) &&
+                      thread.forums[0] && (
+                        <span
+                          className="badge text-xs"
+                          style={{
+                            background: "var(--brand-light)",
+                            color: "var(--brand-dark)",
+                          }}
+                        >
+                          {thread.forums[0].name}
+                        </span>
+                      )}
 
                     <span style={{ color: "var(--muted)" }}>
                       {new Date(thread.created_at).toLocaleDateString("es-ES", {
@@ -251,34 +253,49 @@ export default async function UserProfilePage({
                       })}
                     </span>
 
-                    {(thread.score !== undefined && thread.score !== null && thread.score !== 0) && (
-                      <div className="flex items-center gap-1">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          style={{ 
-                            color: thread.score > 0 ? "var(--success)" : thread.score < 0 ? "var(--danger)" : "var(--muted)" 
-                          }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d={thread.score > 0 
-                              ? "M5 15l7-7 7 7" 
-                              : "M19 9l-7 7-7-7"
-                            }
-                          />
-                        </svg>
-                        <span style={{ 
-                          color: thread.score > 0 ? "var(--success)" : thread.score < 0 ? "var(--danger)" : "var(--muted)" 
-                        }}>
-                          {thread.score}
-                        </span>
-                      </div>
-                    )}
+                    {thread.score !== undefined &&
+                      thread.score !== null &&
+                      thread.score !== 0 && (
+                        <div className="flex items-center gap-1">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            style={{
+                              color:
+                                thread.score > 0
+                                  ? "var(--success)"
+                                  : thread.score < 0
+                                  ? "var(--danger)"
+                                  : "var(--muted)",
+                            }}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d={
+                                thread.score > 0
+                                  ? "M5 15l7-7 7 7"
+                                  : "M19 9l-7 7-7-7"
+                              }
+                            />
+                          </svg>
+                          <span
+                            style={{
+                              color:
+                                thread.score > 0
+                                  ? "var(--success)"
+                                  : thread.score < 0
+                                  ? "var(--danger)"
+                                  : "var(--muted)",
+                            }}
+                          >
+                            {thread.score}
+                          </span>
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
@@ -305,19 +322,21 @@ export default async function UserProfilePage({
               Comentarios Recientes
             </h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {comments.map((comment) => (
-              <div key={comment.id} className="card">
+              <div key={comment.id} className="card p-6">
                 <div className="mb-2">
-                  {comment.thread && Array.isArray(comment.thread) && comment.thread[0] && (
-                    <Link
-                      href={`/thread/${comment.thread[0].id}`}
-                      className="text-sm font-medium hover:underline"
-                      style={{ color: "var(--brand)" }}
-                    >
-                      Re: {comment.thread[0].title}
-                    </Link>
-                  )}
+                  {comment.thread &&
+                    Array.isArray(comment.thread) &&
+                    comment.thread[0] && (
+                      <Link
+                        href={`/thread/${comment.thread[0].id}`}
+                        className="text-sm font-medium hover:underline"
+                        style={{ color: "var(--brand)" }}
+                      >
+                        Re: {comment.thread[0].title}
+                      </Link>
+                    )}
                 </div>
                 <p
                   className="text-sm mb-2 line-clamp-3"
@@ -334,34 +353,49 @@ export default async function UserProfilePage({
                       day: "numeric",
                     })}
                   </span>
-                  {(comment.score !== undefined && comment.score !== null && comment.score !== 0) && (
-                    <div className="flex items-center gap-1">
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        style={{ 
-                          color: comment.score > 0 ? "var(--success)" : comment.score < 0 ? "var(--danger)" : "var(--muted)" 
-                        }}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d={comment.score > 0 
-                            ? "M5 15l7-7 7 7" 
-                            : "M19 9l-7 7-7-7"
-                          }
-                        />
-                      </svg>
-                      <span style={{ 
-                        color: comment.score > 0 ? "var(--success)" : comment.score < 0 ? "var(--danger)" : "var(--muted)" 
-                      }}>
-                        {comment.score}
-                      </span>
-                    </div>
-                  )}
+                  {comment.score !== undefined &&
+                    comment.score !== null &&
+                    comment.score !== 0 && (
+                      <div className="flex items-center gap-1">
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          style={{
+                            color:
+                              comment.score > 0
+                                ? "var(--success)"
+                                : comment.score < 0
+                                ? "var(--danger)"
+                                : "var(--muted)",
+                          }}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d={
+                              comment.score > 0
+                                ? "M5 15l7-7 7 7"
+                                : "M19 9l-7 7-7-7"
+                            }
+                          />
+                        </svg>
+                        <span
+                          style={{
+                            color:
+                              comment.score > 0
+                                ? "var(--success)"
+                                : comment.score < 0
+                                ? "var(--danger)"
+                                : "var(--muted)",
+                          }}
+                        >
+                          {comment.score}
+                        </span>
+                      </div>
+                    )}
                 </div>
               </div>
             ))}
