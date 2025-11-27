@@ -44,7 +44,7 @@ export default function ThreadCard({
           : ""
       }`}
     >
-      <div className="p-5">
+      <div className="p-6">
         {/* Header: Forum & Metadata */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           {thread.forum && (

@@ -171,7 +171,7 @@ export default function ForumPage({
 
           {/* Forum Header */}
           <div
-            className="card mb-6 overflow-hidden"
+            className="card mb-6 overflow-hidden p-8"
             style={{
               borderLeft: `4px solid ${forumColor}`,
               background: `linear-gradient(to right, ${forumColor}15, var(--card-bg))`,
@@ -241,7 +241,7 @@ export default function ForumPage({
 
           {/* Threads List */}
           {threads.length === 0 ? (
-            <div className="card text-center py-8 mb-6">
+            <div className="card text-center py-8 mb-6 p-8">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-3"
                 style={{
@@ -297,7 +297,7 @@ export default function ForumPage({
                 isLoading={isLoadingMore}
                 onLoadMore={handleLoadMore}
                 loader={
-                  <div className="space-y-4 mt-4">
+                  <div className="space-y-6 mt-4">
                     {[1, 2].map((i) => (
                       <LoadingSkeleton key={i} />
                     ))}
@@ -312,7 +312,7 @@ export default function ForumPage({
                   </p>
                 }
               >
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {threads.map((thread) => (
                     <ThreadCard
                       key={thread.id}
@@ -327,7 +327,7 @@ export default function ForumPage({
 
           {/* Forum Rules */}
           <div
-            className="card mt-12"
+            className="card mt-12 p-8"
             style={{
               borderLeft: `4px solid var(--brand)`,
             }}
@@ -350,7 +350,7 @@ export default function ForumPage({
               </h3>
             </div>
             <ul
-              className="space-y-3 text-base"
+              className="space-y-4 text-base"
               style={{ color: "var(--muted)" }}
             >
               <li className="flex items-start gap-3">
