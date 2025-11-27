@@ -2,40 +2,40 @@
 @import "tailwindcss";
 
 :root {
-  /* Modern Color Palette - Light Mode */
-  --background: #f8f9fa;
-  --foreground: #1a1a2e;
+  /* Cosmic Loop Palette - Light Mode */
+  --background: #fafaf9;
+  --foreground: #18181b;
 
   /* Card and surface colors */
   --card-bg: #ffffff;
-  --card-hover: #f8f9fa;
+  --card-hover: #f5f5f4;
 
   /* Borders */
-  --border: #e0e0e0;
-  --border-hover: #c0c0c0;
-  --border-light: #f0f0f0;
+  --border: #e5e7eb;
+  --border-hover: #d4d4d8;
+  --border-light: #f4f4f5;
 
   /* Text colors */
-  --muted: #6c757d;
-  --muted-light: #adb5bd;
+  --muted: #71717a;
+  --muted-light: #a1a1aa;
 
-  /* Brand colors - Vibrant */
-  --brand: #ff6b35;
-  --brand-hover: #ff5722;
-  --brand-light: #fff3f0;
-  --brand-dark: #e85d31;
+  /* Brand colors - Violet */
+  --brand: #8b5cf6;
+  --brand-hover: #7c3aed;
+  --brand-light: #f5f3ff;
+  --brand-dark: #6d28d9;
 
-  /* Accent color */
-  --accent: #4ecdc4;
-  --accent-hover: #45b8b0;
-  --accent-light: #e8f9f8;
+  /* Accent color - Teal */
+  --accent: #14b8a6;
+  --accent-hover: #0d9488;
+  --accent-light: #f0fdfa;
 
   /* Status colors */
-  --success: #06d6a0;
-  --warning: #ffd23f;
-  --error: #ef476f;
-  --upvote: #ff6b35;
-  --downvote: #6c63ff;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --upvote: #8b5cf6;
+  --downvote: #ec4899;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -70,40 +70,40 @@
 }
 
 .dark {
-  /* Dark mode - Deep purple-black theme */
-  --background: #0f0f23;
-  --foreground: #e8e8e8;
+  /* Cosmic Loop Palette - Dark Mode */
+  --background: #09090b;
+  --foreground: #fafafa;
 
   /* Card and surface colors */
-  --card-bg: #1a1a2e;
-  --card-hover: #252538;
+  --card-bg: #18181b;
+  --card-hover: #27272a;
 
   /* Borders */
-  --border: #2d2d44;
-  --border-hover: #3d3d54;
-  --border-light: #252538;
+  --border: #27272a;
+  --border-hover: #3f3f46;
+  --border-light: #1f1f23;
 
   /* Text colors */
-  --muted: #a0a0a0;
-  --muted-light: #707070;
+  --muted: #a1a1aa;
+  --muted-light: #71717a;
 
-  /* Brand colors stay vibrant */
-  --brand: #ff6b35;
-  --brand-hover: #ff7a4d;
-  --brand-light: #2d1f1a;
-  --brand-dark: #ff5722;
+  /* Brand colors - Lighter violet for dark mode */
+  --brand: #a78bfa;
+  --brand-hover: #c4b5fd;
+  --brand-light: #2e1065;
+  --brand-dark: #8b5cf6;
 
-  /* Accent color */
-  --accent: #4ecdc4;
-  --accent-hover: #5dd9d0;
-  --accent-light: #1a2d2c;
+  /* Accent color - Bright teal for dark mode */
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-light: #134e4a;
 
   /* Status colors */
-  --success: #06d6a0;
-  --warning: #ffd23f;
-  --error: #ef476f;
-  --upvote: #ff6b35;
-  --downvote: #6c63ff;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --upvote: #a78bfa;
+  --downvote: #ec4899;
 
   /* Shadows - darker for depth */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
