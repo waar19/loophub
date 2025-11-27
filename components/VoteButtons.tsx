@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
+import { motion } from "framer-motion";
 
 interface VoteButtonsProps {
   threadId?: string;
@@ -160,14 +161,16 @@ export default function VoteButtons({
       }}
     >
       {/* Upvote Button */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           handleVote(1);
         }}
         disabled={isVoting || !user}
-        className="p-1.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
+        className="p-1.5 transition-colors hover:bg-[var(--border-light)] group"
         style={{
           color: userVote === 1 ? "var(--upvote)" : "var(--muted)",
         }}
@@ -183,14 +186,16 @@ export default function VoteButtons({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="transition-transform group-hover:scale-110"
         >
           <path d="M12 19V5M5 12l7-7 7 7" />
         </svg>
-      </button>
+      </motion.button>
 
       {/* Score */}
-      <span
+      <motion.span
+        key={score}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         className={`font-bold text-xs text-center transition-colors ${
           orientation === "vertical"
             ? "px-1.5 py-0.5 min-h-[1.5rem]"
@@ -206,17 +211,19 @@ export default function VoteButtons({
         }}
       >
         {score}
-      </span>
+      </motion.span>
 
       {/* Downvote Button */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           handleVote(-1);
         }}
         disabled={isVoting || !user}
-        className="p-1.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
+        className="p-1.5 transition-colors hover:bg-[var(--border-light)] group"
         style={{
           color: userVote === -1 ? "var(--downvote)" : "var(--muted)",
         }}
@@ -232,11 +239,10 @@ export default function VoteButtons({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="transition-transform group-hover:scale-110"
         >
           <path d="M12 5v14M5 12l7 7 7-7" />
         </svg>
-      </button>
+      </motion.button>
     </div>
   );
 }
