@@ -22,16 +22,16 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
 
   return (
     <aside className="hidden xl:block w-64 shrink-0">
-      <div className="sticky top-20 space-y-4">
+      <div className="sticky top-20 space-y-6">
         {/* Thread Info Card */}
-        <div className="card p-4">
+        <div className="card p-6">
           <h3
-            className="text-xs font-bold mb-3 uppercase tracking-wider"
+            className="text-xs font-bold mb-4 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             {t("threads.threadInfo")}
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {/* Author */}
             {thread.profile?.username && (
               <div>
@@ -120,9 +120,9 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
         </div>
 
         {/* Related Links */}
-        <div className="card p-4">
+        <div className="card p-6">
           <h3
-            className="text-xs font-bold mb-3 uppercase tracking-wider"
+            className="text-xs font-bold mb-4 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             {t("threads.relatedLinks")}
@@ -146,9 +146,9 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
         </div>
 
         {/* Forum Rules */}
-        <div className="card p-4">
+        <div className="card p-6">
           <h3
-            className="text-xs font-bold mb-3 uppercase tracking-wider"
+            className="text-xs font-bold mb-4 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             {t("threads.forumRules")}

@@ -34,7 +34,7 @@ export default function CommentThread({
     // Second pass: build tree structure
     flatComments.forEach((comment) => {
       const commentWithReplies = commentMap.get(comment.id)!;
-      
+
       if (comment.parent_id) {
         // This is a reply
         const parent = commentMap.get(comment.parent_id);
@@ -69,7 +69,7 @@ export default function CommentThread({
             style={{
               width: "1px",
               background: "var(--border)",
-              marginLeft: `${(depth - 1) * 8 + 4}px`,
+              marginLeft: `${(depth - 1) * 12 + 4}px`,
               opacity: 0.25,
             }}
           />
@@ -78,8 +78,8 @@ export default function CommentThread({
         {/* Comment card with indentation */}
         <div
           style={{
-            marginLeft: depth > 0 ? `${depth * 8}px` : "0",
-            paddingLeft: depth > 0 ? "4px" : "0",
+            marginLeft: depth > 0 ? `${depth * 12}px` : "0",
+            paddingLeft: depth > 0 ? "8px" : "0",
           }}
           className="relative"
         >
@@ -89,16 +89,13 @@ export default function CommentThread({
             onCommentAdded={onCommentAdded}
             onCommentDeleted={onCommentDeleted}
             canReply={canReply}
-            depth={depth}
           />
         </div>
 
         {/* Render replies recursively */}
         {hasReplies && (
           <div className="replies-container">
-            {comment.replies!.map((reply) =>
-              renderComment(reply, depth + 1)
-            )}
+            {comment.replies!.map((reply) => renderComment(reply, depth + 1))}
           </div>
         )}
 
@@ -108,12 +105,13 @@ export default function CommentThread({
             className="italic"
             style={{
               color: "var(--muted)",
-              marginLeft: `${(depth + 1) * 8}px`,
+              marginLeft: `${(depth + 1) * 12}px`,
               paddingLeft: "4px",
               fontSize: "0.6875rem",
             }}
           >
-            {t("threads.maxDepthReached") || "Nivel máximo de respuestas alcanzado"}
+            {t("threads.maxDepthReached") ||
+              "Nivel máximo de respuestas alcanzado"}
           </div>
         )}
       </div>
@@ -141,7 +139,7 @@ export default function CommentThread({
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       {commentTree.map((comment) => renderComment(comment, 0))}
     </div>
   );

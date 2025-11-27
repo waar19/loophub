@@ -183,15 +183,15 @@ export default function ThreadPage({
 
           <div className="flex gap-4 items-start">
             {/* Main Content */}
-            <div className="flex-1 min-w-0 space-y-4">
+            <div className="flex-1 min-w-0 space-y-6">
               {/* Thread Header */}
               <article
-                className="card p-6"
+                className="card p-8"
                 style={{
-                  borderLeft: "4px solid var(--brand)",
+                  borderLeft: "3px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex items-start justify-between gap-4 mb-6">
                   <h1
                     className="font-bold leading-tight flex-1 text-2xl"
                     style={{
@@ -212,13 +212,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="leading-relaxed markdown-content text-base mb-6">
+                <div className="leading-relaxed markdown-content text-base mb-8">
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-4 border-t"
+                  className="pt-6 pb-2 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -235,7 +235,7 @@ export default function ThreadPage({
 
               {/* Comments Section */}
               <section>
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-6">
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
                     style={{
@@ -318,14 +318,14 @@ export default function ThreadPage({
               {!showCommentForm ? (
                 <button
                   onClick={() => setShowCommentForm(true)}
-                  className="card p-4 w-full text-left hover:bg-[var(--card-hover)] transition-all"
+                  className="card p-5 pl-6 w-full text-left hover:bg-[var(--card-hover)] transition-all mb-6 relative overflow-visible"
                   style={{
-                    borderLeft: "4px solid var(--brand)",
+                    borderLeft: "3px solid var(--brand)",
                   }}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-lg relative z-10"
                       style={{
                         background: "var(--brand)",
                         color: "white",
@@ -343,12 +343,12 @@ export default function ThreadPage({
                 </button>
               ) : (
                 <div
-                  className="card p-5"
+                  className="card p-6 mb-6"
                   style={{
-                    borderLeft: "4px solid var(--brand)",
+                    borderLeft: "3px solid var(--brand)",
                   }}
                 >
-                  <div className="flex items-center gap-3 mb-4 justify-between">
+                  <div className="flex items-center gap-3 mb-5 justify-between">
                     <div className="flex items-center gap-3">
                       <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"

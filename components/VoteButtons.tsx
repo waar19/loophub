@@ -150,7 +150,9 @@ export default function VoteButtons({
 
   return (
     <div
-      className="flex items-center rounded-full overflow-hidden transition-all"
+      className={`flex items-center rounded-full overflow-hidden transition-all ${
+        orientation === "vertical" ? "flex-col" : "flex-row"
+      }`}
       onClick={(e) => e.stopPropagation()}
       style={{
         background: "var(--card-hover)",
@@ -165,7 +167,7 @@ export default function VoteButtons({
           handleVote(1);
         }}
         disabled={isVoting || !user}
-        className="p-2.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
+        className="p-1.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
         style={{
           color: userVote === 1 ? "var(--upvote)" : "var(--muted)",
         }}
@@ -173,8 +175,8 @@ export default function VoteButtons({
         aria-label="Upvote"
       >
         <svg
-          width="20"
-          height="20"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
@@ -189,7 +191,11 @@ export default function VoteButtons({
 
       {/* Score */}
       <span
-        className="font-bold text-sm px-3 min-w-[3rem] text-center transition-colors"
+        className={`font-bold text-xs text-center transition-colors ${
+          orientation === "vertical"
+            ? "px-1.5 py-0.5 min-h-[1.5rem]"
+            : "px-2 min-w-[2.5rem]"
+        }`}
         style={{
           color:
             userVote === 1
@@ -210,7 +216,7 @@ export default function VoteButtons({
           handleVote(-1);
         }}
         disabled={isVoting || !user}
-        className="p-2.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
+        className="p-1.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
         style={{
           color: userVote === -1 ? "var(--downvote)" : "var(--muted)",
         }}
@@ -218,8 +224,8 @@ export default function VoteButtons({
         aria-label="Downvote"
       >
         <svg
-          width="20"
-          height="20"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"

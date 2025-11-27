@@ -3,39 +3,39 @@
 
 :root {
   /* Modern Color Palette - Light Mode */
-  --background: #F8F9FA;
-  --foreground: #1A1A2E;
+  --background: #f8f9fa;
+  --foreground: #1a1a2e;
 
   /* Card and surface colors */
-  --card-bg: #FFFFFF;
-  --card-hover: #F8F9FA;
+  --card-bg: #ffffff;
+  --card-hover: #f8f9fa;
 
   /* Borders */
-  --border: #E0E0E0;
-  --border-hover: #C0C0C0;
-  --border-light: #F0F0F0;
+  --border: #e0e0e0;
+  --border-hover: #c0c0c0;
+  --border-light: #f0f0f0;
 
   /* Text colors */
-  --muted: #6C757D;
-  --muted-light: #ADB5BD;
+  --muted: #6c757d;
+  --muted-light: #adb5bd;
 
   /* Brand colors - Vibrant */
-  --brand: #FF6B35;
-  --brand-hover: #FF5722;
-  --brand-light: #FFF3F0;
-  --brand-dark: #E85D31;
+  --brand: #ff6b35;
+  --brand-hover: #ff5722;
+  --brand-light: #fff3f0;
+  --brand-dark: #e85d31;
 
   /* Accent color */
-  --accent: #4ECDC4;
-  --accent-hover: #45B8B0;
-  --accent-light: #E8F9F8;
+  --accent: #4ecdc4;
+  --accent-hover: #45b8b0;
+  --accent-light: #e8f9f8;
 
   /* Status colors */
-  --success: #06D6A0;
-  --warning: #FFD23F;
-  --error: #EF476F;
-  --upvote: #FF6B35;
-  --downvote: #6C63FF;
+  --success: #06d6a0;
+  --warning: #ffd23f;
+  --error: #ef476f;
+  --upvote: #ff6b35;
+  --downvote: #6c63ff;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -71,39 +71,39 @@
 
 .dark {
   /* Dark mode - Deep purple-black theme */
-  --background: #0F0F23;
-  --foreground: #E8E8E8;
+  --background: #0f0f23;
+  --foreground: #e8e8e8;
 
   /* Card and surface colors */
-  --card-bg: #1A1A2E;
+  --card-bg: #1a1a2e;
   --card-hover: #252538;
 
   /* Borders */
-  --border: #2D2D44;
-  --border-hover: #3D3D54;
+  --border: #2d2d44;
+  --border-hover: #3d3d54;
   --border-light: #252538;
 
   /* Text colors */
-  --muted: #A0A0A0;
+  --muted: #a0a0a0;
   --muted-light: #707070;
 
   /* Brand colors stay vibrant */
-  --brand: #FF6B35;
-  --brand-hover: #FF7A4D;
-  --brand-light: #2D1F1A;
-  --brand-dark: #FF5722;
+  --brand: #ff6b35;
+  --brand-hover: #ff7a4d;
+  --brand-light: #2d1f1a;
+  --brand-dark: #ff5722;
 
   /* Accent color */
-  --accent: #4ECDC4;
-  --accent-hover: #5DD9D0;
-  --accent-light: #1A2D2C;
+  --accent: #4ecdc4;
+  --accent-hover: #5dd9d0;
+  --accent-light: #1a2d2c;
 
   /* Status colors */
-  --success: #06D6A0;
-  --warning: #FFD23F;
-  --error: #EF476F;
-  --upvote: #FF6B35;
-  --downvote: #6C63FF;
+  --success: #06d6a0;
+  --warning: #ffd23f;
+  --error: #ef476f;
+  --upvote: #ff6b35;
+  --downvote: #6c63ff;
 
   /* Shadows - darker for depth */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -119,15 +119,21 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   font-size: 0.9375rem; /* 15px */
-  line-height: 1.6;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Typography scale */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -159,7 +165,6 @@ h4 {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 0;
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
