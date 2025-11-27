@@ -163,8 +163,8 @@ export default function NotificationsPage() {
   if (!user) {
     return (
       <div className="lg:ml-[var(--sidebar-width)]">
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="card text-center py-12">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="card text-center py-6">
             <p style={{ color: "var(--muted)" }}>
               {t("notifications.mustLogin")}
             </p>
@@ -177,7 +177,7 @@ export default function NotificationsPage() {
   if (isLoading && notifications.length === 0) {
     return (
       <div className="lg:ml-[var(--sidebar-width)]">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="card">
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="lg:ml-[var(--sidebar-width)]">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <Breadcrumbs
           items={[
             { label: t("common.home"), href: "/" },
@@ -249,9 +249,9 @@ export default function NotificationsPage() {
         </div>
 
         {notifications.length === 0 ? (
-          <div className="card text-center py-16">
+          <div className="card text-center py-8">
             <div
-              className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-3"
               style={{
                 background: "var(--brand-light)",
               }}

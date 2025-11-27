@@ -113,7 +113,7 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Main Settings Form */}
         <div className="lg:col-span-2 order-2 lg:order-1">
-          <div className="card">
+          <div className="card p-6 sm:p-8">
             <h1
               className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6"
               style={{ color: "var(--foreground)" }}
@@ -122,170 +122,173 @@ export default function SettingsPage() {
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-          {/* Username (Read-only) */}
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium mb-2"
-              style={{ color: "var(--foreground)" }}
-            >
-              {t("settings.username")}
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              disabled
-              className="input w-full opacity-60 cursor-not-allowed"
-              style={{
-                background: "var(--card-background)",
-                borderColor: "var(--border)",
-                color: "var(--muted)",
-              }}
-            />
-            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              {t("settings.usernameReadonly")}
-            </p>
-          </div>
+              {/* Username (Read-only) */}
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {t("settings.username")}
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  disabled
+                  className="input w-full opacity-60 cursor-not-allowed"
+                  style={{
+                    background: "var(--card-background)",
+                    borderColor: "var(--border)",
+                    color: "var(--muted)",
+                  }}
+                />
+                <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+                  {t("settings.usernameReadonly")}
+                </p>
+              </div>
 
-          {/* Bio */}
-          <div>
-            <label
-              htmlFor="bio"
-              className="block text-sm font-medium mb-2"
-              style={{ color: "var(--foreground)" }}
-            >
-              {t("settings.bio")}
-            </label>
-            <textarea
-              id="bio"
-              name="bio"
-              value={formData.bio}
-              onChange={handleChange}
-              rows={4}
-              maxLength={500}
-              placeholder={t("settings.bioPlaceholder")}
-              className="input w-full"
-              style={{
-                background: "var(--card-background)",
-                borderColor: "var(--border)",
-                color: "var(--foreground)",
-              }}
-            />
-            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-              {formData.bio.length}/500 {t("settings.bioCount")}
-            </p>
-          </div>
+              {/* Bio */}
+              <div>
+                <label
+                  htmlFor="bio"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {t("settings.bio")}
+                </label>
+                <textarea
+                  id="bio"
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleChange}
+                  rows={4}
+                  maxLength={500}
+                  placeholder={t("settings.bioPlaceholder")}
+                  className="input w-full"
+                  style={{
+                    background: "var(--card-background)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                />
+                <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+                  {formData.bio.length}/500 {t("settings.bioCount")}
+                </p>
+              </div>
 
-          {/* Website */}
-          <div>
-            <label
-              htmlFor="website"
-              className="block text-sm font-medium mb-2"
-              style={{ color: "var(--foreground)" }}
-            >
-              {t("settings.website")}
-            </label>
-            <input
-              type="url"
-              id="website"
-              name="website"
-              value={formData.website}
-              onChange={handleChange}
-              placeholder={t("settings.websitePlaceholder")}
-              className="input w-full"
-              style={{
-                background: "var(--card-background)",
-                borderColor: "var(--border)",
-                color: "var(--foreground)",
-              }}
-            />
-          </div>
+              {/* Website */}
+              <div>
+                <label
+                  htmlFor="website"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {t("settings.website")}
+                </label>
+                <input
+                  type="url"
+                  id="website"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  placeholder={t("settings.websitePlaceholder")}
+                  className="input w-full"
+                  style={{
+                    background: "var(--card-background)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                />
+              </div>
 
-          {/* Location */}
-          <div>
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium mb-2"
-              style={{ color: "var(--foreground)" }}
-            >
-              {t("settings.location")}
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder={t("settings.locationPlaceholder")}
-              maxLength={100}
-              className="input w-full"
-              style={{
-                background: "var(--card-background)",
-                borderColor: "var(--border)",
-                color: "var(--foreground)",
-              }}
-            />
-          </div>
+              {/* Location */}
+              <div>
+                <label
+                  htmlFor="location"
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {t("settings.location")}
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder={t("settings.locationPlaceholder")}
+                  maxLength={100}
+                  className="input w-full"
+                  style={{
+                    background: "var(--card-background)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                />
+              </div>
 
-          {/* Submit Button */}
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="btn btn-primary flex-1"
-              style={{
-                background: isSaving ? "var(--muted)" : "var(--brand)",
-                color: "white",
-                opacity: isSaving ? 0.6 : 1,
-              }}
-            >
-              {isSaving ? t("settings.saving") : t("settings.save")}
-            </button>
+              {/* Submit Button */}
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="btn btn-primary flex-1"
+                  style={{
+                    background: isSaving ? "var(--muted)" : "var(--brand)",
+                    color: "white",
+                    opacity: isSaving ? 0.6 : 1,
+                  }}
+                >
+                  {isSaving ? t("settings.saving") : t("settings.save")}
+                </button>
 
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="btn"
-              style={{
-                background: "var(--card-background)",
-                borderColor: "var(--border)",
-                color: "var(--foreground)",
-              }}
-            >
-              {t("settings.cancel")}
-            </button>
-          </div>
-        </form>
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  className="btn"
+                  style={{
+                    background: "var(--card-background)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  {t("settings.cancel")}
+                </button>
+              </div>
+            </form>
 
-        {/* Additional Info */}
-        <div
-          className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <h2
-            className="text-base sm:text-lg font-semibold mb-2 sm:mb-3"
-            style={{ color: "var(--foreground)" }}
-          >
-            {t("settings.additionalInfo")}
-          </h2>
-          <div className="space-y-2 text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
-            <p>• {t("settings.reputationInfo")}</p>
-            <p>
-              • {t("settings.profilePublic")}{" "}
-              <code
-                className="px-1 py-0.5 rounded text-xs"
-                style={{
-                  background: "var(--brand-light)",
-                  color: "var(--brand-dark)",
-                }}
+            {/* Additional Info */}
+            <div
+              className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <h2
+                className="text-base sm:text-lg font-semibold mb-2 sm:mb-3"
+                style={{ color: "var(--foreground)" }}
               >
-                /u/{formData.username}
-              </code>
-            </p>
-          </div>
-        </div>
+                {t("settings.additionalInfo")}
+              </h2>
+              <div
+                className="space-y-2 text-xs sm:text-sm"
+                style={{ color: "var(--muted)" }}
+              >
+                <p>• {t("settings.reputationInfo")}</p>
+                <p>
+                  • {t("settings.profilePublic")}{" "}
+                  <code
+                    className="px-1 py-0.5 rounded text-xs"
+                    style={{
+                      background: "var(--brand-light)",
+                      color: "var(--brand-dark)",
+                    }}
+                  >
+                    /u/{formData.username}
+                  </code>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

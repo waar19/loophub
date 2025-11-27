@@ -34,7 +34,7 @@ export default function CommentThread({
     // Second pass: build tree structure
     flatComments.forEach((comment) => {
       const commentWithReplies = commentMap.get(comment.id)!;
-      
+
       if (comment.parent_id) {
         // This is a reply
         const parent = commentMap.get(comment.parent_id);
@@ -69,7 +69,7 @@ export default function CommentThread({
             style={{
               width: "1px",
               background: "var(--border)",
-              marginLeft: `${(depth - 1) * 12 + 6}px`,
+              marginLeft: `${(depth - 1) * 12 + 4}px`,
               opacity: 0.25,
             }}
           />
@@ -79,7 +79,7 @@ export default function CommentThread({
         <div
           style={{
             marginLeft: depth > 0 ? `${depth * 12}px` : "0",
-            paddingLeft: depth > 0 ? "6px" : "0",
+            paddingLeft: depth > 0 ? "8px" : "0",
           }}
           className="relative"
         >
@@ -89,31 +89,29 @@ export default function CommentThread({
             onCommentAdded={onCommentAdded}
             onCommentDeleted={onCommentDeleted}
             canReply={canReply}
-            depth={depth}
           />
         </div>
 
         {/* Render replies recursively */}
         {hasReplies && (
           <div className="replies-container">
-            {comment.replies!.map((reply) =>
-              renderComment(reply, depth + 1)
-            )}
+            {comment.replies!.map((reply) => renderComment(reply, depth + 1))}
           </div>
         )}
 
         {/* Max depth reached indicator */}
         {!canReply && hasReplies && (
           <div
-            className="italic py-0.5"
+            className="italic"
             style={{
               color: "var(--muted)",
               marginLeft: `${(depth + 1) * 12}px`,
-              paddingLeft: "6px",
+              paddingLeft: "4px",
               fontSize: "0.6875rem",
             }}
           >
-            {t("threads.maxDepthReached") || "Nivel máximo de respuestas alcanzado"}
+            {t("threads.maxDepthReached") ||
+              "Nivel máximo de respuestas alcanzado"}
           </div>
         )}
       </div>
@@ -122,15 +120,15 @@ export default function CommentThread({
 
   if (comments.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-6">
         <div
-          className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-2"
           style={{ background: "var(--brand-light)" }}
         >
           💬
         </div>
         <h3
-          className="text-xl font-bold mb-2"
+          className="text-base font-bold mb-1"
           style={{ color: "var(--foreground)" }}
         >
           {t("threads.noComments")}
@@ -141,7 +139,7 @@ export default function CommentThread({
   }
 
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-6">
       {commentTree.map((comment) => renderComment(comment, 0))}
     </div>
   );

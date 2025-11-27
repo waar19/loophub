@@ -10,46 +10,50 @@ interface ThreadSidebarProps {
 
 export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
   const { t, locale } = useTranslations();
-  
-  const date = new Date(thread.created_at).toLocaleDateString(locale === "es" ? "es-ES" : locale === "pt" ? "pt-BR" : "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+
+  const date = new Date(thread.created_at).toLocaleDateString(
+    locale === "es" ? "es-ES" : locale === "pt" ? "pt-BR" : "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
 
   return (
-    <aside className="hidden xl:block w-56 shrink-0">
-      <div className="sticky top-20 space-y-1.5">
+    <aside className="hidden xl:block w-64 shrink-0">
+      <div className="sticky top-20 space-y-6">
         {/* Thread Info Card */}
-        <div className="card p-2">
+        <div className="card p-6">
           <h3
-            className="text-xs font-semibold mb-1.5 uppercase tracking-wider"
+            className="text-xs font-bold mb-4 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             {t("threads.threadInfo")}
           </h3>
-          <div className="space-y-1.5">
+          <div className="space-y-4">
             {/* Author */}
             {thread.profile?.username && (
               <div>
                 <p
-                  className="text-xs font-medium mb-0.5"
+                  className="text-xs font-medium mb-1.5"
                   style={{ color: "var(--muted)" }}
                 >
                   {t("profile.author")}
                 </p>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   <div
-                    className="w-4 h-4 rounded-full flex items-center justify-center text-xs font-medium"
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
                     style={{
-                      background: "var(--brand)",
+                      background:
+                        "linear-gradient(135deg, var(--brand), var(--accent))",
                       color: "white",
                     }}
                   >
                     {thread.profile.username.charAt(0).toUpperCase()}
                   </div>
                   <span
-                    className="text-xs font-medium"
+                    className="text-sm font-medium"
                     style={{ color: "var(--foreground)" }}
                   >
                     {thread.profile.username}
@@ -61,7 +65,7 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {/* Forum */}
             <div>
               <p
-                className="text-xs font-medium mb-0.5"
+                className="text-xs font-medium mb-1.5"
                 style={{ color: "var(--muted)" }}
               >
                 {t("common.forum")}
@@ -71,7 +75,7 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
                 className="inline-block"
               >
                 <span
-                  className="badge text-xs font-semibold px-1.5 py-0.5"
+                  className="badge text-xs font-semibold px-3 py-1.5"
                   style={{
                     background: "var(--brand)",
                     color: "white",
@@ -85,12 +89,12 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {/* Date */}
             <div>
               <p
-                className="text-xs font-medium mb-0.5"
+                className="text-xs font-medium mb-1.5"
                 style={{ color: "var(--muted)" }}
               >
                 {t("threads.published")}
               </p>
-              <p className="text-xs" style={{ color: "var(--foreground)" }}>
+              <p className="text-sm" style={{ color: "var(--foreground)" }}>
                 {date}
               </p>
             </div>
@@ -99,12 +103,15 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
             {thread._count && (
               <div>
                 <p
-                  className="text-xs font-medium mb-0.5"
+                  className="text-xs font-medium mb-1.5"
                   style={{ color: "var(--muted)" }}
                 >
                   {t("threads.comments")}
                 </p>
-                <p className="text-xs font-semibold" style={{ color: "var(--brand)" }}>
+                <p
+                  className="text-lg font-bold"
+                  style={{ color: "var(--brand)" }}
+                >
                   {thread._count.comments || 0}
                 </p>
               </div>
@@ -113,52 +120,43 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
         </div>
 
         {/* Related Links */}
-        <div className="card p-2">
+        <div className="card p-6">
           <h3
-            className="text-xs font-semibold mb-1.5 uppercase tracking-wider"
+            className="text-xs font-bold mb-4 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             {t("threads.relatedLinks")}
           </h3>
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             <Link
               href={`/forum/${thread.forum.slug}`}
-              className="block text-xs transition-colors"
+              className="block text-sm transition-colors hover:text-[var(--brand)]"
               style={{ color: "var(--muted)" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--brand)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--muted)";
-              }}
             >
-              {t("threads.viewAllThreads")} {thread.forum.name}
+              → {t("threads.viewAllThreads")} {thread.forum.name}
             </Link>
             <Link
               href={`/forum/${thread.forum.slug}/new`}
-              className="block text-xs transition-colors"
+              className="block text-sm transition-colors hover:text-[var(--brand)]"
               style={{ color: "var(--muted)" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--brand)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--muted)";
-              }}
             >
-              {t("threads.createNewThread")}
+              → {t("threads.createNewThread")}
             </Link>
           </div>
         </div>
 
         {/* Forum Rules */}
-        <div className="card p-2">
+        <div className="card p-6">
           <h3
-            className="text-xs font-semibold mb-1.5 uppercase tracking-wider"
+            className="text-xs font-bold mb-4 uppercase tracking-wider"
             style={{ color: "var(--muted)" }}
           >
             {t("threads.forumRules")}
           </h3>
-          <ul className="space-y-0.5 text-xs" style={{ color: "var(--muted)" }}>
+          <ul
+            className="space-y-2 text-sm leading-relaxed"
+            style={{ color: "var(--muted)" }}
+          >
             <li>• {t("threads.rule1")}</li>
             <li>• {t("threads.rule2")}</li>
             <li>• {t("threads.rule3")}</li>
@@ -168,4 +166,3 @@ export default function ThreadSidebar({ thread }: ThreadSidebarProps) {
     </aside>
   );
 }
-

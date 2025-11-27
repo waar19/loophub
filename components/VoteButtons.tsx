@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/contexts/ToastContext";
+import { motion } from "framer-motion";
 
 interface VoteButtonsProps {
   threadId?: string;
@@ -10,6 +11,7 @@ interface VoteButtonsProps {
   initialUpvotes?: number;
   initialDownvotes?: number;
   initialUserVote?: 1 | -1 | null;
+  orientation?: "vertical" | "horizontal";
 }
 
 export default function VoteButtons({
@@ -18,6 +20,7 @@ export default function VoteButtons({
   initialUpvotes = 0,
   initialDownvotes = 0,
   initialUserVote = null,
+  orientation = "horizontal",
 }: VoteButtonsProps) {
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -26,10 +29,8 @@ export default function VoteButtons({
   const [userVote, setUserVote] = useState<1 | -1 | null>(initialUserVote);
   const [isVoting, setIsVoting] = useState(false);
 
-  // Calculate score
   const score = upvotes - downvotes;
 
-  // Load vote status when component mounts (if not provided initially)
   useEffect(() => {
     if (!user || initialUserVote !== null) return;
 
@@ -62,18 +63,15 @@ export default function VoteButtons({
 
     if (isVoting) return;
 
-    // Optimistic UI update
     const previousVote = userVote;
     const previousUpvotes = upvotes;
     const previousDownvotes = downvotes;
 
-    // Calculate new values
     let newUpvotes = upvotes;
     let newDownvotes = downvotes;
     let newUserVote: 1 | -1 | null = voteType;
 
     if (previousVote === voteType) {
-      // Clicking the same vote removes it
       newUserVote = null;
       if (voteType === 1) {
         newUpvotes--;
@@ -81,14 +79,12 @@ export default function VoteButtons({
         newDownvotes--;
       }
     } else if (previousVote === null) {
-      // No previous vote, add new one
       if (voteType === 1) {
         newUpvotes++;
       } else {
         newDownvotes++;
       }
     } else {
-      // Changing vote from up to down or vice versa
       if (voteType === 1) {
         newUpvotes++;
         newDownvotes--;
@@ -98,14 +94,12 @@ export default function VoteButtons({
       }
     }
 
-    // Update UI optimistically
     setUserVote(newUserVote);
     setUpvotes(newUpvotes);
     setDownvotes(newDownvotes);
     setIsVoting(true);
 
     try {
-      // If clicking the same vote, remove it (DELETE)
       if (previousVote === voteType) {
         const params = new URLSearchParams();
         if (threadId) params.set("threadId", threadId);
@@ -121,7 +115,6 @@ export default function VoteButtons({
         setUpvotes(data.upvotes);
         setDownvotes(data.downvotes);
       } else {
-        // Create or update vote
         const res = await fetch("/api/votes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -142,11 +135,10 @@ export default function VoteButtons({
         setDownvotes(data.downvotes);
       }
     } catch (error) {
-      // Revert optimistic update on error
       setUserVote(previousVote);
       setUpvotes(previousUpvotes);
       setDownvotes(previousDownvotes);
-      
+
       console.error("Error voting:", error);
       showToast(
         error instanceof Error ? error.message : "Error al votar",
@@ -159,44 +151,35 @@ export default function VoteButtons({
 
   return (
     <div
+      className={`flex items-center rounded-full overflow-hidden transition-all ${
+        orientation === "vertical" ? "flex-col" : "flex-row"
+      }`}
+      onClick={(e) => e.stopPropagation()}
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "0.0625rem",
-        minWidth: "1.5rem",
+        background: "var(--card-hover)",
+        border: "2px solid var(--border)",
       }}
     >
       {/* Upvote Button */}
-      <button
-        onClick={() => handleVote(1)}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleVote(1);
+        }}
         disabled={isVoting || !user}
+        className="p-1.5 transition-colors hover:bg-[var(--border-light)] group"
         style={{
-          background: "none",
-          border: "none",
-          cursor: user ? (isVoting ? "not-allowed" : "pointer") : "not-allowed",
-          padding: "0.125rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: isVoting ? 0.5 : 1,
-          transition: "all 0.15s ease",
-          color: userVote === 1 ? "var(--brand)" : "var(--muted)",
-        }}
-        onMouseEnter={(e) => {
-          if (user && !isVoting) {
-            e.currentTarget.style.transform = "scale(1.15)";
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
+          color: userVote === 1 ? "var(--upvote)" : "var(--muted)",
         }}
         title={user ? "Upvote" : "Inicia sesión para votar"}
         aria-label="Upvote"
       >
         <svg
-          width="14"
-          height="14"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
@@ -204,58 +187,52 @@ export default function VoteButtons({
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M12 19V6M5 12l7-7 7 7" />
+          <path d="M12 19V5M5 12l7-7 7 7" />
         </svg>
-      </button>
+      </motion.button>
 
       {/* Score */}
-      <span
+      <motion.span
+        key={score}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className={`font-bold text-xs text-center transition-colors ${
+          orientation === "vertical"
+            ? "px-1.5 py-0.5 min-h-[1.5rem]"
+            : "px-2 min-w-[2.5rem]"
+        }`}
         style={{
-          fontSize: "0.6875rem",
-          fontWeight: "700",
           color:
-            score > 0
-              ? "var(--brand)"
-              : score < 0
-              ? "var(--danger)"
-              : "var(--muted)",
-          textAlign: "center",
-          lineHeight: "1",
+            userVote === 1
+              ? "var(--upvote)"
+              : userVote === -1
+              ? "var(--downvote)"
+              : "var(--foreground)",
         }}
       >
         {score}
-      </span>
+      </motion.span>
 
       {/* Downvote Button */}
-      <button
-        onClick={() => handleVote(-1)}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleVote(-1);
+        }}
         disabled={isVoting || !user}
+        className="p-1.5 transition-colors hover:bg-[var(--border-light)] group"
         style={{
-          background: "none",
-          border: "none",
-          cursor: user ? (isVoting ? "not-allowed" : "pointer") : "not-allowed",
-          padding: "0.125rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: isVoting ? 0.5 : 1,
-          transition: "all 0.15s ease",
-          color: userVote === -1 ? "var(--danger)" : "var(--muted)",
-        }}
-        onMouseEnter={(e) => {
-          if (user && !isVoting) {
-            e.currentTarget.style.transform = "scale(1.15)";
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
+          color: userVote === -1 ? "var(--downvote)" : "var(--muted)",
         }}
         title={user ? "Downvote" : "Inicia sesión para votar"}
         aria-label="Downvote"
       >
         <svg
-          width="14"
-          height="14"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"
@@ -263,9 +240,9 @@ export default function VoteButtons({
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M12 5v13M5 12l7 7 7-7" />
+          <path d="M12 5v14M5 12l7 7 7-7" />
         </svg>
-      </button>
+      </motion.button>
     </div>
   );
 }

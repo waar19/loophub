@@ -6,7 +6,6 @@ import ReportButton from "@/components/ReportButton";
 import EditCommentButton from "@/components/EditCommentButton";
 import dynamic from "next/dynamic";
 import DeleteCommentButton from "@/components/DeleteCommentButton";
-import Tooltip from "./Tooltip";
 import Link from "next/link";
 import VoteButtons from "./VoteButtons";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,16 +26,14 @@ interface CommentCardProps {
   onCommentAdded?: () => void;
   onCommentDeleted?: () => void;
   canReply?: boolean;
-  depth?: number;
 }
 
-export default function CommentCard({ 
-  comment, 
+export default function CommentCard({
+  comment,
   threadId,
   onCommentAdded,
   onCommentDeleted,
   canReply = true,
-  depth = 0,
 }: CommentCardProps) {
   const { user } = useAuth();
   const { t } = useTranslations();
@@ -44,7 +41,7 @@ export default function CommentCard({
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const isOwner = user?.id === comment.user_id;
 
   // Format date like Reddit (e.g., "5h ago", "2d ago")
@@ -96,7 +93,7 @@ export default function CommentCard({
       setReplyContent("");
       setIsReplying(false);
       onCommentAdded?.();
-    } catch (error) {
+    } catch {
       showError(t("threads.errorPosting"));
     } finally {
       setIsSubmitting(false);
@@ -108,75 +105,78 @@ export default function CommentCard({
   };
 
   return (
-    <div className="flex gap-1 py-1">
+    <div className="flex gap-5 p-5 card">
       {/* Voting column - left side like Reddit */}
-      <div className="flex flex-col items-center gap-0.5 pt-0.5">
+      <div className="flex flex-col items-center gap-1 pt-1">
         <VoteButtons
           commentId={comment.id}
           initialUpvotes={comment.upvote_count || 0}
           initialDownvotes={comment.downvote_count || 0}
+          orientation="vertical"
         />
       </div>
 
       {/* Content column */}
       <div className="flex-1 min-w-0">
         {/* Header - compact single line */}
-        <div className="flex items-center gap-1 mb-0.5">
+        <div className="flex items-center gap-2 mb-3">
           {comment.profile?.username && (
             <Link
               href={`/u/${comment.profile.username}`}
-              className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
               <div
-                className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
+                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold"
                 style={{
-                  background: "var(--brand)",
+                  background:
+                    "linear-gradient(135deg, var(--brand), var(--accent))",
                   color: "white",
-                  fontSize: "0.5rem",
                 }}
               >
                 {comment.profile.username.charAt(0).toUpperCase()}
               </div>
               <span
-                className="font-medium hover:underline"
-                style={{ color: "var(--foreground)", fontSize: "0.6875rem" }}
+                className="font-semibold hover:underline text-sm"
+                style={{ color: "var(--foreground)" }}
               >
                 {comment.profile.username}
               </span>
             </Link>
           )}
-          <span style={{ color: "var(--muted)", fontSize: "0.625rem" }}>
+          <span className="text-xs" style={{ color: "var(--muted)" }}>
             •
           </span>
-          <span style={{ color: "var(--muted)", fontSize: "0.625rem" }}>
+          <span className="text-xs" style={{ color: "var(--muted)" }}>
             {date}
           </span>
         </div>
-        
+
         {/* Comment content - compact prose */}
-        <div className="prose prose-sm max-w-none mb-1" style={{ fontSize: "0.75rem", lineHeight: "1.4" }}>
+        <div className="prose prose-sm max-w-none text-sm leading-relaxed mb-4">
           <MarkdownRenderer content={comment.content} />
         </div>
 
         {/* Action buttons - compact horizontal list */}
-        <div className="flex items-center gap-1.5" style={{ fontSize: "0.6875rem" }}>
+        <div className="flex items-center gap-4 text-sm">
           {canReply && (
             <button
               onClick={() => setIsReplying(!isReplying)}
-              className="font-medium transition-colors hover:opacity-80"
-              style={{ 
+              className="font-semibold transition-colors hover:opacity-80"
+              style={{
                 color: isReplying ? "var(--brand)" : "var(--muted)",
-                fontSize: "0.6875rem"
               }}
               disabled={!user}
             >
               {isReplying ? t("common.cancel") : t("threads.reply")}
             </button>
           )}
-          
+
           {comment.reply_count > 0 && (
-            <span style={{ color: "var(--muted)", fontSize: "0.6875rem" }}>
-              {comment.reply_count} {comment.reply_count === 1 ? t("threads.oneReply") : t("threads.replies")}
+            <span className="text-xs" style={{ color: "var(--muted)" }}>
+              {comment.reply_count}{" "}
+              {comment.reply_count === 1
+                ? t("threads.oneReply")
+                : t("threads.replies")}
             </span>
           )}
 
@@ -193,13 +193,13 @@ export default function CommentCard({
               />
             </>
           )}
-          
+
           <ReportButton contentType="comment" contentId={comment.id} />
         </div>
 
         {/* Reply form (inline) */}
         {isReplying && (
-          <div className="mt-1.5">
+          <div className="mt-3">
             <textarea
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
@@ -213,13 +213,16 @@ export default function CommentCard({
               }}
               rows={2}
             />
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1 mt-2">
               <button
                 onClick={handleReply}
                 disabled={isSubmitting || !replyContent.trim()}
                 className="px-2 py-1 rounded font-medium transition-colors"
                 style={{
-                  background: isSubmitting || !replyContent.trim() ? "var(--muted)" : "var(--brand)",
+                  background:
+                    isSubmitting || !replyContent.trim()
+                      ? "var(--muted)"
+                      : "var(--brand)",
                   color: "white",
                   fontSize: "0.6875rem",
                 }}

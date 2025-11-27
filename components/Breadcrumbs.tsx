@@ -14,14 +14,15 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
 
   return (
     <nav
-      className="flex items-center gap-2 text-sm mb-6"
+      className="flex items-center gap-1.5 mb-3"
       aria-label="Breadcrumb"
+      style={{ fontSize: "0.75rem" }}
     >
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         
         return (
-          <div key={index} className="flex items-center gap-2">
+          <div key={index} className="flex items-center gap-1">
             {item.href && !isLast ? (
               <Link
                 href={item.href}

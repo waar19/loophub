@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getFullUrl } from "@/lib/url-helpers";
 
 interface ShareButtonsProps {
@@ -16,59 +16,51 @@ export default function ShareButtons({
   description = "",
   className = "",
 }: ShareButtonsProps) {
-  const [currentUrl, setCurrentUrl] = useState(() => {
-    // Initialize with the correct URL immediately
+  // Compute the current URL directly during render
+  // This is more efficient than useState + useEffect and avoids cascading renders
+  const getCurrentUrl = () => {
+    // If URL doesn't start with http, use the helper function
     if (!url.startsWith("http")) {
-      return getFullUrl(url);
-    }
-    return url;
-  });
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    // Ensure we have the full URL using the helper function
-    if (!url.startsWith("http")) {
-      // Use getFullUrl helper to ensure correct production URL
       const fullUrl = getFullUrl(url);
-      
-      // Double-check: if we're in production (not localhost) and got localhost, use production URL
+
+      // Check if we're in production but got a localhost URL
       if (typeof window !== "undefined") {
-        const isLocalhost = fullUrl.includes("localhost") || fullUrl.includes("127.0.0.1");
-        const isProduction = window.location.hostname !== "localhost" &&
-                            window.location.hostname !== "127.0.0.1" &&
-                            !window.location.hostname.startsWith("192.168.");
-        
+        const isLocalhost =
+          fullUrl.includes("localhost") || fullUrl.includes("127.0.0.1");
+        const isProduction =
+          window.location.hostname !== "localhost" &&
+          window.location.hostname !== "127.0.0.1" &&
+          !window.location.hostname.startsWith("192.168.");
+
         if (isLocalhost && isProduction) {
           // We're in production but got localhost URL - use current origin
-          const productionUrl = `${window.location.origin}${url}`;
-          setCurrentUrl(productionUrl);
-          return;
+          return `${window.location.origin}${url}`;
         }
       }
-      
-      setCurrentUrl(fullUrl);
-    } else {
-      // Already a full URL, but verify it's not localhost in production
-      if (typeof window !== "undefined") {
-        const isLocalhost = url.includes("localhost") || url.includes("127.0.0.1");
-        const isProduction = window.location.hostname !== "localhost" &&
-                            window.location.hostname !== "127.0.0.1" &&
-                            !window.location.hostname.startsWith("192.168.");
-        
-        if (isLocalhost && isProduction) {
-          // Replace localhost with production URL
-          const productionUrl = url.replace(
-            /^https?:\/\/[^/]+/,
-            window.location.origin
-          );
-          setCurrentUrl(productionUrl);
-          return;
-        }
-      }
-      
-      setCurrentUrl(url);
+
+      return fullUrl;
     }
-  }, [url]);
+
+    // Already a full URL, but verify it's not localhost in production
+    if (typeof window !== "undefined") {
+      const isLocalhost =
+        url.includes("localhost") || url.includes("127.0.0.1");
+      const isProduction =
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1" &&
+        !window.location.hostname.startsWith("192.168.");
+
+      if (isLocalhost && isProduction) {
+        // Replace localhost with production URL
+        return url.replace(/^https?:\/\/[^/]+/, window.location.origin);
+      }
+    }
+
+    return url;
+  };
+
+  const currentUrl = getCurrentUrl();
+  const [copied, setCopied] = useState(false);
 
   const shareText = description
     ? `${title} - ${description.substring(0, 100)}...`
@@ -161,14 +153,11 @@ export default function ShareButtons({
   };
 
   const buttonClass =
-    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95";
+    "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md";
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-      <span
-        className="text-sm font-semibold mr-2"
-        style={{ color: "var(--muted)" }}
-      >
+      <span className="font-bold text-xs" style={{ color: "var(--muted)" }}>
         Compartir:
       </span>
 
@@ -178,14 +167,14 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: "2px solid var(--border)",
           color: "var(--foreground)",
         }}
         aria-label="Compartir en Twitter"
         title="Compartir en Twitter"
       >
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="currentColor"
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -201,14 +190,14 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: "2px solid var(--border)",
           color: "var(--foreground)",
         }}
         aria-label="Compartir en Facebook"
         title="Compartir en Facebook"
       >
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="currentColor"
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -228,7 +217,7 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: "2px solid var(--border)",
           color: "var(--foreground)",
         }}
         aria-label="Compartir en LinkedIn"
@@ -251,7 +240,7 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: "2px solid var(--border)",
           color: "var(--foreground)",
         }}
         aria-label="Compartir en WhatsApp"
@@ -274,7 +263,7 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: "2px solid var(--border)",
           color: "var(--foreground)",
         }}
         aria-label="Compartir en Telegram"
@@ -297,7 +286,7 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: "2px solid var(--border)",
           color: "var(--foreground)",
         }}
         aria-label="Compartir en Reddit"
@@ -320,7 +309,7 @@ export default function ShareButtons({
         className={buttonClass}
         style={{
           background: copied ? "var(--brand)" : "var(--card-bg)",
-          border: "1px solid var(--border)",
+          border: `2px solid ${copied ? "var(--brand)" : "var(--border)"}`,
           color: copied ? "white" : "var(--foreground)",
         }}
         aria-label="Copiar enlace"
@@ -364,35 +353,35 @@ export default function ShareButtons({
       </button>
 
       {/* Native Share (mobile) */}
-      {typeof navigator !== "undefined" && typeof navigator.share !== "undefined" && (
-        <button
-          onClick={() => handleShare("native")}
-          className={buttonClass}
-          style={{
-            background: "var(--card-bg)",
-            border: "1px solid var(--border)",
-            color: "var(--foreground)",
-          }}
-          aria-label="Compartir"
-          title="Compartir"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      {typeof navigator !== "undefined" &&
+        typeof navigator.share !== "undefined" && (
+          <button
+            onClick={() => handleShare("native")}
+            className={buttonClass}
+            style={{
+              background: "var(--card-bg)",
+              border: "2px solid var(--border)",
+              color: "var(--foreground)",
+            }}
+            aria-label="Compartir"
+            title="Compartir"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8.684 13.342c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11m5.34 0c.399 0 .79.04 1.17.11l1.17-.11c.399 0 .79.04 1.17.11m-5.34 0c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11m5.34 0c.399 0 .79.04 1.17.11l1.17-.11c.399 0 .79.04 1.17.11m-5.34 0c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11m5.34 0c.399 0 .79.04 1.17.11l1.17-.11c.399 0 .79.04 1.17.11m-5.34 0c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11"
-            />
-          </svg>
-          <span className="hidden sm:inline">Más</span>
-        </button>
-      )}
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8.684 13.342c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11m5.34 0c.399 0 .79.04 1.17.11l1.17-.11c.399 0 .79.04 1.17.11m-5.34 0c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11m5.34 0c.399 0 .79.04 1.17.11l1.17-.11c.399 0 .79.04 1.17.11m-5.34 0c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11m5.34 0c.399 0 .79.04 1.17.11l1.17-.11c.399 0 .79.04 1.17.11m-5.34 0c-.399 0-.79-.04-1.17-.11l-1.17.11c-.399 0-.79-.04-1.17-.11"
+              />
+            </svg>
+            <span className="hidden sm:inline">Más</span>
+          </button>
+        )}
     </div>
   );
 }
-

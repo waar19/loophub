@@ -15,6 +15,7 @@ const MarkdownRenderer = dynamic(
 );
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ThreadSidebar from "@/components/ThreadSidebar";
+import MobileThreadSidebar from "@/components/MobileThreadSidebar";
 import TrendingPanel from "@/components/TrendingPanel";
 import EditThreadButton from "@/components/EditThreadButton";
 import DeleteButton from "@/components/DeleteButton";
@@ -49,6 +50,7 @@ export default function ThreadPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
+  const [showCommentForm, setShowCommentForm] = useState(false);
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const { t } = useTranslations();
@@ -123,7 +125,7 @@ export default function ThreadPage({
   if (isLoading && !data) {
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="skeleton h-6 w-48 mb-6" />
           <div className="card mb-8">
             <div className="skeleton h-8 w-3/4 mb-3" />
@@ -146,8 +148,8 @@ export default function ThreadPage({
   if (!data) {
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="card text-center py-12">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="card text-center py-6">
             <p style={{ color: "var(--muted)" }}>
               {t("threads.threadNotFound")}
             </p>
@@ -171,7 +173,7 @@ export default function ThreadPage({
       />
       <ThreadStructuredData thread={thread} author={thread.profile} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <Breadcrumbs
             items={[
               { label: t("common.home"), href: "/" },
@@ -180,28 +182,27 @@ export default function ThreadPage({
             ]}
           />
 
-          <div className="flex gap-8 items-start">
+          <div className="flex gap-4 items-start">
             {/* Main Content */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 space-y-6">
               {/* Thread Header */}
-              <div
-                className="card mb-3 p-2"
+              <article
+                className="card p-8"
                 style={{
-                  borderLeft: "2px solid var(--brand)",
+                  borderLeft: "3px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-2 mb-1">
+                <div className="flex items-start justify-between gap-4 mb-6">
                   <h1
-                    className="font-semibold leading-tight flex-1"
+                    className="font-bold leading-tight flex-1 text-2xl"
                     style={{
                       color: "var(--foreground)",
-                      fontSize: "1rem",
                     }}
                   >
                     {thread.title}
                   </h1>
                   {user?.id === thread.user_id && (
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                       <EditThreadButton
                         threadId={thread.id}
                         currentTitle={thread.title}
@@ -212,13 +213,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="leading-relaxed markdown-content mb-1.5" style={{ fontSize: "0.8125rem" }}>
+                <div className="leading-relaxed markdown-content text-base mb-8">
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-1.5 border-t"
+                  className="pt-6 pb-2 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -231,33 +232,32 @@ export default function ThreadPage({
                       .trim()}
                   />
                 </div>
-              </div>
+              </article>
 
               {/* Comments Section */}
-              <div className="mb-3">
-                <div className="flex items-center gap-1.5 mb-2">
+              <section>
+                <div className="flex items-center gap-3 mb-6">
                   <div
-                    className="w-4 h-4 rounded flex items-center justify-center"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
                     style={{
-                      background: "var(--brand)",
+                      background:
+                        "linear-gradient(135deg, var(--brand), var(--accent))",
                       color: "white",
-                      fontSize: "0.625rem",
                     }}
                   >
                     💬
                   </div>
                   <h2
-                    className="font-semibold"
-                    style={{ color: "var(--foreground)", fontSize: "0.8125rem" }}
+                    className="font-bold text-xl"
+                    style={{ color: "var(--foreground)" }}
                   >
                     {t("threads.comments")}
                   </h2>
                   <div
-                    className="px-1 py-0 rounded font-semibold"
+                    className="px-3 py-1 rounded-full font-bold text-sm"
                     style={{
                       background: "var(--brand)",
                       color: "white",
-                      fontSize: "0.625rem",
                     }}
                   >
                     {data.pagination.total}
@@ -265,23 +265,22 @@ export default function ThreadPage({
                 </div>
 
                 {comments.length === 0 && !isLoading ? (
-                  <div className="card text-center py-4 mb-3">
+                  <div className="card text-center py-12 mb-4">
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1.5"
+                      className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"
                       style={{
                         background: "var(--brand-light)",
-                        fontSize: "1.25rem",
                       }}
                     >
                       💭
                     </div>
                     <h3
-                      className="font-semibold mb-0.5"
-                      style={{ color: "var(--foreground)", fontSize: "0.875rem" }}
+                      className="font-semibold text-lg mb-2"
+                      style={{ color: "var(--foreground)" }}
                     >
                       {t("threads.noComments")}
                     </h3>
-                    <p style={{ color: "var(--muted)", fontSize: "0.75rem" }}>
+                    <p className="text-sm" style={{ color: "var(--muted)" }}>
                       {t("threads.beFirst")}
                     </p>
                   </div>
@@ -291,7 +290,7 @@ export default function ThreadPage({
                     isLoading={isLoadingMore}
                     onLoadMore={handleLoadMore}
                     loader={
-                      <div className="space-y-4 mt-4">
+                      <div className="space-y-1 mt-1">
                         {[1, 2].map((i) => (
                           <CommentSkeleton key={i} />
                         ))}
@@ -299,8 +298,8 @@ export default function ThreadPage({
                     }
                     endMessage={
                       <p
-                        className="text-center py-4"
-                        style={{ color: "var(--muted)" }}
+                        className="text-center py-0.5"
+                        style={{ color: "var(--muted)", fontSize: "0.6875rem" }}
                       >
                         {t("threads.noMoreComments")}
                       </p>
@@ -314,52 +313,93 @@ export default function ThreadPage({
                     />
                   </InfiniteScroll>
                 )}
-              </div>
+              </section>
 
               {/* Comment Form */}
-              <div
-                className="card p-2"
-                style={{
-                  borderLeft: "2px solid var(--brand)",
-                }}
-              >
-                <div className="flex items-center gap-1.5 mb-2">
-                  <div
-                    className="w-4 h-4 rounded flex items-center justify-center"
-                    style={{
-                      background: "var(--brand)",
-                      color: "white",
-                      fontSize: "0.625rem",
-                    }}
-                  >
-                    ✍️
+              {!showCommentForm ? (
+                <button
+                  onClick={() => setShowCommentForm(true)}
+                  className="card p-5 pl-6 w-full text-left hover:bg-[var(--card-hover)] transition-all mb-6 relative overflow-visible"
+                  style={{
+                    borderLeft: "3px solid var(--brand)",
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-lg relative z-10"
+                      style={{
+                        background: "var(--brand)",
+                        color: "white",
+                      }}
+                    >
+                      ➕
+                    </div>
+                    <span
+                      className="font-semibold text-base"
+                      style={{ color: "var(--foreground)" }}
+                    >
+                      {t("threads.addComment")}
+                    </span>
                   </div>
-                  <h3
-                    className="font-semibold"
-                    style={{ color: "var(--foreground)", fontSize: "0.8125rem" }}
-                  >
-                    {t("threads.addComment")}
-                  </h3>
+                </button>
+              ) : (
+                <div
+                  className="card p-6 mb-6"
+                  style={{
+                    borderLeft: "3px solid var(--brand)",
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-5 justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
+                        style={{
+                          background: "var(--brand)",
+                          color: "white",
+                        }}
+                      >
+                        ✍️
+                      </div>
+                      <h3
+                        className="font-bold text-lg"
+                        style={{ color: "var(--foreground)" }}
+                      >
+                        {t("threads.addComment")}
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setShowCommentForm(false)}
+                      className="hover:opacity-70 transition-opacity text-xl"
+                      style={{ color: "var(--muted)" }}
+                      aria-label="Cancel"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <SimpleForm
+                    fields={[
+                      {
+                        name: "content",
+                        label: t("threads.yourComment"),
+                        type: "markdown",
+                        placeholder: t("threads.commentPlaceholder"),
+                        required: true,
+                        maxLength: 10000,
+                      },
+                    ]}
+                    onSubmit={async (values) => {
+                      await handleCommentSubmit(values);
+                      setShowCommentForm(false);
+                    }}
+                    submitText={t("threads.postComment")}
+                  />
                 </div>
-                <SimpleForm
-                  fields={[
-                    {
-                      name: "content",
-                      label: t("threads.yourComment"),
-                      type: "markdown",
-                      placeholder: t("threads.commentPlaceholder"),
-                      required: true,
-                      maxLength: 10000,
-                    },
-                  ]}
-                  onSubmit={handleCommentSubmit}
-                  submitText={t("threads.postComment")}
-                />
-              </div>
+              )}
             </div>
 
             {/* Sidebar */}
             <ThreadSidebar thread={thread} />
+            <MobileThreadSidebar thread={thread} />
           </div>
         </div>
 

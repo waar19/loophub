@@ -72,7 +72,7 @@ export default function HomeContent({
 
   return (
     <div className="min-h-screen lg:ml-[var(--sidebar-width)] xl:mr-80">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <Breadcrumbs items={[{ label: t("nav.home"), href: "/" }]} />
 
         {/* Hero Section */}
@@ -80,10 +80,10 @@ export default function HomeContent({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-16"
+          className="mb-6"
         >
           <h1
-            className="text-4xl sm:text-5xl font-extrabold mb-4"
+            className="text-2xl sm:text-3xl font-extrabold mb-2"
             style={{
               color: "var(--foreground)",
               background:
@@ -96,7 +96,7 @@ export default function HomeContent({
             {t("home.welcome")}
           </h1>
           <p
-            className="text-xl leading-relaxed"
+            className="text-base leading-relaxed"
             style={{ color: "var(--muted)" }}
           >
             {t("home.welcomeSubtitle")}
@@ -105,10 +105,10 @@ export default function HomeContent({
 
         {/* Forums List */}
         {forums.length > 0 && (
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
+          <section className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                className="w-6 h-6 rounded flex items-center justify-center text-sm"
                 style={{
                   background: "var(--brand)",
                   color: "white",
@@ -117,7 +117,7 @@ export default function HomeContent({
                 💬
               </div>
               <h2
-                className="text-2xl sm:text-3xl font-bold"
+                className="text-xl sm:text-2xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 {t("home.forums")}
@@ -127,7 +127,7 @@ export default function HomeContent({
               variants={container}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              className="grid grid-cols-1 md:grid-cols-2 gap-3"
             >
               {forums.map((forum) => (
                 <motion.div key={forum.id} variants={item}>
@@ -140,10 +140,10 @@ export default function HomeContent({
 
         {/* Featured Threads */}
         {featuredThreads.length > 0 && (
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
+          <section className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                className="w-6 h-6 rounded flex items-center justify-center text-sm"
                 style={{
                   background:
                     "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)",
@@ -154,7 +154,7 @@ export default function HomeContent({
                 ⭐
               </div>
               <h2
-                className="text-2xl sm:text-3xl font-bold"
+                className="text-xl sm:text-2xl font-bold"
                 style={{ color: "var(--foreground)" }}
               >
                 {t("home.featuredThreads")}
@@ -181,9 +181,9 @@ export default function HomeContent({
 
         {/* Recent Threads */}
         <section>
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-2 mb-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+              className="w-6 h-6 rounded flex items-center justify-center text-sm"
               style={{
                 background: "var(--brand)",
                 color: "white",
@@ -192,14 +192,14 @@ export default function HomeContent({
               🔥
             </div>
             <h2
-              className="text-2xl sm:text-3xl font-bold"
+              className="text-xl sm:text-2xl font-bold"
               style={{ color: "var(--foreground)" }}
             >
               {t("home.recentThreads")}
             </h2>
           </div>
           {recentThreads.length === 0 ? (
-            <div className="card text-center py-12">
+            <div className="card text-center py-6">
               <p style={{ color: "var(--muted)" }}>{t("home.noThreads")}</p>
             </div>
           ) : (

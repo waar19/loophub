@@ -137,8 +137,8 @@ export default function ForumPage({
   if (!data) {
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="card text-center py-12">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="card text-center py-6">
             <p style={{ color: "var(--muted)" }}>{t("forums.errorLoading")}</p>
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function ForumPage({
       />
       <ForumStructuredData forum={forum} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-4">
           <Breadcrumbs
             items={[
               { label: t("common.home"), href: "/" },
@@ -171,16 +171,16 @@ export default function ForumPage({
 
           {/* Forum Header */}
           <div
-            className="card mb-12 overflow-hidden"
+            className="card mb-6 overflow-hidden p-8"
             style={{
               borderLeft: `4px solid ${forumColor}`,
               background: `linear-gradient(to right, ${forumColor}15, var(--card-bg))`,
               boxShadow: `0 4px 12px ${forumColor}20, var(--shadow-md)`,
             }}
           >
-            <div className="flex items-start gap-6">
+            <div className="flex items-start gap-4">
               <div
-                className="w-20 h-20 rounded-xl flex items-center justify-center text-4xl shrink-0 transition-transform hover:scale-110"
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0 transition-transform hover:scale-110"
                 style={{
                   background: `linear-gradient(135deg, ${forumColor} 0%, ${forumColor}CC 100%)`,
                   boxShadow: `0 4px 12px ${forumColor}40`,
@@ -190,7 +190,7 @@ export default function ForumPage({
               </div>
               <div className="flex-1">
                 <h1
-                  className="text-3xl sm:text-4xl font-extrabold mb-3"
+                  className="text-2xl sm:text-3xl font-extrabold mb-2"
                   style={{
                     color: "var(--foreground)",
                     background: `linear-gradient(135deg, var(--foreground) 0%, ${forumColor} 100%)`,
@@ -203,16 +203,16 @@ export default function ForumPage({
                 </h1>
                 {forum.description && (
                   <p
-                    className="text-lg mb-6 leading-relaxed"
+                    className="text-base mb-3 leading-relaxed"
                     style={{ color: "var(--muted)" }}
                   >
                     {forum.description}
                   </p>
                 )}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                      className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
                       style={{
                         background: "var(--brand)",
                         color: "white",
@@ -241,9 +241,9 @@ export default function ForumPage({
 
           {/* Threads List */}
           {threads.length === 0 ? (
-            <div className="card text-center py-16 mb-12">
+            <div className="card text-center py-8 mb-6 p-8">
               <div
-                className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-3"
                 style={{
                   background: "var(--brand-light)",
                 }}
@@ -264,8 +264,8 @@ export default function ForumPage({
               </Link>
             </div>
           ) : (
-            <div className="mb-12">
-              <div className="flex items-center justify-between mb-8">
+            <div className="mb-6">
+              <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
@@ -297,7 +297,7 @@ export default function ForumPage({
                 isLoading={isLoadingMore}
                 onLoadMore={handleLoadMore}
                 loader={
-                  <div className="space-y-4 mt-4">
+                  <div className="space-y-6 mt-4">
                     {[1, 2].map((i) => (
                       <LoadingSkeleton key={i} />
                     ))}
@@ -312,7 +312,7 @@ export default function ForumPage({
                   </p>
                 }
               >
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {threads.map((thread) => (
                     <ThreadCard
                       key={thread.id}
@@ -327,7 +327,7 @@ export default function ForumPage({
 
           {/* Forum Rules */}
           <div
-            className="card mt-12"
+            className="card mt-12 p-8"
             style={{
               borderLeft: `4px solid var(--brand)`,
             }}
@@ -350,7 +350,7 @@ export default function ForumPage({
               </h3>
             </div>
             <ul
-              className="space-y-3 text-base"
+              className="space-y-4 text-base"
               style={{ color: "var(--muted)" }}
             >
               <li className="flex items-start gap-3">
