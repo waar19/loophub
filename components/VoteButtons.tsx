@@ -28,10 +28,8 @@ export default function VoteButtons({
   const [userVote, setUserVote] = useState<1 | -1 | null>(initialUserVote);
   const [isVoting, setIsVoting] = useState(false);
 
-  // Calculate score
   const score = upvotes - downvotes;
 
-  // Load vote status when component mounts (if not provided initially)
   useEffect(() => {
     if (!user || initialUserVote !== null) return;
 
@@ -64,18 +62,15 @@ export default function VoteButtons({
 
     if (isVoting) return;
 
-    // Optimistic UI update
     const previousVote = userVote;
     const previousUpvotes = upvotes;
     const previousDownvotes = downvotes;
 
-    // Calculate new values
     let newUpvotes = upvotes;
     let newDownvotes = downvotes;
     let newUserVote: 1 | -1 | null = voteType;
 
     if (previousVote === voteType) {
-      // Clicking the same vote removes it
       newUserVote = null;
       if (voteType === 1) {
         newUpvotes--;
@@ -83,14 +78,12 @@ export default function VoteButtons({
         newDownvotes--;
       }
     } else if (previousVote === null) {
-      // No previous vote, add new one
       if (voteType === 1) {
         newUpvotes++;
       } else {
         newDownvotes++;
       }
     } else {
-      // Changing vote from up to down or vice versa
       if (voteType === 1) {
         newUpvotes++;
         newDownvotes--;
@@ -100,14 +93,12 @@ export default function VoteButtons({
       }
     }
 
-    // Update UI optimistically
     setUserVote(newUserVote);
     setUpvotes(newUpvotes);
     setDownvotes(newDownvotes);
     setIsVoting(true);
 
     try {
-      // If clicking the same vote, remove it (DELETE)
       if (previousVote === voteType) {
         const params = new URLSearchParams();
         if (threadId) params.set("threadId", threadId);
@@ -123,7 +114,6 @@ export default function VoteButtons({
         setUpvotes(data.upvotes);
         setDownvotes(data.downvotes);
       } else {
-        // Create or update vote
         const res = await fetch("/api/votes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -144,7 +134,6 @@ export default function VoteButtons({
         setDownvotes(data.downvotes);
       }
     } catch (error) {
-      // Revert optimistic update on error
       setUserVote(previousVote);
       setUpvotes(previousUpvotes);
       setDownvotes(previousDownvotes);
@@ -161,9 +150,12 @@ export default function VoteButtons({
 
   return (
     <div
-      className="flex items-center bg-[var(--card-hover)] rounded-full overflow-hidden"
+      className="flex items-center rounded-full overflow-hidden transition-all"
       onClick={(e) => e.stopPropagation()}
-      style={{ border: "1px solid var(--border)" }}
+      style={{
+        background: "var(--card-hover)",
+        border: "2px solid var(--border)",
+      }}
     >
       {/* Upvote Button */}
       <button
@@ -173,9 +165,9 @@ export default function VoteButtons({
           handleVote(1);
         }}
         disabled={isVoting || !user}
-        className="p-2 hover:bg-[var(--border-light)] transition-colors"
+        className="p-2.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
         style={{
-          color: userVote === 1 ? "var(--error)" : "var(--muted)",
+          color: userVote === 1 ? "var(--upvote)" : "var(--muted)",
         }}
         title={user ? "Upvote" : "Inicia sesión para votar"}
         aria-label="Upvote"
@@ -186,9 +178,10 @@ export default function VoteButtons({
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="transition-transform group-hover:scale-110"
         >
           <path d="M12 19V5M5 12l7-7 7 7" />
         </svg>
@@ -196,13 +189,13 @@ export default function VoteButtons({
 
       {/* Score */}
       <span
-        className="font-bold text-sm px-2 min-w-[2.5rem] text-center"
+        className="font-bold text-sm px-3 min-w-[3rem] text-center transition-colors"
         style={{
           color:
             userVote === 1
-              ? "var(--error)"
+              ? "var(--upvote)"
               : userVote === -1
-              ? "var(--brand)"
+              ? "var(--downvote)"
               : "var(--foreground)",
         }}
       >
@@ -217,9 +210,9 @@ export default function VoteButtons({
           handleVote(-1);
         }}
         disabled={isVoting || !user}
-        className="p-2 hover:bg-[var(--border-light)] transition-colors"
+        className="p-2.5 transition-all hover:bg-[var(--border-light)] active:scale-95 group"
         style={{
-          color: userVote === -1 ? "var(--brand)" : "var(--muted)",
+          color: userVote === -1 ? "var(--downvote)" : "var(--muted)",
         }}
         title={user ? "Downvote" : "Inicia sesión para votar"}
         aria-label="Downvote"
@@ -230,9 +223,10 @@ export default function VoteButtons({
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="transition-transform group-hover:scale-110"
         >
           <path d="M12 5v14M5 12l7 7 7-7" />
         </svg>
