@@ -164,7 +164,7 @@ export default function HomeContent({
               variants={container}
               initial="hidden"
               animate="show"
-              className="space-y-2"
+              className="space-y-4"
             >
               {featuredThreads.map((thread) => (
                 <motion.div key={thread.id} variants={item}>
@@ -207,7 +207,7 @@ export default function HomeContent({
               variants={container}
               initial="hidden"
               animate="show"
-              className="space-y-2"
+              className="space-y-4"
             >
               {recentThreads.map((thread) => (
                 <motion.div key={thread.id} variants={item}>
