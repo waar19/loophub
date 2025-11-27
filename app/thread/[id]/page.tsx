@@ -15,6 +15,7 @@ const MarkdownRenderer = dynamic(
 );
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ThreadSidebar from "@/components/ThreadSidebar";
+import MobileThreadSidebar from "@/components/MobileThreadSidebar";
 import TrendingPanel from "@/components/TrendingPanel";
 import EditThreadButton from "@/components/EditThreadButton";
 import DeleteButton from "@/components/DeleteButton";
@@ -398,6 +399,7 @@ export default function ThreadPage({
 
             {/* Sidebar */}
             <ThreadSidebar thread={thread} />
+            <MobileThreadSidebar thread={thread} />
           </div>
         </div>
 

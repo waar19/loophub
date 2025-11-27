@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect, useCallback } from "react";
+
 import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
 
@@ -11,10 +11,10 @@ interface UsernameChangeProps {
   onUsernameChanged: (newUsername: string) => void;
 }
 
-export default function UsernameChange({ 
-  currentUsername, 
+export default function UsernameChange({
+  currentUsername,
   canChange,
-  onUsernameChanged 
+  onUsernameChanged,
 }: UsernameChangeProps) {
   const { t } = useTranslations();
   const { showToast } = useToast();
@@ -26,17 +26,20 @@ export default function UsernameChange({
   const [isAvailable, setIsAvailable] = useState(false);
 
   // Validate username format
-  const validateFormat = (username: string): boolean => {
-    if (username.length < 3 || username.length > 30) {
-      setValidationMessage(t("onboarding.usernameMinLength"));
-      return false;
-    }
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setValidationMessage(t("onboarding.onlyAlphanumeric"));
-      return false;
-    }
-    return true;
-  };
+  const validateFormat = useCallback(
+    (username: string): boolean => {
+      if (username.length < 3 || username.length > 30) {
+        setValidationMessage(t("onboarding.usernameMinLength"));
+        return false;
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        setValidationMessage(t("onboarding.onlyAlphanumeric"));
+        return false;
+      }
+      return true;
+    },
+    [t]
+  );
 
   // Check availability with debounce
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function UsernameChange({
           body: JSON.stringify({ username: newUsername }),
         });
         const data = await res.json();
-        
+
         if (data.available) {
           setValidationMessage("✓ " + t("onboarding.usernameAvailable"));
           setIsAvailable(true);
@@ -78,7 +81,7 @@ export default function UsernameChange({
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [newUsername, currentUsername, t]);
+  }, [newUsername, currentUsername, t, validateFormat]);
 
   const handleChange = async () => {
     if (!isAvailable || !newUsername) return;
@@ -114,41 +117,31 @@ export default function UsernameChange({
 
   if (!canChange) {
     return (
-      <div
-        style={{
-          background: "var(--card-bg)",
-          border: "1px solid var(--border)",
-          borderRadius: "12px",
-          padding: "1.25rem",
-        }}
-      >
-        <h3 style={{ 
-          fontSize: "1.125rem", 
-          fontWeight: "600",
-          marginBottom: "0.5rem",
-          color: "var(--foreground)"
-        }}>
+      <div className="card p-6 sm:p-8">
+        <h3
+          className="text-lg font-semibold mb-2"
+          style={{ color: "var(--foreground)" }}
+        >
           {t("settings.username")}
         </h3>
-        <p style={{ 
-          fontSize: "0.875rem", 
-          color: "var(--foreground-secondary)",
-          marginBottom: "0.75rem"
-        }}>
+        <p className="text-sm mb-3" style={{ color: "var(--muted)" }}>
           @{currentUsername}
         </p>
-        <div style={{
-          background: "var(--accent-light)",
-          border: "1px solid var(--accent)",
-          borderRadius: "8px",
-          padding: "0.75rem",
-          fontSize: "0.875rem",
-          color: "var(--foreground-secondary)"
-        }}>
-          ℹ️ {t("settings.usernameChangeLimit") || "You've already used your free username change."}
+        <div
+          className="p-3 rounded-lg text-sm"
+          style={{
+            background: "var(--accent-light)",
+            border: "1px solid var(--accent)",
+            color: "var(--muted)",
+          }}
+        >
+          ℹ️{" "}
+          {t("settings.usernameChangeLimit") ||
+            "You've already used your free username change."}
           <br />
-          <span style={{ fontSize: "0.75rem", opacity: 0.8 }}>
-            {t("settings.usernameChangeFuture") || "In the future, you may be able to change it using karma or other rewards."}
+          <span className="text-xs opacity-80">
+            {t("settings.usernameChangeFuture") ||
+              "In the future, you may be able to change it using karma or other rewards."}
           </span>
         </div>
       </div>
@@ -156,56 +149,63 @@ export default function UsernameChange({
   }
 
   return (
-    <div
-      style={{
-        background: "var(--card-bg)",
-        border: "1px solid var(--border)",
-        borderRadius: "12px",
-        padding: "1.25rem",
-      }}
-    >
-      <h3 style={{ 
-        fontSize: "1.125rem", 
-        fontWeight: "600",
-        marginBottom: "0.5rem",
-        color: "var(--foreground)"
-      }}>
+    <div className="card p-6 sm:p-8">
+      <h3
+        style={{
+          fontSize: "1.125rem",
+          fontWeight: "600",
+          marginBottom: "0.5rem",
+          color: "var(--foreground)",
+        }}
+      >
         {t("settings.changeUsername") || "Change Username"}
       </h3>
-      <p style={{ 
-        fontSize: "0.875rem", 
-        color: "var(--foreground-secondary)",
-        marginBottom: "1rem"
-      }}>
+      <p
+        style={{
+          fontSize: "0.875rem",
+          color: "var(--foreground-secondary)",
+          marginBottom: "1rem",
+        }}
+      >
         {t("settings.currentUsername")}: <strong>@{currentUsername}</strong>
       </p>
 
       {!showConfirm ? (
         <>
-          <div style={{
-            background: "linear-gradient(135deg, var(--brand-light) 0%, var(--accent-light) 100%)",
-            border: "1px solid var(--brand)",
-            borderRadius: "8px",
-            padding: "0.75rem",
-            marginBottom: "1rem",
-            fontSize: "0.875rem",
-            color: "var(--foreground)"
-          }}>
-            ⚠️ <strong>{t("settings.usernameChangeOnce") || "You can change your username only once for free."}</strong>
+          <div
+            style={{
+              background:
+                "linear-gradient(135deg, var(--brand-light) 0%, var(--accent-light) 100%)",
+              border: "1px solid var(--brand)",
+              borderRadius: "8px",
+              padding: "0.75rem",
+              marginBottom: "1rem",
+              fontSize: "0.875rem",
+              color: "var(--foreground)",
+            }}
+          >
+            ⚠️{" "}
+            <strong>
+              {t("settings.usernameChangeOnce") ||
+                "You can change your username only once for free."}
+            </strong>
             <br />
             <span style={{ fontSize: "0.75rem", opacity: 0.9 }}>
-              {t("settings.usernameChangeWarning") || "Choose carefully! Future changes may require karma or payment."}
+              {t("settings.usernameChangeWarning") ||
+                "Choose carefully! Future changes may require karma or payment."}
             </span>
           </div>
 
           <div style={{ marginBottom: "0.75rem" }}>
-            <label style={{
-              display: "block",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              marginBottom: "0.5rem",
-              color: "var(--foreground)"
-            }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                marginBottom: "0.5rem",
+                color: "var(--foreground)",
+              }}
+            >
               {t("settings.newUsername") || "New Username"}
             </label>
             <input
@@ -225,11 +225,13 @@ export default function UsernameChange({
               }}
             />
             {validationMessage && (
-              <p style={{
-                marginTop: "0.5rem",
-                fontSize: "0.875rem",
-                color: isAvailable ? "var(--success)" : "var(--danger)"
-              }}>
+              <p
+                style={{
+                  marginTop: "0.5rem",
+                  fontSize: "0.875rem",
+                  color: isAvailable ? "var(--success)" : "var(--danger)",
+                }}
+              >
                 {isValidating ? t("onboarding.checking") : validationMessage}
               </p>
             )}
@@ -240,8 +242,12 @@ export default function UsernameChange({
             disabled={!isAvailable || isValidating}
             style={{
               padding: "0.625rem 1.25rem",
-              background: isAvailable && !isValidating ? "var(--brand)" : "var(--border)",
-              color: isAvailable && !isValidating ? "#fff" : "var(--foreground-secondary)",
+              background:
+                isAvailable && !isValidating ? "var(--brand)" : "var(--border)",
+              color:
+                isAvailable && !isValidating
+                  ? "#fff"
+                  : "var(--foreground-secondary)",
               border: "none",
               borderRadius: "8px",
               fontSize: "0.9375rem",
@@ -254,40 +260,58 @@ export default function UsernameChange({
           </button>
         </>
       ) : (
-        <div style={{
-          background: "var(--danger-light)",
-          border: "2px solid var(--danger)",
-          borderRadius: "8px",
-          padding: "1rem",
-        }}>
-          <h4 style={{ 
-            fontSize: "1rem", 
-            fontWeight: "600",
-            marginBottom: "0.75rem",
-            color: "var(--danger)"
-          }}>
+        <div
+          style={{
+            background: "var(--danger-light)",
+            border: "2px solid var(--danger)",
+            borderRadius: "8px",
+            padding: "1rem",
+          }}
+        >
+          <h4
+            style={{
+              fontSize: "1rem",
+              fontWeight: "600",
+              marginBottom: "0.75rem",
+              color: "var(--danger)",
+            }}
+          >
             ⚠️ {t("settings.confirmChange") || "Confirm Username Change"}
           </h4>
-          <p style={{ 
-            fontSize: "0.875rem", 
-            marginBottom: "1rem",
-            color: "var(--foreground)"
-          }}>
-            {t("settings.confirmChangeText") || "Are you sure you want to change your username from"}{" "}
-            <strong>@{currentUsername}</strong> {t("settings.toUsername") || "to"} <strong>@{newUsername}</strong>?
+          <p
+            style={{
+              fontSize: "0.875rem",
+              marginBottom: "1rem",
+              color: "var(--foreground)",
+            }}
+          >
+            {t("settings.confirmChangeText") ||
+              "Are you sure you want to change your username from"}{" "}
+            <strong>@{currentUsername}</strong>{" "}
+            {t("settings.toUsername") || "to"} <strong>@{newUsername}</strong>?
             <br />
             <br />
-            <strong>{t("settings.confirmChangeWarning") || "This action cannot be undone for free."}</strong>
+            <strong>
+              {t("settings.confirmChangeWarning") ||
+                "This action cannot be undone for free."}
+            </strong>
           </p>
-          <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column", width: "100%" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "0.75rem",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
             <button
               onClick={handleChange}
               disabled={isChanging}
               style={{
                 width: "100%",
                 padding: "0.875rem 1.25rem",
-                background: isChanging 
-                  ? "var(--muted)" 
+                background: isChanging
+                  ? "var(--muted)"
                   : "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
                 color: "#ffffff",
                 border: "none",
@@ -296,23 +320,29 @@ export default function UsernameChange({
                 fontWeight: "600",
                 cursor: isChanging ? "not-allowed" : "pointer",
                 opacity: isChanging ? 0.7 : 1,
-                boxShadow: isChanging ? "none" : "0 2px 8px rgba(220, 38, 38, 0.3)",
+                boxShadow: isChanging
+                  ? "none"
+                  : "0 2px 8px rgba(220, 38, 38, 0.3)",
                 transition: "all 0.2s ease",
               }}
               onMouseEnter={(e) => {
                 if (!isChanging) {
                   e.currentTarget.style.transform = "translateY(-1px)";
-                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.4)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 12px rgba(220, 38, 38, 0.4)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isChanging) {
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(220, 38, 38, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 2px 8px rgba(220, 38, 38, 0.3)";
                 }
               }}
             >
-              {isChanging ? t("settings.changing") || "Changing..." : t("settings.confirmButton") || "Yes, Change Username"}
+              {isChanging
+                ? t("settings.changing") || "Changing..."
+                : t("settings.confirmButton") || "Yes, Change Username"}
             </button>
             <button
               onClick={() => {
