@@ -180,7 +180,7 @@ export default function ForumPage({
           >
             <div className="flex items-start gap-4">
               <div
-                className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0 transition-transform hover:scale-110"
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0 transition-transform hover:scale-110"
                 style={{
                   background: `linear-gradient(135deg, ${forumColor} 0%, ${forumColor}CC 100%)`,
                   boxShadow: `0 4px 12px ${forumColor}40`,
@@ -243,7 +243,7 @@ export default function ForumPage({
           {threads.length === 0 ? (
             <div className="card text-center py-8 mb-6">
               <div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mx-auto mb-3"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-3"
                 style={{
                   background: "var(--brand-light)",
                 }}

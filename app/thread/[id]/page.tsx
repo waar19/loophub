@@ -49,6 +49,7 @@ export default function ThreadPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
+  const [showCommentForm, setShowCommentForm] = useState(false);
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const { t } = useTranslations();
@@ -317,45 +318,87 @@ export default function ThreadPage({
               </div>
 
               {/* Comment Form */}
-              <div
-                className="card p-2"
-                style={{
-                  borderLeft: "2px solid var(--brand)",
-                }}
-              >
-                <div className="flex items-center gap-1.5 mb-1">
-                  <div
-                    className="w-4 h-4 rounded flex items-center justify-center"
-                    style={{
-                      background: "var(--brand)",
-                      color: "white",
-                      fontSize: "0.625rem",
-                    }}
-                  >
-                    ✍️
+              {!showCommentForm ? (
+                <button
+                  onClick={() => setShowCommentForm(true)}
+                  className="card p-2 w-full text-left hover:opacity-80 transition-opacity"
+                  style={{
+                    borderLeft: "2px solid var(--brand)",
+                  }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="w-4 h-4 rounded flex items-center justify-center"
+                      style={{
+                        background: "var(--brand)",
+                        color: "white",
+                        fontSize: "0.625rem",
+                      }}
+                    >
+                      ➕
+                    </div>
+                    <span
+                      className="font-medium"
+                      style={{ color: "var(--foreground)", fontSize: "0.75rem" }}
+                    >
+                      {t("threads.addComment")}
+                    </span>
                   </div>
-                  <h3
-                    className="font-semibold"
-                    style={{ color: "var(--foreground)", fontSize: "0.8125rem" }}
-                  >
-                    {t("threads.addComment")}
-                  </h3>
+                </button>
+              ) : (
+                <div
+                  className="card p-2"
+                  style={{
+                    borderLeft: "2px solid var(--brand)",
+                  }}
+                >
+                  <div className="flex items-center gap-1.5 mb-1 justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-4 h-4 rounded flex items-center justify-center"
+                        style={{
+                          background: "var(--brand)",
+                          color: "white",
+                          fontSize: "0.625rem",
+                        }}
+                      >
+                        ✍️
+                      </div>
+                      <h3
+                        className="font-semibold"
+                        style={{ color: "var(--foreground)", fontSize: "0.8125rem" }}
+                      >
+                        {t("threads.addComment")}
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setShowCommentForm(false)}
+                      className="hover:opacity-70 transition-opacity"
+                      style={{ fontSize: "0.875rem", color: "var(--muted)" }}
+                      aria-label="Cancel"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <SimpleForm
+                    fields={[
+                      {
+                        name: "content",
+                        label: t("threads.yourComment"),
+                        type: "markdown",
+                        placeholder: t("threads.commentPlaceholder"),
+                        required: true,
+                        maxLength: 10000,
+                      },
+                    ]}
+                    onSubmit={async (values) => {
+                      await handleCommentSubmit(values);
+                      setShowCommentForm(false);
+                    }}
+                    submitText={t("threads.postComment")}
+                  />
                 </div>
-                <SimpleForm
-                  fields={[
-                    {
-                      name: "content",
-                      label: t("threads.yourComment"),
-                      type: "markdown",
-                      placeholder: t("threads.commentPlaceholder"),
-                      required: true,
-                      maxLength: 10000,
-                    },
-                  ]}
-                  onSubmit={handleCommentSubmit}
-                  submitText={t("threads.postComment")}
-                />
-              </div>
+              )}
             </div>
 
             {/* Sidebar */}

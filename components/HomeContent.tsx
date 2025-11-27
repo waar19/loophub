@@ -83,7 +83,7 @@ export default function HomeContent({
           className="mb-6"
         >
           <h1
-            className="text-3xl sm:text-4xl font-extrabold mb-2"
+            className="text-2xl sm:text-3xl font-extrabold mb-2"
             style={{
               color: "var(--foreground)",
               background:
@@ -96,7 +96,7 @@ export default function HomeContent({
             {t("home.welcome")}
           </h1>
           <p
-            className="text-lg leading-relaxed"
+            className="text-base leading-relaxed"
             style={{ color: "var(--muted)" }}
           >
             {t("home.welcomeSubtitle")}

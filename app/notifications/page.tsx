@@ -251,7 +251,7 @@ export default function NotificationsPage() {
         {notifications.length === 0 ? (
           <div className="card text-center py-8">
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mx-auto mb-3"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-3"
               style={{
                 background: "var(--brand-light)",
               }}
