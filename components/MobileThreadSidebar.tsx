@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Thread, Forum } from "@/lib/supabase";
 import { useTranslations } from "./TranslationsProvider";
@@ -14,6 +15,8 @@ export default function MobileThreadSidebar({
   thread,
 }: MobileThreadSidebarProps) {
   const { t, locale } = useTranslations();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
 
   const date = new Date(thread.created_at).toLocaleDateString(
@@ -27,8 +30,9 @@ export default function MobileThreadSidebar({
 
   // Close on route change
   useEffect(() => {
-    setIsOpen(false);
-  }, []);
+    const timer = setTimeout(() => setIsOpen(false), 0);
+    return () => clearTimeout(timer);
+  }, [pathname, searchParams]);
 
   // Prevent body scroll when open
   useEffect(() => {

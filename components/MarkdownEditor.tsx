@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useImageUpload } from "@/hooks/useImageUpload";
+
 // Lazy load MarkdownRenderer
 const MarkdownRenderer = dynamic(() => import("./MarkdownRenderer"), {
   loading: () => <div className="skeleton h-40 w-full" />,
@@ -25,6 +27,72 @@ export default function MarkdownEditor({
   required = false,
 }: MarkdownEditorProps) {
   const [mode, setMode] = useState<"edit" | "preview" | "split">("edit");
+  const [isDragging, setIsDragging] = useState(false);
+  const { uploadImage, isUploading } = useImageUpload();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Track latest value to avoid stale closures in async handlers
+  const valueRef = useRef(value);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
+  const insertText = (text: string, cursorOffset = 0) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newValue = value.substring(0, start) + text + value.substring(end);
+
+    onChange(newValue);
+
+    // Restore cursor position after React render
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
+    }, 0);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    const loadingPlaceholder = `![Uploading ${file.name}...]()`;
+    insertText(loadingPlaceholder);
+
+    const url = await uploadImage(file);
+
+    if (url) {
+      const finalMarkdown = `![${file.name}](${url})`;
+      const currentValue = valueRef.current;
+      onChange(currentValue.replace(loadingPlaceholder, finalMarkdown));
+    } else {
+      // Remove placeholder on error
+      const currentValue = valueRef.current;
+      onChange(currentValue.replace(loadingPlaceholder, ""));
+    }
+  };
+
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (const item of items) {
+      if (item.type.startsWith("image/")) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) await handleImageUpload(file);
+      }
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+
+    for (const file of imageFiles) {
+      await handleImageUpload(file);
+    }
+  };
 
   return (
     <div>
@@ -138,18 +206,48 @@ export default function MarkdownEditor({
       {/* Editor/Preview */}
       <div className="flex gap-2" style={{ minHeight }}>
         {(mode === "edit" || mode === "split") && (
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <textarea
+              ref={textareaRef}
               value={value}
               onChange={(e) => onChange(e.target.value)}
+              onPaste={handlePaste}
+              onDrop={handleDrop}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
               placeholder={placeholder}
               required={required}
               maxLength={maxLength}
               className="textarea w-full font-mono"
-              style={{ minHeight, fontSize: "0.75rem" }}
+              style={{
+                minHeight,
+                fontSize: "0.75rem",
+                ...(isDragging
+                  ? {
+                      borderColor: "var(--brand)",
+                      background: "var(--brand-light)",
+                    }
+                  : {}),
+              }}
             />
-            <div className="mt-1" style={{ color: "var(--muted)", fontSize: "0.625rem" }}>
-              <p>Markdown supported. Use **bold**, *italic*, `code`, etc.</p>
+            {isDragging && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 pointer-events-none rounded">
+                <div className="bg-white dark:bg-gray-800 p-2 rounded shadow text-sm font-bold text-brand">
+                  Drop image to upload
+                </div>
+              </div>
+            )}
+            <div
+              className="mt-1 flex justify-between items-center"
+              style={{ color: "var(--muted)", fontSize: "0.625rem" }}
+            >
+              <p>Markdown supported. Drag & drop or paste images.</p>
+              {isUploading && (
+                <span className="text-brand animate-pulse">Uploading...</span>
+              )}
             </div>
           </div>
         )}
