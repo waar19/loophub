@@ -256,6 +256,29 @@ h4 {
   box-shadow: 0 0 0 3px var(--brand-light);
 }
 
+/* Search input - with icon padding */
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 0.9375rem;
+  transition: all var(--transition-base);
+  background: var(--card-bg);
+  color: var(--foreground);
+  font-family: inherit;
+}
+
+.search-input:hover {
+  border-color: var(--border-hover);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-light);
+}
+
 /* Badge component */
 .badge {
   display: inline-flex;
