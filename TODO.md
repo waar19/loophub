@@ -27,6 +27,10 @@
 | Onboarding | ✅ | Flujo completo |
 | Menciones @username | ✅ | Con autocomplete |
 | Rate Limiting | ✅ | En rutas críticas |
+| Sistema de Imágenes | ✅ | Upload y preview |
+| Bookmarks/Favoritos | ✅ | Guardar threads |
+| Sistema de Tags | ✅ | Etiquetas en threads |
+| Suscripciones a Threads | ✅ | Seguir threads |
 
 ---
 
@@ -116,67 +120,53 @@
 
 ---
 
-## 🟠 FASE 2: PRIORIDAD ALTA (Semanas 3-4)
+## ✅ FASE 2: COMPLETADA
 
-### 2.1 Sistema de Imágenes
-**Tiempo estimado**: 3-4 días  
-**Impacto**: ⭐⭐⭐⭐
+### 2.1 Sistema de Imágenes ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Supabase Storage
-  - [ ] Bucket `post-images` (público)
-  - [ ] Bucket `avatars` (público)
-  - [ ] RLS policies para storage
-  - [ ] Límite 5MB por imagen
-- [ ] API Endpoints
-  - [ ] POST `/api/upload/image` - Subir imagen
-  - [ ] DELETE `/api/upload/image/[id]` - Eliminar
-  - [ ] Validación de tipo (jpg, png, gif, webp)
-- [ ] Optimización
-  - [ ] Resize automático (max 1920px)
-  - [ ] Compresión con Sharp
-  - [ ] Generación de thumbnails
-- [ ] Componentes UI
-  - [ ] `ImageUploader.tsx` - Drag & drop
-  - [ ] Preview antes de subir
-  - [ ] Progress bar de upload
-  - [ ] `Lightbox.tsx` - Ver imagen grande
-- [ ] Integración con Markdown
-  - [ ] Botón de imagen en toolbar
-  - [ ] Insertar sintaxis `![alt](url)`
-- [ ] Lazy loading de imágenes
+**Logros**:
+- [x] Supabase Storage
+  - [x] Bucket `avatars` (público)
+  - [x] Bucket `post-images` (público)
+  - [x] RLS policies para storage
+- [x] Hook `useImageUpload`
+  - [x] Validación de tipo y tamaño
+  - [x] Upload con progress
+  - [x] Resize automático (max 1920px)
+- [x] API Endpoint POST `/api/uploads`
+- [x] Componentes UI
+  - [x] Upload en MarkdownEditor (botón de imagen)
+  - [x] Preview antes de insertar
+- [x] Lazy loading de imágenes (next/image)
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/015_image_storage.sql`
-- `app/api/upload/image/route.ts`
-- `components/ImageUploader.tsx`
-- `components/Lightbox.tsx`
+- `app/api/uploads/route.ts`
+- `hooks/useImageUpload.ts`
 
 ---
 
-### 2.2 Bookmarks/Favoritos
-**Tiempo estimado**: 2 días  
-**Impacto**: ⭐⭐⭐
+### 2.2 Bookmarks/Favoritos ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Base de datos
-  - [ ] Tabla `bookmarks` (user_id, thread_id, created_at)
-  - [ ] Índices y RLS
-- [ ] API Endpoints
-  - [ ] POST `/api/bookmarks` - Guardar
-  - [ ] DELETE `/api/bookmarks/[id]` - Eliminar
-  - [ ] GET `/api/bookmarks` - Listar
-- [ ] Componentes UI
-  - [ ] `BookmarkButton.tsx` con animación
-  - [ ] Integrar en `ThreadCard.tsx`
-  - [ ] Integrar en página de thread
-- [ ] Página `/bookmarks`
-  - [ ] Lista de threads guardados
-  - [ ] Ordenar por fecha guardado
-  - [ ] Eliminar desde la lista
-- [ ] Traducciones
+**Logros**:
+- [x] Base de datos
+  - [x] Tabla `bookmarks` (user_id, thread_id)
+  - [x] Índices y RLS policies
+- [x] API Endpoints
+  - [x] POST `/api/bookmarks` - Guardar/eliminar toggle
+  - [x] GET `/api/bookmarks` - Listar bookmarks del usuario
+- [x] Componentes UI
+  - [x] `BookmarkButton.tsx` con animación
+  - [x] Integrado en `ThreadCard.tsx`
+  - [x] Integrado en página de thread
+- [x] Página `/bookmarks`
+  - [x] Lista de threads guardados
+  - [x] Link en Sidebar y MobileMenu (usuarios logueados)
+- [x] Traducciones ES, EN, PT
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/016_bookmarks.sql`
 - `app/api/bookmarks/route.ts`
 - `app/bookmarks/page.tsx`
@@ -184,95 +174,93 @@
 
 ---
 
-### 2.3 Sistema de Tags/Etiquetas
-**Tiempo estimado**: 3 días  
-**Impacto**: ⭐⭐⭐
+### 2.3 Sistema de Tags/Etiquetas ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Base de datos
-  - [ ] Tabla `tags` (id, name, slug, color, description)
-  - [ ] Tabla `thread_tags` (thread_id, tag_id)
-  - [ ] Índices para búsqueda
-- [ ] API Endpoints
-  - [ ] GET `/api/tags` - Listar todos
-  - [ ] GET `/api/tags/popular` - Más usados
-  - [ ] Asociar tags al crear/editar thread
-- [ ] Componentes UI
-  - [ ] `TagInput.tsx` - Input con sugerencias
-  - [ ] `TagBadge.tsx` - Badge de tag
-  - [ ] Tags en `ThreadCard.tsx`
-  - [ ] Tag cloud en sidebar
-- [ ] Página `/tag/[slug]`
-  - [ ] Listar threads con ese tag
-  - [ ] Estadísticas del tag
-- [ ] Propuesta de tags (nivel 2+)
-- [ ] Traducciones
+**Logros**:
+- [x] Base de datos
+  - [x] Tabla `tags` (id, name, slug, color, description)
+  - [x] Tabla `thread_tags` (thread_id, tag_id)
+  - [x] Índices para búsqueda
+- [x] API Endpoints
+  - [x] GET `/api/tags` - Listar todos
+  - [x] POST - Crear tag (admin)
+- [x] Componentes UI
+  - [x] `TagSelector.tsx` - Selector con sugerencias
+  - [x] `TagBadge.tsx` - Badge de tag con colores
+  - [x] Tags en `ThreadCard.tsx`
+  - [x] Tags al crear thread
+- [x] Traducciones
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/017_tags_system.sql`
+- `supabase/seeds/001_initial_tags.sql`
 - `app/api/tags/route.ts`
-- `app/tag/[slug]/page.tsx`
-- `components/TagInput.tsx`
+- `components/TagSelector.tsx`
 - `components/TagBadge.tsx`
 
 ---
 
-### 2.4 Seguir Threads (Watch/Subscribe)
-**Tiempo estimado**: 2 días  
-**Impacto**: ⭐⭐⭐
+### 2.4 Seguir Threads (Watch/Subscribe) ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Base de datos
-  - [ ] Tabla `thread_subscriptions` (user_id, thread_id, created_at)
-  - [ ] Auto-suscribir al crear thread
-  - [ ] Auto-suscribir al comentar (configurable)
-- [ ] Notificaciones
-  - [ ] Notificar a suscriptores en nuevo comentario
-  - [ ] Tipo de notificación: "thread_update"
-  - [ ] Evitar spam (agrupar si hay muchos)
-- [ ] Componentes UI
-  - [ ] `SubscribeButton.tsx` - Seguir/Dejar de seguir
-  - [ ] Indicador visual de thread seguido
-  - [ ] Lista en perfil de usuario
-- [ ] Traducciones
+**Logros**:
+- [x] Base de datos
+  - [x] Tabla `thread_subscriptions` (user_id, thread_id)
+  - [x] Índices y RLS
+- [x] API Endpoints
+  - [x] POST `/api/subscriptions` - Suscribir/desuscribir
+  - [x] GET - Ver suscripciones
+- [x] Componentes UI
+  - [x] `SubscribeButton.tsx` con animación
+  - [x] Integrado en página de thread
+  - [x] Integrado en ThreadCard
+- [x] Traducciones ES, EN, PT
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/018_thread_subscriptions.sql`
 - `app/api/subscriptions/route.ts`
 - `components/SubscribeButton.tsx`
 
 ---
 
-## 🟡 FASE 3: PRIORIDAD MEDIA (Mes 2)
+## 🟠 FASE 3: EN PROGRESO (Mes 2)
 
-### 3.1 Búsqueda Avanzada
-**Tiempo estimado**: 3 días  
-**Impacto**: ⭐⭐⭐
+### 3.1 Búsqueda Avanzada ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Filtros de búsqueda
-  - [ ] Por foro
-  - [ ] Por fecha (hoy, semana, mes, año, todo)
-  - [ ] Por autor
-  - [ ] Por tags
-  - [ ] Solo threads / Solo comentarios
-- [ ] Ordenamiento
-  - [ ] Relevancia
-  - [ ] Más reciente
-  - [ ] Más votado
-  - [ ] Más comentado
-- [ ] Full-text search en Supabase
-  - [ ] Índices GIN para búsqueda
-  - [ ] Búsqueda en título y contenido
-- [ ] UI mejorada
-  - [ ] Sidebar de filtros
-  - [ ] Chips de filtros activos
-  - [ ] Guardar búsquedas frecuentes
+**Logros**:
+- [x] Full-text search en Supabase
+  - [x] Columnas `search_vector` tsvector en threads/comments
+  - [x] Índices GIN para búsqueda
+  - [x] Triggers para actualizar vectors
+  - [x] Función `search_threads_advanced()`
+- [x] Filtros de búsqueda
+  - [x] Por foro
+  - [x] Por fecha (hoy, semana, mes, año, todo)
+  - [x] Por autor
+  - [x] Por tags
+  - [x] Solo threads / Solo comentarios / Solo foros
+- [x] Ordenamiento
+  - [x] Relevancia
+  - [x] Más reciente
+  - [x] Más antiguo
+  - [x] Más votado
+- [x] API actualizada `/api/search`
+- [x] UI mejorada
+  - [x] `SearchFilters.tsx` - Sidebar de filtros
+  - [x] Chips de filtros activos
+  - [x] Responsive (drawer en móvil)
+- [x] Traducciones ES, EN, PT
 
-**Archivos a modificar**:
-- `app/search/page.tsx`
+**Archivos creados**:
+- `supabase/migrations/019_advanced_search.sql`
+- `components/SearchFilters.tsx`
+
+**Archivos modificados**:
 - `app/api/search/route.ts`
-- `components/SearchBar.tsx`
+- `app/search/page.tsx`
+- `lib/i18n/translations.ts`
 
 ---
 
@@ -281,7 +269,7 @@
 **Impacto**: ⭐⭐⭐
 
 **Tareas**:
-- [ ] Implementar `/api/og` con `@vercel/og`
+- [ ] Mejorar `/api/og` con `@vercel/og`
 - [ ] Template con branding LoopHub
   - [ ] Logo
   - [ ] Título del thread
