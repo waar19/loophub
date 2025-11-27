@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "@/components/TranslationsProvider";
+import { useAuth } from "@/hooks/useAuth";
 import Tooltip from "./Tooltip";
 
 interface Forum {
@@ -20,6 +21,7 @@ interface SidebarProps {
 export default function Sidebar({ forums }: SidebarProps) {
   const pathname = usePathname();
   const { t } = useTranslations();
+  const { user } = useAuth();
   const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -76,6 +78,33 @@ export default function Sidebar({ forums }: SidebarProps) {
             </svg>
             {t("nav.home")}
           </Link>
+
+          {/* Bookmarks - only for logged in users */}
+          {user && (
+            <Link
+              href="/bookmarks"
+              className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
+                pathname === "/bookmarks"
+                  ? "bg-[var(--card-hover)] text-[var(--foreground)]"
+                  : "text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
+              }`}
+            >
+              <svg
+                className="w-5 h-5"
+                fill={pathname === "/bookmarks" ? "currentColor" : "none"}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                />
+              </svg>
+              {t("nav.bookmarks")}
+            </Link>
+          )}
         </div>
 
         <div className="mb-4">
