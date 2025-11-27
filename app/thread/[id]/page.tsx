@@ -147,7 +147,7 @@ export default function ThreadPage({
     return (
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="card text-center py-12">
+          <div className="card text-center py-6">
             <p style={{ color: "var(--muted)" }}>
               {t("threads.threadNotFound")}
             </p>

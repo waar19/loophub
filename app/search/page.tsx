@@ -89,7 +89,7 @@ export default function SearchPage() {
           description="Search for threads and forums on Loophub"
         />
         <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-          <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="max-w-4xl mx-auto px-4 py-4">
             <Breadcrumbs
               items={[{ label: t("common.search"), href: "/search" }]}
             />
@@ -126,7 +126,7 @@ export default function SearchPage() {
         description={`Search results for "${query}" on Loophub`}
       />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-4">
           <Breadcrumbs
             items={[{ label: t("common.search"), href: "/search" }]}
           />
@@ -207,17 +207,17 @@ export default function SearchPage() {
             <>
               {/* Threads Results */}
               {(activeTab === "all" || activeTab === "threads") && (
-                <section className="mb-12">
-                  <div className="flex items-center gap-3 mb-6">
+                <section className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
                     <h2
-                      className="text-2xl font-bold"
+                      className="text-xl font-bold"
                       style={{ color: "var(--foreground)" }}
                     >
                       {t("threads.threads")} ({results?.pagination.total || 0})
                     </h2>
                   </div>
                   {results?.threads.length === 0 ? (
-                    <div className="card text-center py-12">
+                    <div className="card text-center py-6">
                       <p style={{ color: "var(--muted)" }}>
                         {t("common.noResultsFor")}{" "}
                         {t("forums.forums").toLowerCase()} {'"'}
@@ -242,16 +242,16 @@ export default function SearchPage() {
               {/* Forums Results */}
               {(activeTab === "all" || activeTab === "forums") && (
                 <section>
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-2 mb-3">
                     <h2
-                      className="text-2xl font-bold"
+                      className="text-xl font-bold"
                       style={{ color: "var(--foreground)" }}
                     >
                       {t("forums.forums")} ({results?.forums.length || 0})
                     </h2>
                   </div>
                   {results?.forums.length === 0 ? (
-                    <div className="card text-center py-12">
+                    <div className="card text-center py-6">
                       <p style={{ color: "var(--muted)" }}>
                         {t("common.noResultsFor")}{" "}
                         {t("forums.forums").toLowerCase()} {'"'}

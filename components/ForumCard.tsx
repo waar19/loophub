@@ -30,7 +30,7 @@ export default function ForumCard({ forum }: ForumCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <h3
-            className="text-xl font-bold mb-2 transition-colors"
+            className="text-lg font-bold mb-1 transition-colors"
             style={{ color: "var(--foreground)" }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--brand)")}
             onMouseLeave={(e) =>

@@ -58,8 +58,8 @@ export default function ThreadCard({
         <div className="flex-1 min-w-0">
           {/* Title */}
           <h3
-            className={`font-semibold mb-2 line-clamp-2 ${
-              featured ? "text-xl" : "text-lg"
+            className={`font-semibold mb-1 line-clamp-2 ${
+              featured ? "text-lg" : "text-base"
             }`}
             style={{ color: "var(--foreground)" }}
           >
@@ -69,7 +69,7 @@ export default function ThreadCard({
           {/* Preview */}
           {!featured && (
             <p
-              className="text-sm mb-4 line-clamp-2"
+              className="text-sm mb-2 line-clamp-2"
               style={{ color: "var(--muted)" }}
             >
               {preview}

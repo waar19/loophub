@@ -59,7 +59,7 @@ export default function NewThreadPage({
 
   return (
     <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <Breadcrumbs
           items={[
             { label: t("common.home"), href: "/" },

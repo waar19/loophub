@@ -122,15 +122,15 @@ export default function CommentThread({
 
   if (comments.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-6">
         <div
-          className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-xl mx-auto mb-2"
           style={{ background: "var(--brand-light)" }}
         >
           💬
         </div>
         <h3
-          className="text-xl font-bold mb-2"
+          className="text-base font-bold mb-1"
           style={{ color: "var(--foreground)" }}
         >
           {t("threads.noComments")}
