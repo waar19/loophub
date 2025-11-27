@@ -16,8 +16,10 @@ export default function NotificationBell() {
     unreadCount,
     recentNotifications,
     isLoading,
+    hasNewNotification,
     markAsRead,
     markAllAsRead,
+    clearNewNotificationFlag,
   } = useRealtimeNotifications();
 
   // Close dropdown when clicking outside
@@ -72,22 +74,31 @@ export default function NotificationBell() {
     return date.toLocaleDateString();
   };
 
+  const handleBellClick = () => {
+    setIsOpen(!isOpen);
+    if (hasNewNotification) {
+      clearNewNotificationFlag();
+    }
+  };
+
   if (!user) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+        onClick={handleBellClick}
+        className={`relative p-2 rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-gray-800 ${
+          hasNewNotification ? 'animate-bounce' : ''
+        }`}
         aria-label={t("notifications.title")}
         title={t("notifications.title")}
       >
         <svg
-          className="w-6 h-6"
+          className={`w-6 h-6 transition-transform ${hasNewNotification ? 'scale-110' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          style={{ color: "var(--foreground)" }}
+          style={{ color: hasNewNotification ? "var(--brand)" : "var(--foreground)" }}
         >
           <path
             strokeLinecap="round"
@@ -98,7 +109,18 @@ export default function NotificationBell() {
         </svg>
         {unreadCount > 0 && (
           <span
-            className="absolute top-0 right-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white animate-pulse"
+            className={`absolute top-0 right-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+              hasNewNotification ? 'animate-ping' : 'animate-pulse'
+            }`}
+            style={{ background: "var(--brand)" }}
+          >
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </span>
+        )}
+        {/* Secondary badge that stays visible while ping animation plays */}
+        {unreadCount > 0 && hasNewNotification && (
+          <span
+            className="absolute top-0 right-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
             style={{ background: "var(--brand)" }}
           >
             {unreadCount > 9 ? "9+" : unreadCount}

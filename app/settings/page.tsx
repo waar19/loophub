@@ -7,6 +7,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
 import KarmaProgress from "@/components/KarmaProgress";
 import UsernameChange from "@/components/UsernameChange";
+import NotificationSettings from "@/components/NotificationSettings";
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -304,6 +305,7 @@ export default function SettingsPage() {
               }}
             />
             <KarmaProgress />
+            <NotificationSettings />
           </div>
         </div>
       </div>

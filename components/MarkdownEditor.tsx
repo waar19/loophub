@@ -3,6 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import {
+  MentionAutocomplete,
+  useMentionAutocomplete,
+} from "./MentionAutocomplete";
 
 // Lazy load MarkdownRenderer
 const MarkdownRenderer = dynamic(() => import("./MarkdownRenderer"), {
@@ -30,6 +34,16 @@ export default function MarkdownEditor({
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage, isUploading } = useImageUpload();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Mention autocomplete
+  const {
+    isOpen: isMentionOpen,
+    query: mentionQuery,
+    position: mentionPosition,
+    checkForMention,
+    insertMention,
+    close: closeMention,
+  } = useMentionAutocomplete(textareaRef);
 
   // Track latest value to avoid stale closures in async handlers
   const valueRef = useRef(value);
@@ -210,7 +224,21 @@ export default function MarkdownEditor({
             <textarea
               ref={textareaRef}
               value={value}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(e) => {
+                onChange(e.target.value);
+                // Check for mention trigger
+                checkForMention(e.target.value, e.target.selectionStart);
+              }}
+              onKeyUp={(e) => {
+                // Also check on cursor movement
+                const textarea = e.currentTarget;
+                checkForMention(textarea.value, textarea.selectionStart);
+              }}
+              onClick={(e) => {
+                // Check when clicking inside textarea
+                const textarea = e.currentTarget;
+                checkForMention(textarea.value, textarea.selectionStart);
+              }}
               onPaste={handlePaste}
               onDrop={handleDrop}
               onDragOver={(e) => {
@@ -233,6 +261,15 @@ export default function MarkdownEditor({
                   : {}),
               }}
             />
+            {/* Mention Autocomplete */}
+            {isMentionOpen && (
+              <MentionAutocomplete
+                query={mentionQuery}
+                position={mentionPosition}
+                onSelect={(username) => insertMention(username, value, onChange)}
+                onClose={closeMention}
+              />
+            )}
             {isDragging && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/10 pointer-events-none rounded">
                 <div className="bg-white dark:bg-gray-800 p-2 rounded shadow text-sm font-bold text-brand">
@@ -244,7 +281,7 @@ export default function MarkdownEditor({
               className="mt-1 flex justify-between items-center"
               style={{ color: "var(--muted)", fontSize: "0.625rem" }}
             >
-              <p>Markdown supported. Drag & drop or paste images.</p>
+              <p>Markdown supported. Drag & drop or paste images. Type @ to mention users.</p>
               {isUploading && (
                 <span className="text-brand animate-pulse">Uploading...</span>
               )}

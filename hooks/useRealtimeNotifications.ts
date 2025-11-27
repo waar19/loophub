@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase-browser';
 import { useAuth } from './useAuth';
 
@@ -23,11 +23,102 @@ interface NotificationWithUser extends Notification {
   related_user_avatar?: string | null;
 }
 
+interface NotificationSettings {
+  browser_enabled: boolean;
+  sound_enabled: boolean;
+  comments_enabled: boolean;
+  replies_enabled: boolean;
+  mentions_enabled: boolean;
+  upvotes_enabled: boolean;
+  downvotes_enabled: boolean;
+  thread_updates_enabled: boolean;
+  milestones_enabled: boolean;
+}
+
+// Map notification types to settings keys
+const typeToSettingsKey: Record<string, keyof NotificationSettings> = {
+  comment: 'comments_enabled',
+  reply: 'replies_enabled',
+  mention: 'mentions_enabled',
+  upvote: 'upvotes_enabled',
+  downvote: 'downvotes_enabled',
+  thread_update: 'thread_updates_enabled',
+  vote_milestone: 'milestones_enabled',
+};
+
 export function useRealtimeNotifications() {
   const { user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [recentNotifications, setRecentNotifications] = useState<NotificationWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
+  const settingsRef = useRef<NotificationSettings | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize audio element
+  // NOTE: Add a notification.mp3 file to /public/sounds/ for sound notifications
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const audio = new Audio('/sounds/notification.mp3');
+      audio.volume = 0.5;
+      // Preload and handle missing file gracefully
+      audio.addEventListener('canplaythrough', () => {
+        audioRef.current = audio;
+      });
+      audio.addEventListener('error', () => {
+        console.warn('Notification sound file not found at /public/sounds/notification.mp3');
+        audioRef.current = null;
+      });
+      audio.load();
+    }
+  }, []);
+
+  // Fetch notification settings
+  const fetchSettings = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      const response = await fetch('/api/notifications/settings');
+      if (response.ok) {
+        const data = await response.json();
+        settingsRef.current = data;
+      }
+    } catch (error) {
+      console.error('Error fetching notification settings:', error);
+    }
+  }, [user]);
+
+  // Fetch settings on mount
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
+
+  // Play notification sound
+  const playNotificationSound = useCallback(() => {
+    if (audioRef.current && settingsRef.current?.sound_enabled) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {
+        // Autoplay may be blocked, ignore error
+      });
+    }
+  }, []);
+
+  // Show browser notification
+  const showBrowserNotification = useCallback((notification: Notification) => {
+    if (!settingsRef.current?.browser_enabled) return;
+    
+    // Check if this notification type is enabled
+    const settingsKey = typeToSettingsKey[notification.type];
+    if (settingsKey && !settingsRef.current[settingsKey]) return;
+    
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(notification.title, {
+        body: notification.message,
+        icon: '/logo.png',
+        tag: notification.id,
+      });
+    }
+  }, []);
 
   // Fetch initial notifications
   const fetchNotifications = useCallback(async () => {
@@ -188,15 +279,14 @@ export function useRealtimeNotifications() {
           
           // Increment unread count
           setUnreadCount(prev => prev + 1);
+          
+          // Set flag for new notification animation
+          setHasNewNotification(true);
+          setTimeout(() => setHasNewNotification(false), 3000);
 
-          // Optional: Play sound or show browser notification
-          if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(newNotification.title, {
-              body: newNotification.message,
-              icon: '/logo.png',
-              tag: newNotification.id,
-            });
-          }
+          // Play sound and show browser notification based on settings
+          playNotificationSound();
+          showBrowserNotification(newNotification);
         }
       )
       .on(
@@ -226,14 +316,22 @@ export function useRealtimeNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user, playNotificationSound, showBrowserNotification]);
+
+  // Clear new notification flag when bell is opened
+  const clearNewNotificationFlag = useCallback(() => {
+    setHasNewNotification(false);
+  }, []);
 
   return {
     unreadCount,
     recentNotifications,
     isLoading,
+    hasNewNotification,
     markAsRead,
     markAllAsRead,
     refresh: fetchNotifications,
+    refreshSettings: fetchSettings,
+    clearNewNotificationFlag,
   };
 }

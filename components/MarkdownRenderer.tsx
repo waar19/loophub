@@ -17,10 +17,23 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
+// Process @mentions into links
+function processMentions(content: string): string {
+  // Match @username where username is 3-20 alphanumeric chars or underscores
+  // Only match if @ is at start of string or after whitespace/newline
+  return content.replace(
+    /(^|[\s\n])@([a-zA-Z0-9_]{3,20})\b/g,
+    '$1[@$2](/u/$2)'
+  );
+}
+
 export default function MarkdownRenderer({
   content,
   className = "",
 }: MarkdownRendererProps) {
+  // Pre-process content to convert @mentions to links
+  const processedContent = processMentions(content);
+
   return (
     <div className={`markdown-content ${className}`}>
       <ReactMarkdown
@@ -43,10 +56,26 @@ export default function MarkdownRenderer({
           ),
           // Customize links
           a: ({ href, children, ...props }) => {
-            // Check if it's a standalone link (text matches href)
+            // Check if it's a mention link
             const childText = Array.isArray(children)
               ? children.join("")
               : String(children);
+            const isMention = href?.startsWith("/u/") && childText.startsWith("@");
+            
+            if (isMention) {
+              return (
+                <a
+                  href={href}
+                  className="font-medium hover:underline"
+                  style={{ color: "var(--brand)" }}
+                  {...props}
+                >
+                  {children}
+                </a>
+              );
+            }
+            
+            // Check if it's a standalone link (text matches href)
             const isStandalone =
               href && (childText === href || childText === href + "/");
 
@@ -145,7 +174,7 @@ export default function MarkdownRenderer({
           ),
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
