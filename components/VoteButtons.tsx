@@ -19,7 +19,7 @@ export default function VoteButtons({
   initialUpvotes = 0,
   initialDownvotes = 0,
   initialUserVote = null,
-  orientation = "vertical",
+  orientation = "horizontal",
 }: VoteButtonsProps) {
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -161,18 +161,8 @@ export default function VoteButtons({
 
   return (
     <div
-      className={`flex ${
-        orientation === "vertical" ? "flex-col" : "flex-row"
-      } items-center bg-transparent`}
-      style={{
-        gap: orientation === "vertical" ? "0" : "0.5rem",
-        minWidth: orientation === "vertical" ? "2.5rem" : "auto",
-        padding: orientation === "vertical" ? "0.5rem 0.25rem" : "0",
-        background:
-          orientation === "vertical" ? "var(--card-hover)" : "transparent",
-        borderRight:
-          orientation === "vertical" ? "1px solid var(--border-light)" : "none",
-      }}
+      className="flex items-center bg-[var(--card-hover)] rounded-full overflow-hidden border border-[var(--border)]"
+      onClick={(e) => e.stopPropagation()}
     >
       {/* Upvote Button */}
       <button
@@ -182,7 +172,7 @@ export default function VoteButtons({
           handleVote(1);
         }}
         disabled={isVoting || !user}
-        className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+        className="p-1.5 hover:bg-[var(--border-light)] transition-colors"
         style={{
           color: userVote === 1 ? "var(--error)" : "var(--muted)",
         }}
@@ -190,8 +180,8 @@ export default function VoteButtons({
         aria-label="Upvote"
       >
         <svg
-          width="24"
-          height="24"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
@@ -205,9 +195,7 @@ export default function VoteButtons({
 
       {/* Score */}
       <span
-        className={`font-bold text-sm ${
-          orientation === "vertical" ? "py-1" : "px-1"
-        }`}
+        className="font-bold text-xs px-1 min-w-[1.5rem] text-center"
         style={{
           color:
             userVote === 1
@@ -228,7 +216,7 @@ export default function VoteButtons({
           handleVote(-1);
         }}
         disabled={isVoting || !user}
-        className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+        className="p-1.5 hover:bg-[var(--border-light)] transition-colors"
         style={{
           color: userVote === -1 ? "var(--brand)" : "var(--muted)",
         }}
@@ -236,8 +224,8 @@ export default function VoteButtons({
         aria-label="Downvote"
       >
         <svg
-          width="24"
-          height="24"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"
