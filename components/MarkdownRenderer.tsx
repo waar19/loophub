@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -8,6 +9,8 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import LinkPreview from "./LinkPreview";
+
+const syntaxHighlighterTheme = vscDarkPlus as Record<string, CSSProperties>;
 
 interface MarkdownRendererProps {
   content: string;
@@ -80,6 +83,9 @@ export default function MarkdownRenderer({
             children,
             ...props
           }: React.HTMLAttributes<HTMLElement>) => {
+            const { style: _ignoredStyle, ...rest } = props;
+            // Drop upstream inline styles so we can enforce a consistent Prism theme.
+            void _ignoredStyle;
             const match = /language-(\w+)/.exec(className || "");
             const isInline = !match;
 
@@ -91,7 +97,7 @@ export default function MarkdownRenderer({
                     background: "var(--border)",
                     color: "var(--foreground)",
                   }}
-                  {...props}
+                  {...rest}
                 >
                   {children}
                 </code>
@@ -105,17 +111,13 @@ export default function MarkdownRenderer({
               <div className="mb-4">
                 <SyntaxHighlighter
                   language={language}
-                  style={
-                    vscDarkPlus as unknown as {
-                      [key: string]: React.CSSProperties;
-                    }
-                  }
+                  style={syntaxHighlighterTheme}
                   customStyle={{
                     margin: 0,
                     borderRadius: "0.5rem",
                     fontSize: "0.875rem",
                   }}
-                  {...props}
+                  {...rest}
                 >
                   {codeString}
                 </SyntaxHighlighter>
