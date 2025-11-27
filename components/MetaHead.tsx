@@ -5,6 +5,19 @@ interface MetaHeadProps {
   description?: string;
   imageUrl?: string;
   url?: string;
+  // OG Image generation params
+  ogParams?: {
+    type?: "thread" | "forum" | "profile" | "default";
+    forum?: string;
+    author?: string;
+    votes?: number;
+    comments?: number;
+    tags?: string[];
+    karma?: number;
+    level?: number;
+    threads?: number;
+    threadCount?: number;
+  };
 }
 
 /**
@@ -16,11 +29,34 @@ export default function MetaHead({
   description = "",
   imageUrl = "",
   url = "",
+  ogParams,
 }: MetaHeadProps) {
   const siteName = "Loophub";
-  const fullTitle = `${title} | ${siteName}`;
-  const ogImage =
-    imageUrl || `${process.env.NEXT_PUBLIC_BASE_URL}/og-default.png`;
+  const fullTitle = title.includes("Loophub") ? title : `${title} | ${siteName}`;
+  
+  // Generate OG image URL
+  let ogImage = imageUrl;
+  if (!ogImage && ogParams) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+    const params = new URLSearchParams();
+    params.set("title", title.replace(" - Loophub", "").replace(" | Loophub", ""));
+    if (description) params.set("description", description.substring(0, 150));
+    if (ogParams.type) params.set("type", ogParams.type);
+    if (ogParams.forum) params.set("forum", ogParams.forum);
+    if (ogParams.author) params.set("author", ogParams.author);
+    if (ogParams.votes !== undefined) params.set("votes", String(ogParams.votes));
+    if (ogParams.comments !== undefined) params.set("comments", String(ogParams.comments));
+    if (ogParams.tags?.length) params.set("tags", ogParams.tags.join(","));
+    if (ogParams.karma !== undefined) params.set("karma", String(ogParams.karma));
+    if (ogParams.level !== undefined) params.set("level", String(ogParams.level));
+    if (ogParams.threads !== undefined) params.set("threads", String(ogParams.threads));
+    if (ogParams.threadCount !== undefined) params.set("threadCount", String(ogParams.threadCount));
+    
+    ogImage = `${baseUrl}/api/og?${params.toString()}`;
+  } else if (!ogImage) {
+    ogImage = `${process.env.NEXT_PUBLIC_BASE_URL}/og-default.png`;
+  }
+  
   const pageUrl =
     url ||
     `${process.env.NEXT_PUBLIC_BASE_URL}${
@@ -38,6 +74,8 @@ export default function MetaHead({
       <meta property="og:type" content="website" />
       <meta property="og:url" content={pageUrl} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={siteName} />
 
       {/* Twitter Card */}

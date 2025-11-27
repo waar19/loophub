@@ -2,11 +2,67 @@ import { createClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Tooltip from "@/components/Tooltip";
+import { Metadata } from "next";
 
 interface UserProfilePageProps {
   params: Promise<{
     username: string;
   }>;
+}
+
+// Generate dynamic metadata for OG images
+export async function generateMetadata({
+  params,
+}: UserProfilePageProps): Promise<Metadata> {
+  const { username } = await params;
+  const supabase = await createClient();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, username, karma, level")
+    .eq("username", username)
+    .single();
+
+  if (!profile) {
+    return { title: "Usuario no encontrado - Loophub" };
+  }
+
+  // Get counts
+  const [{ count: threadCount }, { count: commentCount }] = await Promise.all([
+    supabase
+      .from("threads")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.id),
+    supabase
+      .from("comments")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.id),
+  ]);
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+  const ogParams = new URLSearchParams({
+    type: "profile",
+    title: profile.username,
+    karma: String(profile.karma || 0),
+    level: String(profile.level || 0),
+    threads: String(threadCount || 0),
+    comments: String(commentCount || 0),
+  });
+
+  return {
+    title: `@${profile.username} - Loophub`,
+    description: `Perfil de ${profile.username} en Loophub. Nivel ${profile.level || 0} con ${profile.karma || 0} karma.`,
+    openGraph: {
+      title: `@${profile.username} - Loophub`,
+      description: `Perfil de ${profile.username} en Loophub`,
+      images: [`${baseUrl}/api/og?${ogParams.toString()}`],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `@${profile.username} - Loophub`,
+      images: [`${baseUrl}/api/og?${ogParams.toString()}`],
+    },
+  };
 }
 
 export default async function UserProfilePage({

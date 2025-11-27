@@ -162,6 +162,9 @@ export default function ThreadPage({
   }
 
   const { thread, comments } = data;
+  
+  // Calculate comment count
+  const commentCount = data.pagination?.total || comments.length;
 
   return (
     <>
@@ -172,6 +175,14 @@ export default function ThreadPage({
           .replace(/\n/g, " ")
           .substring(0, 155)
           .trim()}
+        ogParams={{
+          type: "thread",
+          forum: thread.forum?.name,
+          author: thread.profile?.username,
+          votes: (thread.upvote_count || 0) - (thread.downvote_count || 0),
+          comments: commentCount,
+          // Tags are fetched separately if needed
+        }}
       />
       <ThreadStructuredData thread={thread} author={thread.profile} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
