@@ -27,7 +27,7 @@ export default function ForumCard({ forum }: ForumCardProps) {
         borderLeft: "4px solid var(--brand)",
       }}
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 p-4">
         <div className="flex-1">
           <h3
             className="text-lg font-bold mb-1 transition-colors"
