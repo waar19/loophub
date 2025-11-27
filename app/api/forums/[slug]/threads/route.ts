@@ -213,6 +213,17 @@ export async function POST(
 
     if (threadError) throw threadError;
 
+    // Add tags if provided
+    const tags = body.tags;
+    if (tags && Array.isArray(tags) && tags.length > 0) {
+      const tagInserts = tags.slice(0, 5).map((tagId: string) => ({
+        thread_id: thread.id,
+        tag_id: tagId,
+      }));
+      
+      await supabase.from("thread_tags").insert(tagInserts);
+    }
+
     // Invalidate cache
     cache.delete(CACHE_KEYS.forumThreads(slug, 1, "newest"));
 

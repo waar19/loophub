@@ -20,6 +20,8 @@ import TrendingPanel from "@/components/TrendingPanel";
 import EditThreadButton from "@/components/EditThreadButton";
 import DeleteButton from "@/components/DeleteButton";
 import ShareButtons from "@/components/ShareButtons";
+import BookmarkButton from "@/components/BookmarkButton";
+import SubscribeButton from "@/components/SubscribeButton";
 import { useToast } from "@/contexts/ToastContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "@/components/TranslationsProvider";
@@ -219,7 +221,7 @@ export default function ThreadPage({
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-6 pb-2 border-t"
+                  className="pt-6 pb-2 border-t flex items-center justify-between"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -231,6 +233,10 @@ export default function ThreadPage({
                       .substring(0, 100)
                       .trim()}
                   />
+                  <div className="flex items-center gap-2">
+                    <BookmarkButton threadId={thread.id} size="md" />
+                    <SubscribeButton threadId={thread.id} showText size="md" />
+                  </div>
                 </div>
               </article>
 

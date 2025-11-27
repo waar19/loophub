@@ -12,8 +12,9 @@ interface Tag {
 }
 
 interface TagSelectorProps {
-  threadId: string;
+  threadId?: string;
   initialTags?: Tag[];
+  selectedTags?: Tag[];
   editable?: boolean;
   maxTags?: number;
   onTagsChange?: (tags: Tag[]) => void;
@@ -22,19 +23,32 @@ interface TagSelectorProps {
 export default function TagSelector({
   threadId,
   initialTags = [],
+  selectedTags,
   editable = false,
   maxTags = 5,
   onTagsChange,
 }: TagSelectorProps) {
-  const [tags, setTags] = useState<Tag[]>(initialTags);
-  const [isAdding, setIsAdding] = useState(false);
+  // Use selectedTags if provided (for new thread creation), otherwise use internal state
+  const isControlled = selectedTags !== undefined;
+  const [internalTags, setInternalTags] = useState<Tag[]>(initialTags);
+  const tags = isControlled ? selectedTags : internalTags;
+  
+  const setTags = (newTags: Tag[] | ((prev: Tag[]) => Tag[])) => {
+    const resolvedTags = typeof newTags === 'function' ? newTags(tags) : newTags;
+    if (!isControlled) {
+      setInternalTags(resolvedTags);
+    }
+    onTagsChange?.(resolvedTags);
+  };
+
+  const [isAdding, setIsAdding] = useState(isControlled || editable);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Tag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fetch tags for thread on mount
+  // Fetch tags for thread on mount (only if threadId is provided)
   useEffect(() => {
     if (initialTags.length === 0 && threadId) {
       fetchThreadTags();

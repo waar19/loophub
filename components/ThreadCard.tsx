@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Thread } from "@/lib/supabase";
 import { useTranslations } from "@/components/TranslationsProvider";
 import VoteButtons from "./VoteButtons";
+import BookmarkButton from "./BookmarkButton";
 import MotionWrapper from "./MotionWrapper";
 
 interface ThreadCardProps {
@@ -185,6 +186,8 @@ export default function ThreadCard({
               </svg>
               <span className="text-sm font-semibold">Compartir</span>
             </button>
+
+            <BookmarkButton threadId={thread.id} size="sm" />
           </div>
         </div>
       </article>
