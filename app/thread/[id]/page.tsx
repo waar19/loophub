@@ -183,26 +183,25 @@ export default function ThreadPage({
 
           <div className="flex gap-4 items-start">
             {/* Main Content */}
-            <div className="flex-1 min-w-0 space-y-1">
+            <div className="flex-1 min-w-0 space-y-4">
               {/* Thread Header */}
-              <div
-                className="card p-2"
+              <article
+                className="card p-6"
                 style={{
-                  borderLeft: "2px solid var(--brand)",
+                  borderLeft: "4px solid var(--brand)",
                 }}
               >
-                <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <h1
-                    className="font-semibold leading-tight flex-1"
+                    className="font-bold leading-tight flex-1 text-2xl"
                     style={{
                       color: "var(--foreground)",
-                      fontSize: "1rem",
                     }}
                   >
                     {thread.title}
                   </h1>
                   {user?.id === thread.user_id && (
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                       <EditThreadButton
                         threadId={thread.id}
                         currentTitle={thread.title}
@@ -213,13 +212,13 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
-                <div className="leading-relaxed markdown-content" style={{ fontSize: "0.8125rem" }}>
+                <div className="leading-relaxed markdown-content text-base mb-6">
                   <MarkdownRenderer content={thread.content} />
                 </div>
 
                 {/* Share Buttons */}
                 <div
-                  className="pt-1 border-t"
+                  className="pt-4 border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ShareButtons
@@ -232,33 +231,32 @@ export default function ThreadPage({
                       .trim()}
                   />
                 </div>
-              </div>
+              </article>
 
               {/* Comments Section */}
-              <div>
-                <div className="flex items-center gap-1.5 mb-1">
+              <section>
+                <div className="flex items-center gap-3 mb-4">
                   <div
-                    className="w-4 h-4 rounded flex items-center justify-center"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
                     style={{
-                      background: "var(--brand)",
+                      background:
+                        "linear-gradient(135deg, var(--brand), var(--accent))",
                       color: "white",
-                      fontSize: "0.625rem",
                     }}
                   >
                     💬
                   </div>
                   <h2
-                    className="font-semibold"
-                    style={{ color: "var(--foreground)", fontSize: "0.8125rem" }}
+                    className="font-bold text-xl"
+                    style={{ color: "var(--foreground)" }}
                   >
                     {t("threads.comments")}
                   </h2>
                   <div
-                    className="px-1 py-0 rounded font-semibold"
+                    className="px-3 py-1 rounded-full font-bold text-sm"
                     style={{
                       background: "var(--brand)",
                       color: "white",
-                      fontSize: "0.625rem",
                     }}
                   >
                     {data.pagination.total}
@@ -266,23 +264,22 @@ export default function ThreadPage({
                 </div>
 
                 {comments.length === 0 && !isLoading ? (
-                  <div className="card text-center py-2 mb-1">
+                  <div className="card text-center py-12 mb-4">
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-1"
+                      className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"
                       style={{
                         background: "var(--brand-light)",
-                        fontSize: "1.25rem",
                       }}
                     >
                       💭
                     </div>
                     <h3
-                      className="font-semibold"
-                      style={{ color: "var(--foreground)", fontSize: "0.875rem" }}
+                      className="font-semibold text-lg mb-2"
+                      style={{ color: "var(--foreground)" }}
                     >
                       {t("threads.noComments")}
                     </h3>
-                    <p style={{ color: "var(--muted)", fontSize: "0.75rem" }}>
+                    <p className="text-sm" style={{ color: "var(--muted)" }}>
                       {t("threads.beFirst")}
                     </p>
                   </div>
@@ -315,31 +312,30 @@ export default function ThreadPage({
                     />
                   </InfiniteScroll>
                 )}
-              </div>
+              </section>
 
               {/* Comment Form */}
               {!showCommentForm ? (
                 <button
                   onClick={() => setShowCommentForm(true)}
-                  className="card p-2 w-full text-left hover:opacity-80 transition-opacity"
+                  className="card p-4 w-full text-left hover:bg-[var(--card-hover)] transition-all"
                   style={{
-                    borderLeft: "2px solid var(--brand)",
+                    borderLeft: "4px solid var(--brand)",
                   }}
                 >
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-3">
                     <div
-                      className="w-4 h-4 rounded flex items-center justify-center"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
                       style={{
                         background: "var(--brand)",
                         color: "white",
-                        fontSize: "0.625rem",
                       }}
                     >
                       ➕
                     </div>
                     <span
-                      className="font-medium"
-                      style={{ color: "var(--foreground)", fontSize: "0.75rem" }}
+                      className="font-semibold text-base"
+                      style={{ color: "var(--foreground)" }}
                     >
                       {t("threads.addComment")}
                     </span>
@@ -347,34 +343,33 @@ export default function ThreadPage({
                 </button>
               ) : (
                 <div
-                  className="card p-2"
+                  className="card p-5"
                   style={{
-                    borderLeft: "2px solid var(--brand)",
+                    borderLeft: "4px solid var(--brand)",
                   }}
                 >
-                  <div className="flex items-center gap-1.5 mb-1 justify-between">
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-3 mb-4 justify-between">
+                    <div className="flex items-center gap-3">
                       <div
-                        className="w-4 h-4 rounded flex items-center justify-center"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
                         style={{
                           background: "var(--brand)",
                           color: "white",
-                          fontSize: "0.625rem",
                         }}
                       >
                         ✍️
                       </div>
                       <h3
-                        className="font-semibold"
-                        style={{ color: "var(--foreground)", fontSize: "0.8125rem" }}
+                        className="font-bold text-lg"
+                        style={{ color: "var(--foreground)" }}
                       >
                         {t("threads.addComment")}
                       </h3>
                     </div>
                     <button
                       onClick={() => setShowCommentForm(false)}
-                      className="hover:opacity-70 transition-opacity"
-                      style={{ fontSize: "0.875rem", color: "var(--muted)" }}
+                      className="hover:opacity-70 transition-opacity text-xl"
+                      style={{ color: "var(--muted)" }}
                       aria-label="Cancel"
                     >
                       ✕
