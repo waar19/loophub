@@ -44,12 +44,10 @@ export default function Sidebar({ forums }: SidebarProps) {
 
   return (
     <aside
-      className="hidden lg:block fixed left-0 top-0 bottom-0 overflow-y-auto border-r"
+      className="hidden lg:block fixed left-0 top-0 bottom-0 overflow-y-auto border-r bg-[var(--card-bg)] border-[var(--border)]"
       style={{
         width: "var(--sidebar-width)",
         marginTop: "var(--header-height)",
-        background: "var(--card-bg)",
-        borderColor: "var(--border)",
       }}
       aria-label="Navegación principal de foros"
     >
@@ -57,35 +55,14 @@ export default function Sidebar({ forums }: SidebarProps) {
         <div className="mb-4">
           <Link
             href="/"
-            className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm font-medium transition-colors ${
-              pathname === "/" ? "" : ""
-            }`}
-            style={
+            className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
               pathname === "/"
-                ? {
-                    background: "var(--brand)",
-                    color: "white",
-                    boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
-                  }
-                : {
-                    color: "var(--muted)",
-                  }
-            }
-            onMouseEnter={(e) => {
-              if (pathname !== "/") {
-                e.currentTarget.style.background = "var(--card-hover)";
-                e.currentTarget.style.color = "var(--foreground)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (pathname !== "/") {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--muted)";
-              }
-            }}
+                ? "bg-[var(--card-hover)] text-[var(--foreground)]"
+                : "text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
+            }`}
           >
             <svg
-              className="w-4 h-4"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -102,15 +79,12 @@ export default function Sidebar({ forums }: SidebarProps) {
         </div>
 
         <div className="mb-4">
-          <h3
-            className="px-2 text-xs font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "var(--muted)" }}
-          >
+          <h3 className="px-3 text-xs font-bold uppercase tracking-wider mb-2 text-[var(--muted)]">
             {t("nav.forums")}
           </h3>
           <div className="space-y-0.5">
             {forums.length === 0 ? (
-              <p className="px-3 text-sm" style={{ color: "var(--muted)" }}>
+              <p className="px-3 text-sm text-[var(--muted)]">
                 {t("common.noForumsAvailable")}
               </p>
             ) : (
@@ -121,50 +95,28 @@ export default function Sidebar({ forums }: SidebarProps) {
                   <Link
                     key={forum.id}
                     href={`/forum/${forum.slug}`}
-                    className={`flex items-center justify-between gap-2 px-2 py-1.5 rounded text-sm transition-colors ${
-                      active ? "" : ""
-                    }`}
-                    style={
+                    className={`flex items-center justify-between gap-2 px-3 py-2 rounded text-sm transition-colors ${
                       active
-                        ? {
-                            background: "var(--brand)",
-                            color: "white",
-                            boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
-                          }
-                        : {
-                            color: "var(--muted)",
-                          }
-                    }
-                    onMouseEnter={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.background = "var(--card-hover)";
-                        e.currentTarget.style.color = "var(--foreground)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.color = "var(--muted)";
-                      }
-                    }}
+                        ? "bg-[var(--card-hover)] text-[var(--foreground)] font-medium"
+                        : "text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
+                    }`}
                   >
-                    <span className="font-medium">{forum.name}</span>
+                    <span className="truncate">{forum.name}</span>
                     {count > 0 && (
                       <Tooltip
-                        content={`${count} ${count === 1 ? t("threads.thread") : t("threads.threads")} ${t("common.inThisForum")}`}
+                        content={`${count} ${
+                          count === 1
+                            ? t("threads.thread")
+                            : t("threads.threads")
+                        } ${t("common.inThisForum")}`}
                         position="right"
                       >
                         <span
-                          className="text-xs px-2 py-0.5 rounded font-bold"
-                          style={{
-                            background: active
-                              ? "white"
-                              : "var(--brand)",
-                            color: active ? "var(--brand)" : "white",
-                            boxShadow: active 
-                              ? "0 1px 3px rgba(88, 101, 242, 0.2)"
-                              : "0 1px 3px rgba(88, 101, 242, 0.3)",
-                          }}
+                          className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
+                            active
+                              ? "bg-[var(--foreground)] text-[var(--card-bg)]"
+                              : "bg-[var(--border-light)] text-[var(--muted)]"
+                          }`}
                         >
                           {count}
                         </span>
@@ -180,4 +132,3 @@ export default function Sidebar({ forums }: SidebarProps) {
     </aside>
   );
 }
-

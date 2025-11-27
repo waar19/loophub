@@ -10,6 +10,7 @@ interface VoteButtonsProps {
   initialUpvotes?: number;
   initialDownvotes?: number;
   initialUserVote?: 1 | -1 | null;
+  orientation?: "vertical" | "horizontal";
 }
 
 export default function VoteButtons({
@@ -18,6 +19,7 @@ export default function VoteButtons({
   initialUpvotes = 0,
   initialDownvotes = 0,
   initialUserVote = null,
+  orientation = "vertical",
 }: VoteButtonsProps) {
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -146,7 +148,7 @@ export default function VoteButtons({
       setUserVote(previousVote);
       setUpvotes(previousUpvotes);
       setDownvotes(previousDownvotes);
-      
+
       console.error("Error voting:", error);
       showToast(
         error instanceof Error ? error.message : "Error al votar",
@@ -159,68 +161,60 @@ export default function VoteButtons({
 
   return (
     <div
+      className={`flex ${
+        orientation === "vertical" ? "flex-col" : "flex-row"
+      } items-center bg-transparent`}
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "0.0625rem",
-        minWidth: "1.5rem",
+        gap: orientation === "vertical" ? "0" : "0.5rem",
+        minWidth: orientation === "vertical" ? "2.5rem" : "auto",
+        padding: orientation === "vertical" ? "0.5rem 0.25rem" : "0",
+        background:
+          orientation === "vertical" ? "var(--card-hover)" : "transparent",
+        borderRight:
+          orientation === "vertical" ? "1px solid var(--border-light)" : "none",
       }}
     >
       {/* Upvote Button */}
       <button
-        onClick={() => handleVote(1)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleVote(1);
+        }}
         disabled={isVoting || !user}
+        className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         style={{
-          background: "none",
-          border: "none",
-          cursor: user ? (isVoting ? "not-allowed" : "pointer") : "not-allowed",
-          padding: "0.125rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: isVoting ? 0.5 : 1,
-          transition: "all 0.15s ease",
-          color: userVote === 1 ? "var(--brand)" : "var(--muted)",
-        }}
-        onMouseEnter={(e) => {
-          if (user && !isVoting) {
-            e.currentTarget.style.transform = "scale(1.15)";
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
+          color: userVote === 1 ? "var(--error)" : "var(--muted)",
         }}
         title={user ? "Upvote" : "Inicia sesión para votar"}
         aria-label="Upvote"
       >
         <svg
-          width="14"
-          height="14"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill={userVote === 1 ? "currentColor" : "none"}
           stroke="currentColor"
-          strokeWidth="2.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M12 19V6M5 12l7-7 7 7" />
+          <path d="M12 19V5M5 12l7-7 7 7" />
         </svg>
       </button>
 
       {/* Score */}
       <span
+        className={`font-bold text-sm ${
+          orientation === "vertical" ? "py-1" : "px-1"
+        }`}
         style={{
-          fontSize: "0.6875rem",
-          fontWeight: "700",
           color:
-            score > 0
+            userVote === 1
+              ? "var(--error)"
+              : userVote === -1
               ? "var(--brand)"
-              : score < 0
-              ? "var(--danger)"
-              : "var(--muted)",
-          textAlign: "center",
-          lineHeight: "1",
+              : "var(--foreground)",
         }}
       >
         {score}
@@ -228,42 +222,30 @@ export default function VoteButtons({
 
       {/* Downvote Button */}
       <button
-        onClick={() => handleVote(-1)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleVote(-1);
+        }}
         disabled={isVoting || !user}
+        className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         style={{
-          background: "none",
-          border: "none",
-          cursor: user ? (isVoting ? "not-allowed" : "pointer") : "not-allowed",
-          padding: "0.125rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: isVoting ? 0.5 : 1,
-          transition: "all 0.15s ease",
-          color: userVote === -1 ? "var(--danger)" : "var(--muted)",
-        }}
-        onMouseEnter={(e) => {
-          if (user && !isVoting) {
-            e.currentTarget.style.transform = "scale(1.15)";
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
+          color: userVote === -1 ? "var(--brand)" : "var(--muted)",
         }}
         title={user ? "Downvote" : "Inicia sesión para votar"}
         aria-label="Downvote"
       >
         <svg
-          width="14"
-          height="14"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill={userVote === -1 ? "currentColor" : "none"}
           stroke="currentColor"
-          strokeWidth="2.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M12 5v13M5 12l7 7 7-7" />
+          <path d="M12 5v14M5 12l7 7 7-7" />
         </svg>
       </button>
     </div>

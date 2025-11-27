@@ -171,6 +171,7 @@ export const translations = {
       home: "Inicio",
       anonymous: "Anónimo",
       forum: "Foro",
+      postedBy: "Publicado por",
     },
     // Notifications
     notifications: {
@@ -234,7 +235,8 @@ export const translations = {
       saving: "Guardando...",
       cancel: "Cancelar",
       additionalInfo: "Información adicional",
-      reputationInfo: "Tu reputación (Karma) se gana automáticamente cuando otros usuarios dan me gusta a tus threads y comentarios.",
+      reputationInfo:
+        "Tu reputación (Karma) se gana automáticamente cuando otros usuarios dan me gusta a tus threads y comentarios.",
       profilePublic: "Tu perfil público es visible en",
       updated: "Perfil actualizado exitosamente",
       errorUpdate: "Error al actualizar el perfil",
@@ -243,13 +245,18 @@ export const translations = {
       changeUsername: "Cambiar nombre de usuario",
       currentUsername: "Usuario actual",
       newUsername: "Nuevo nombre de usuario",
-      usernameChangeLimit: "Ya has usado tu cambio de nombre de usuario gratuito.",
-      usernameChangeFuture: "En el futuro, podrás cambiarlo usando karma u otras recompensas.",
-      usernameChangeOnce: "Puedes cambiar tu nombre de usuario solo una vez gratis.",
-      usernameChangeWarning: "¡Elige con cuidado! Los cambios futuros podrían requerir karma o pago.",
+      usernameChangeLimit:
+        "Ya has usado tu cambio de nombre de usuario gratuito.",
+      usernameChangeFuture:
+        "En el futuro, podrás cambiarlo usando karma u otras recompensas.",
+      usernameChangeOnce:
+        "Puedes cambiar tu nombre de usuario solo una vez gratis.",
+      usernameChangeWarning:
+        "¡Elige con cuidado! Los cambios futuros podrían requerir karma o pago.",
       continueChange: "Continuar",
       confirmChange: "Confirmar cambio de nombre",
-      confirmChangeText: "¿Estás seguro de que quieres cambiar tu nombre de usuario de",
+      confirmChangeText:
+        "¿Estás seguro de que quieres cambiar tu nombre de usuario de",
       toUsername: "a",
       confirmChangeWarning: "Esta acción no se puede deshacer gratis.",
       confirmButton: "Sí, cambiar nombre de usuario",
@@ -320,7 +327,8 @@ export const translations = {
     },
     // Footer
     footer: {
-      tagline: "Minimalismo Digital • Organización Personal • Productividad Realista",
+      tagline:
+        "Minimalismo Digital • Organización Personal • Productividad Realista",
       rights: "Todos los derechos reservados.",
     },
   },
@@ -490,6 +498,7 @@ export const translations = {
       home: "Home",
       anonymous: "Anonymous",
       forum: "Forum",
+      postedBy: "Posted by",
     },
     // Notifications
     notifications: {
@@ -554,7 +563,8 @@ export const translations = {
       saving: "Saving...",
       cancel: "Cancel",
       additionalInfo: "Additional information",
-      reputationInfo: "Your reputation (Karma) is earned automatically when other users like your threads and comments.",
+      reputationInfo:
+        "Your reputation (Karma) is earned automatically when other users like your threads and comments.",
       profilePublic: "Your public profile is visible at",
       updated: "Profile updated successfully",
       errorUpdate: "Error updating profile",
@@ -564,9 +574,11 @@ export const translations = {
       currentUsername: "Current username",
       newUsername: "New username",
       usernameChangeLimit: "You've already used your free username change.",
-      usernameChangeFuture: "In the future, you may be able to change it using karma or other rewards.",
+      usernameChangeFuture:
+        "In the future, you may be able to change it using karma or other rewards.",
       usernameChangeOnce: "You can change your username only once for free.",
-      usernameChangeWarning: "Choose carefully! Future changes may require karma or payment.",
+      usernameChangeWarning:
+        "Choose carefully! Future changes may require karma or payment.",
       continueChange: "Continue",
       confirmChange: "Confirm Username Change",
       confirmChangeText: "Are you sure you want to change your username from",
@@ -640,7 +652,8 @@ export const translations = {
     },
     // Footer
     footer: {
-      tagline: "Digital Minimalism • Personal Organization • Realistic Productivity",
+      tagline:
+        "Digital Minimalism • Personal Organization • Realistic Productivity",
       rights: "All rights reserved.",
     },
   },
@@ -812,6 +825,7 @@ export const translations = {
       home: "Início",
       anonymous: "Anônimo",
       forum: "Fórum",
+      postedBy: "Publicado por",
     },
     // Notifications
     notifications: {
@@ -875,7 +889,8 @@ export const translations = {
       saving: "Salvando...",
       cancel: "Cancelar",
       additionalInfo: "Informações adicionais",
-      reputationInfo: "Sua reputação (Karma) é ganha automaticamente quando outros usuários curtem seus tópicos e comentários.",
+      reputationInfo:
+        "Sua reputação (Karma) é ganha automaticamente quando outros usuários curtem seus tópicos e comentários.",
       profilePublic: "Seu perfil público é visível em",
       updated: "Perfil atualizado com sucesso",
       errorUpdate: "Erro ao atualizar perfil",
@@ -884,13 +899,18 @@ export const translations = {
       changeUsername: "Alterar nome de usuário",
       currentUsername: "Usuário atual",
       newUsername: "Novo nome de usuário",
-      usernameChangeLimit: "Você já usou sua alteração de nome de usuário gratuita.",
-      usernameChangeFuture: "No futuro, você pode alterá-lo usando karma ou outras recompensas.",
-      usernameChangeOnce: "Você pode alterar seu nome de usuário apenas uma vez gratuitamente.",
-      usernameChangeWarning: "Escolha com cuidado! Alterações futuras podem exigir karma ou pagamento.",
+      usernameChangeLimit:
+        "Você já usou sua alteração de nome de usuário gratuita.",
+      usernameChangeFuture:
+        "No futuro, você pode alterá-lo usando karma ou outras recompensas.",
+      usernameChangeOnce:
+        "Você pode alterar seu nome de usuário apenas uma vez gratuitamente.",
+      usernameChangeWarning:
+        "Escolha com cuidado! Alterações futuras podem exigir karma ou pagamento.",
       continueChange: "Continuar",
       confirmChange: "Confirmar alteração de nome",
-      confirmChangeText: "Tem certeza de que deseja alterar seu nome de usuário de",
+      confirmChangeText:
+        "Tem certeza de que deseja alterar seu nome de usuário de",
       toUsername: "para",
       confirmChangeWarning: "Esta ação não pode ser desfeita gratuitamente.",
       confirmButton: "Sim, alterar nome de usuário",
@@ -961,7 +981,8 @@ export const translations = {
     },
     // Footer
     footer: {
-      tagline: "Minimalismo Digital • Organização Pessoal • Produtividade Realista",
+      tagline:
+        "Minimalismo Digital • Organização Pessoal • Produtividade Realista",
       rights: "Todos os direitos reservados.",
     },
   },
