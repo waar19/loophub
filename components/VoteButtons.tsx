@@ -161,8 +161,9 @@ export default function VoteButtons({
 
   return (
     <div
-      className="flex items-center bg-[var(--card-hover)] rounded-full overflow-hidden border border-[var(--border)]"
+      className="flex items-center bg-[var(--card-hover)] rounded-full overflow-hidden"
       onClick={(e) => e.stopPropagation()}
+      style={{ border: "1px solid var(--border)" }}
     >
       {/* Upvote Button */}
       <button
@@ -172,7 +173,7 @@ export default function VoteButtons({
           handleVote(1);
         }}
         disabled={isVoting || !user}
-        className="p-1.5 hover:bg-[var(--border-light)] transition-colors"
+        className="p-2 hover:bg-[var(--border-light)] transition-colors"
         style={{
           color: userVote === 1 ? "var(--error)" : "var(--muted)",
         }}
@@ -195,7 +196,7 @@ export default function VoteButtons({
 
       {/* Score */}
       <span
-        className="font-bold text-xs px-1 min-w-[1.5rem] text-center"
+        className="font-bold text-sm px-2 min-w-[2.5rem] text-center"
         style={{
           color:
             userVote === 1
@@ -216,7 +217,7 @@ export default function VoteButtons({
           handleVote(-1);
         }}
         disabled={isVoting || !user}
-        className="p-1.5 hover:bg-[var(--border-light)] transition-colors"
+        className="p-2 hover:bg-[var(--border-light)] transition-colors"
         style={{
           color: userVote === -1 ? "var(--brand)" : "var(--muted)",
         }}
