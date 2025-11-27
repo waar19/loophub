@@ -11,6 +11,7 @@ export const translations = {
       forums: "Foros",
       search: "Buscar",
       notifications: "Notificaciones",
+      bookmarks: "Favoritos",
       login: "Iniciar Sesión",
       signup: "Registrarse",
       logout: "Cerrar Sesión",
@@ -173,6 +174,37 @@ export const translations = {
       forum: "Foro",
       postedBy: "Publicado por",
       comingSoon: "Próximamente",
+      loginRequired: "Debes iniciar sesión",
+      loadMore: "Cargar más",
+    },
+    // Bookmarks
+    bookmarks: {
+      title: "Favoritos",
+      add: "Guardar en favoritos",
+      remove: "Quitar de favoritos",
+      added: "Guardado en favoritos",
+      removed: "Eliminado de favoritos",
+      noBookmarks: "No tienes favoritos guardados",
+      savedOn: "Guardado el",
+    },
+    // Subscriptions
+    subscriptions: {
+      subscribe: "Seguir",
+      unsubscribe: "Dejar de seguir",
+      subscribed: "Ahora sigues este hilo",
+      unsubscribed: "Dejaste de seguir este hilo",
+      following: "Siguiendo",
+      loginRequired: "Inicia sesión para seguir este hilo",
+      errorToggle: "Error al cambiar suscripción",
+    },
+    // Tags
+    tags: {
+      title: "Etiquetas",
+      addTags: "Agregar etiquetas",
+      searchTags: "Buscar etiquetas...",
+      popular: "Etiquetas populares",
+      maxTags: "Máximo 5 etiquetas",
+      noTags: "No hay etiquetas",
     },
     // Notifications
     notifications: {
@@ -374,6 +406,7 @@ export const translations = {
       forums: "Forums",
       search: "Search",
       notifications: "Notifications",
+      bookmarks: "Bookmarks",
       login: "Log In",
       signup: "Sign Up",
       logout: "Log Out",
@@ -535,6 +568,37 @@ export const translations = {
       forum: "Forum",
       postedBy: "Posted by",
       comingSoon: "Coming soon",
+      loginRequired: "Please log in",
+      loadMore: "Load more",
+    },
+    // Bookmarks
+    bookmarks: {
+      title: "Bookmarks",
+      add: "Add to bookmarks",
+      remove: "Remove from bookmarks",
+      added: "Added to bookmarks",
+      removed: "Removed from bookmarks",
+      noBookmarks: "You have no bookmarks",
+      savedOn: "Saved on",
+    },
+    // Subscriptions
+    subscriptions: {
+      subscribe: "Subscribe",
+      unsubscribe: "Unsubscribe",
+      subscribed: "You are now following this thread",
+      unsubscribed: "You stopped following this thread",
+      following: "Following",
+      loginRequired: "Log in to follow this thread",
+      errorToggle: "Error changing subscription",
+    },
+    // Tags
+    tags: {
+      title: "Tags",
+      addTags: "Add tags",
+      searchTags: "Search tags...",
+      popular: "Popular tags",
+      maxTags: "Maximum 5 tags",
+      noTags: "No tags",
     },
     // Notifications
     notifications: {
@@ -734,6 +798,7 @@ export const translations = {
       forums: "Fóruns",
       search: "Pesquisar",
       notifications: "Notificações",
+      bookmarks: "Favoritos",
       login: "Entrar",
       signup: "Cadastrar-se",
       logout: "Sair",
@@ -897,6 +962,37 @@ export const translations = {
       forum: "Fórum",
       postedBy: "Publicado por",
       comingSoon: "Em breve",
+      loginRequired: "Faça login",
+      loadMore: "Carregar mais",
+    },
+    // Bookmarks
+    bookmarks: {
+      title: "Favoritos",
+      add: "Adicionar aos favoritos",
+      remove: "Remover dos favoritos",
+      added: "Adicionado aos favoritos",
+      removed: "Removido dos favoritos",
+      noBookmarks: "Você não tem favoritos",
+      savedOn: "Salvo em",
+    },
+    // Subscriptions
+    subscriptions: {
+      subscribe: "Seguir",
+      unsubscribe: "Deixar de seguir",
+      subscribed: "Você agora está seguindo este tópico",
+      unsubscribed: "Você deixou de seguir este tópico",
+      following: "Seguindo",
+      loginRequired: "Faça login para seguir este tópico",
+      errorToggle: "Erro ao alterar inscrição",
+    },
+    // Tags
+    tags: {
+      title: "Tags",
+      addTags: "Adicionar tags",
+      searchTags: "Buscar tags...",
+      popular: "Tags populares",
+      maxTags: "Máximo 5 tags",
+      noTags: "Sem tags",
     },
     // Notifications
     notifications: {

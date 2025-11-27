@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, ReactNode } from "react";
 import MarkdownEditor from "./MarkdownEditor";
 
 interface Field {
@@ -17,12 +17,14 @@ interface SimpleFormProps {
   fields: Field[];
   onSubmit: (data: Record<string, string>) => Promise<void>;
   submitText?: string;
+  children?: ReactNode;
 }
 
 export default function SimpleForm({
   fields,
   onSubmit,
   submitText = "Submit",
+  children,
 }: SimpleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -172,6 +174,9 @@ export default function SimpleForm({
           </div>
         </div>
       )}
+
+      {/* Custom children (e.g., TagSelector) */}
+      {children}
 
       <button
         type="submit"

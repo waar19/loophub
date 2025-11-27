@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "@/components/TranslationsProvider";
+import { useAuth } from "@/hooks/useAuth";
 import Tooltip from "./Tooltip";
 
 interface Forum {
@@ -22,6 +23,7 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useTranslations();
+  const { user } = useAuth();
 
   useEffect(() => {
     console.log("MobileMenu forums:", forums?.length || 0, forums);
@@ -180,6 +182,53 @@ export default function MobileMenu({ forums, threadCounts }: MobileMenuProps) {
                   </svg>
                   {t("nav.home")}
                 </Link>
+
+                {/* Bookmarks - only for logged in users */}
+                {user && (
+                  <Link
+                    href="/bookmarks"
+                    onClick={handleClose}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                    style={
+                      pathname === "/bookmarks"
+                        ? {
+                            background: "var(--brand)",
+                            color: "white",
+                            boxShadow: "0 2px 8px rgba(88, 101, 242, 0.3)",
+                          }
+                        : {
+                            color: "var(--muted)",
+                          }
+                    }
+                    onMouseEnter={(e) => {
+                      if (pathname !== "/bookmarks") {
+                        e.currentTarget.style.background = "var(--card-hover)";
+                        e.currentTarget.style.color = "var(--foreground)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (pathname !== "/bookmarks") {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "var(--muted)";
+                      }
+                    }}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill={pathname === "/bookmarks" ? "currentColor" : "none"}
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
+                    </svg>
+                    {t("nav.bookmarks")}
+                  </Link>
+                )}
               </div>
 
               <div className="mb-4">

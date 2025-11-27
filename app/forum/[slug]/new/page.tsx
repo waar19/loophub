@@ -5,9 +5,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SimpleForm from "@/components/SimpleForm";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import TagSelector from "@/components/TagSelector";
 import { createClient } from "@/lib/supabase-browser";
 import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
+
+interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
 
 export default function NewThreadPage({
   params,
@@ -17,6 +25,7 @@ export default function NewThreadPage({
   const { slug } = use(params);
   const router = useRouter();
   const [forumName, setForumName] = useState("");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const { showSuccess, showError } = useToast();
   const { t } = useTranslations();
 
@@ -38,7 +47,10 @@ export default function NewThreadPage({
       const res = await fetch(`/api/forums/${slug}/threads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          tags: selectedTags.map(tag => tag.id),
+        }),
       });
 
       if (!res.ok) {
@@ -119,7 +131,22 @@ export default function NewThreadPage({
             ]}
             onSubmit={handleSubmit}
             submitText={t("threads.createThread")}
-          />
+          >
+            {/* Tag Selector */}
+            <div className="mb-6">
+              <label
+                className="block text-sm font-semibold mb-2"
+                style={{ color: "var(--foreground)" }}
+              >
+                {t("tags.addTags")}
+              </label>
+              <TagSelector
+                selectedTags={selectedTags}
+                onTagsChange={setSelectedTags}
+                maxTags={5}
+              />
+            </div>
+          </SimpleForm>
         </div>
       </div>
     </div>
