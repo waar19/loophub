@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAuth, handleApiError } from "@/lib/api-helpers";
+import { requireAuth, handleApiError, checkRateLimit } from "@/lib/api-helpers";
 
 type VoteType = 1 | -1; // 1 = upvote, -1 = downvote
 
@@ -7,6 +7,11 @@ type VoteType = 1 | -1; // 1 = upvote, -1 = downvote
 export async function POST(request: Request) {
   try {
     const { user, supabase } = await requireAuth();
+    
+    // Check rate limit
+    const rateLimitError = checkRateLimit(request, "votes", user.id);
+    if (rateLimitError) return rateLimitError;
+    
     const body = await request.json();
     const { threadId, commentId, voteType } = body as { 
       threadId?: string; 

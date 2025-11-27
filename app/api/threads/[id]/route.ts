@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createThreadSchema } from "@/lib/validations";
-import { requireAuth, handleApiError } from "@/lib/api-helpers";
+import { requireAuth, handleApiError, checkRateLimit } from "@/lib/api-helpers";
 
 export async function PUT(
   request: Request,
@@ -14,6 +14,10 @@ export async function PUT(
 
     // Check authentication
     const { user, supabase } = await requireAuth();
+
+    // Check rate limit for thread edits (using threads limit)
+    const rateLimitError = checkRateLimit(request, "threads", user.id);
+    if (rateLimitError) return rateLimitError;
 
     // Verify thread exists and user owns it
     const { data: thread, error: threadError } = await supabase
