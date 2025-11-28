@@ -785,6 +785,211 @@ Todas las funcionalidades avanzadas de la Fase 7 han sido implementadas.
 
 ---
 
+## 🌐 FASE 8: COMUNIDADES POR USUARIOS
+
+> **Diferenciador vs Reddit**: Comunidades más íntimas y curadas, no subreddits masivos.
+
+### 8.1 Crear Comunidades (Base)
+**Prioridad**: Alta | **Estimación**: 8-10 horas
+
+**Tareas**:
+- [ ] Migración de base de datos
+  - [ ] Tabla `communities` (id, name, slug, description, image_url, banner_url, rules, category, visibility, member_limit, created_by, created_at)
+  - [ ] Tabla `community_members` (community_id, user_id, role, joined_at)
+  - [ ] Tabla `community_categories` (id, name, slug, icon)
+  - [ ] RLS policies
+  - [ ] Índices para búsqueda
+- [ ] Requisito: Nivel 3+ para crear comunidad
+- [ ] Límite: 1 comunidad por usuario (inicialmente)
+- [ ] Visibilidad: Público, Privado, Solo invitación
+- [ ] URL: `/c/[slug]`
+- [ ] API Endpoints:
+  - [ ] POST `/api/communities` - Crear
+  - [ ] GET `/api/communities` - Listar
+  - [ ] GET `/api/communities/[slug]` - Detalle
+  - [ ] PUT `/api/communities/[slug]` - Editar
+  - [ ] DELETE `/api/communities/[slug]` - Eliminar
+- [ ] Páginas:
+  - [ ] `/communities` - Directorio
+  - [ ] `/communities/new` - Crear comunidad
+  - [ ] `/c/[slug]` - Página de comunidad
+  - [ ] `/c/[slug]/settings` - Configuración (owner)
+
+**Archivos a crear**:
+- `supabase/migrations/026_communities.sql`
+- `app/communities/page.tsx`
+- `app/communities/new/page.tsx`
+- `app/c/[slug]/page.tsx`
+- `app/c/[slug]/settings/page.tsx`
+- `app/api/communities/route.ts`
+- `app/api/communities/[slug]/route.ts`
+- `components/CommunityCard.tsx`
+- `components/CreateCommunityForm.tsx`
+
+---
+
+### 8.2 Membresías
+**Prioridad**: Alta | **Estimación**: 4-6 horas
+
+**Tareas**:
+- [ ] Unirse/salir de comunidades
+- [ ] Roles: Owner, Moderador, Miembro, Visitante
+- [ ] Comunidades privadas (requiere aprobación)
+- [ ] Sistema de invitaciones (link único)
+- [ ] API Endpoints:
+  - [ ] POST `/api/communities/[slug]/join` - Unirse
+  - [ ] POST `/api/communities/[slug]/leave` - Salir
+  - [ ] POST `/api/communities/[slug]/invite` - Invitar
+  - [ ] GET `/api/communities/[slug]/members` - Miembros
+- [ ] Solicitudes de acceso para comunidades privadas
+- [ ] Notificaciones de aprobación/rechazo
+
+**Archivos a crear**:
+- `app/api/communities/[slug]/join/route.ts`
+- `app/api/communities/[slug]/members/route.ts`
+- `app/api/communities/[slug]/invite/route.ts`
+- `components/JoinCommunityButton.tsx`
+- `components/CommunityMembers.tsx`
+
+---
+
+### 8.3 Personalización
+**Prioridad**: Media | **Estimación**: 3-4 horas
+
+**Tareas**:
+- [ ] Banner y avatar de comunidad
+- [ ] Colores personalizados (tema)
+- [ ] Reglas de comunidad (markdown)
+- [ ] Flairs/etiquetas propias de la comunidad
+- [ ] Widgets en sidebar (descripción, reglas, mods, stats)
+
+**Archivos a crear**:
+- `components/CommunityBanner.tsx`
+- `components/CommunitySidebar.tsx`
+- `components/CommunityRules.tsx`
+
+---
+
+### 8.4 Descubrimiento
+**Prioridad**: Media | **Estimación**: 3-4 horas
+
+**Tareas**:
+- [ ] Directorio de comunidades `/communities`
+- [ ] Filtros: categoría, tamaño, actividad
+- [ ] Trending communities (por nuevos miembros/actividad)
+- [ ] Recomendaciones basadas en actividad del usuario
+- [ ] Búsqueda de comunidades
+
+---
+
+## 👥 FASE 9: SOCIAL LAYER
+
+### 9.1 Seguir Usuarios
+**Prioridad**: Alta | **Estimación**: 4-5 horas
+
+**Tareas**:
+- [ ] Tabla `user_follows` (follower_id, following_id, created_at)
+- [ ] Follow/unfollow toggle
+- [ ] Contador de seguidores/siguiendo en perfil
+- [ ] Feed personalizado de seguidos
+- [ ] Notificación al ser seguido
+- [ ] Lista de seguidores/siguiendo en perfil
+
+**Archivos a crear**:
+- `supabase/migrations/027_user_follows.sql`
+- `app/api/users/[username]/follow/route.ts`
+- `components/FollowButton.tsx`
+- `app/u/[username]/followers/page.tsx`
+- `app/u/[username]/following/page.tsx`
+
+---
+
+### 9.2 Mensajes Privados
+**Prioridad**: Alta | **Estimación**: 8-10 horas
+
+**Tareas**:
+- [ ] Tablas `conversations`, `messages`
+- [ ] Inbox con lista de conversaciones
+- [ ] Chat 1-a-1 en tiempo real (Supabase Realtime)
+- [ ] Requests de usuarios no seguidos
+- [ ] Bloquear usuarios
+- [ ] Notificaciones de nuevos mensajes
+- [ ] Marcar como leído/no leído
+
+**Archivos a crear**:
+- `supabase/migrations/028_private_messages.sql`
+- `app/messages/page.tsx`
+- `app/messages/[conversationId]/page.tsx`
+- `app/api/messages/route.ts`
+- `components/MessageInbox.tsx`
+- `components/ChatWindow.tsx`
+
+---
+
+### 9.3 Actividad Social
+**Prioridad**: Baja | **Estimación**: 3-4 horas
+
+**Tareas**:
+- [ ] Feed de actividad de seguidos
+- [ ] Tipos: nuevo thread, comentario, unirse a comunidad
+- [ ] Página `/feed` o tab en home
+
+---
+
+## 📈 FASE 10: ENGAGEMENT
+
+### 10.1 Trending System
+**Prioridad**: Alta | **Estimación**: 4-5 horas
+
+**Tareas**:
+- [ ] Algoritmo: votos + comentarios + tiempo
+- [ ] Filtros: Hot, Rising, Top (día/semana/mes/año)
+- [ ] Trending por comunidad y global
+- [ ] Cache de rankings (actualizar cada 5-15 min)
+
+---
+
+### 10.2 Reacciones en Comentarios
+**Prioridad**: Media | **Estimación**: 3-4 horas
+
+**Tareas**:
+- [ ] Emojis: 👍❤️😂🔥💡🎉
+- [ ] Tabla `comment_reactions`
+- [ ] UI de selector de reacciones
+- [ ] Contador agrupado por emoji
+- [ ] Ver quién reaccionó
+
+---
+
+### 10.3 Eventos/AMA
+**Prioridad**: Baja | **Estimación**: 5-6 horas
+
+**Tareas**:
+- [ ] Threads tipo AMA (Ask Me Anything)
+- [ ] Programar fecha/hora
+- [ ] Notificar a miembros de comunidad
+- [ ] UI especial para Q&A
+
+---
+
+## 💰 FASE 11: MONETIZACIÓN (Futuro)
+
+### 11.1 Comunidades Premium
+- [ ] Suscripción mensual para acceso
+- [ ] Owner recibe % de ingresos
+- [ ] Integración Stripe
+
+### 11.2 Tips a Creadores
+- [ ] Enviar propinas a usuarios
+- [ ] Wallet interno o Stripe Connect
+
+### 11.3 Verificación de Usuarios
+- [ ] Badge verificado ✓
+- [ ] Proceso de verificación
+- [ ] Pago único o mensual
+
+---
+
 ## 💡 Ideas Futuras (Backlog)
 
 - [ ] Modo Wiki - Threads editables por comunidad
@@ -795,13 +1000,6 @@ Todas las funcionalidades avanzadas de la Fase 7 han sido implementadas.
 - [ ] Webhooks para eventos
 - [ ] Sistema de recompensas (achievements avanzados)
 - [ ] Threads programados (scheduled posts)
-- [ ] Keyboard shortcuts globales
-- [ ] Draft autosave en localStorage
-- [ ] Exportar datos personales (GDPR)
-- [ ] Modo lectura sin distracciones
-- [ ] Hilos destacados (sticky threads)
-- [ ] Moderadores por foro
-- [ ] Webhooks para eventos
 
 ---
 
@@ -821,6 +1019,8 @@ Todas las funcionalidades avanzadas de la Fase 7 han sido implementadas.
 
 | Fecha | Cambio |
 |-------|--------|
+| 2025-11-28 | Plan de Fases 8-11 agregado (Comunidades, Social, Engagement, Monetización) |
+| 2025-11-28 | Fase 7 completada: Sticky threads, Polls, Shortcuts, Draft autosave |
 | 2025-11-28 | Fase 5 completada: Gestión foros, moderadores, UX, traducciones |
 | 2025-11-28 | Plan reorganizado con Fases 6 y 7 |
 | 2025-11-27 | Plan reorganizado y actualizado |
@@ -830,4 +1030,4 @@ Todas las funcionalidades avanzadas de la Fase 7 han sido implementadas.
 
 ---
 
-**Próximo paso sugerido**: Fase 6.1 - CI/CD Pipeline con GitHub Actions
+**Próximo paso sugerido**: Fase 8.1 - Crear Comunidades (Base)
