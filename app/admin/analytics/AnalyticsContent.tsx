@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase-browser';
+import { useTranslations } from '@/components/TranslationsProvider';
 
 interface DailyMetric {
   date: string;
@@ -64,6 +66,7 @@ export default function AnalyticsContent() {
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d');
   const [activeTab, setActiveTab] = useState<'overview' | 'threads' | 'users' | 'growth'>('overview');
   const supabase = createClient();
+  const { t } = useTranslations();
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
@@ -293,6 +296,17 @@ export default function AnalyticsContent() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-2xl font-bold">📊 Analytics Dashboard</h1>
         <div className="flex gap-2">
+          <Link
+            href="/admin"
+            className="btn"
+            style={{
+              background: 'var(--card-bg)',
+              color: 'var(--foreground)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            ← {t('admin.backToAdmin')}
+          </Link>
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as '7d' | '30d' | '90d')}
@@ -371,7 +385,7 @@ export default function AnalyticsContent() {
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Growth Chart */}
-          <div className="card">
+          <div className="card p-6">
             <h3 className="font-bold mb-4">📈 Activity Overview</h3>
             <div className="h-64">
               <MiniChart data={dailyMetrics} />
@@ -379,7 +393,7 @@ export default function AnalyticsContent() {
           </div>
 
           {/* Recent Activity */}
-          <div className="card">
+          <div className="card p-6">
             <h3 className="font-bold mb-4">🕐 Recent Activity</h3>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {recentActivity.map((activity, i) => (
@@ -407,7 +421,7 @@ export default function AnalyticsContent() {
       )}
 
       {activeTab === 'threads' && (
-        <div className="card">
+        <div className="card p-6">
           <h3 className="font-bold mb-4">🏆 Top Threads</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -460,7 +474,7 @@ export default function AnalyticsContent() {
       )}
 
       {activeTab === 'users' && (
-        <div className="card">
+        <div className="card p-6">
           <h3 className="font-bold mb-4">🏆 Top Users by Reputation</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -526,7 +540,7 @@ export default function AnalyticsContent() {
       {activeTab === 'growth' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Growth Metrics */}
-          <div className="card">
+          <div className="card p-6">
             <h3 className="font-bold mb-4">📈 Growth Comparison</h3>
             <div className="space-y-4">
               <GrowthMetric
@@ -553,7 +567,7 @@ export default function AnalyticsContent() {
           </div>
 
           {/* Daily New Content */}
-          <div className="card">
+          <div className="card p-6">
             <h3 className="font-bold mb-4">📊 Daily Activity</h3>
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {[...dailyMetrics].reverse().slice(0, 14).map((metric) => (
@@ -602,7 +616,7 @@ function StatCard({
   };
 
   return (
-    <div className="card" style={{ background: colors[color] }}>
+    <div className="card p-4" style={{ background: colors[color] }}>
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
         <span className="text-xs px-2 py-1 rounded" style={{ background: 'var(--card-bg)' }}>
