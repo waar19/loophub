@@ -55,14 +55,14 @@ export async function createPoll(
     return { success: false, error: 'Debes iniciar sesión para crear encuestas' };
   }
 
-  // Verificar nivel del usuario
+  // Verificar nivel del usuario (3+ o admin)
   const { data: profile } = await supabase
     .from('profiles')
-    .select('level')
+    .select('level, is_admin')
     .eq('id', user.id)
     .single();
 
-  if (!profile || profile.level < 3) {
+  if (!profile || (!profile.is_admin && profile.level < 3)) {
     return { success: false, error: 'Necesitas nivel 3 para crear encuestas' };
   }
 

@@ -109,15 +109,22 @@ export default function ModeratorActions({
   return (
     <>
       <div
-        className="card"
+        className="card p-4"
         style={{
-          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08))',
+          border: '1px solid rgba(99, 102, 241, 0.2)',
         }}
       >
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg">🛡️</span>
-          <h3 className="font-semibold text-sm">Acciones de Moderador</h3>
+        <div className="flex items-center gap-2 mb-4">
+          <div 
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+          >
+            <span className="text-sm">🛡️</span>
+          </div>
+          <h3 className="font-semibold text-sm" style={{ color: 'var(--foreground)' }}>
+            Acciones de Moderador
+          </h3>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -125,11 +132,11 @@ export default function ModeratorActions({
             <button
               onClick={handlePin}
               disabled={isPending}
-              className="btn btn-sm flex items-center gap-1"
-              style={{
-                background: isPinned ? 'var(--primary)' : 'var(--card-bg)',
-                color: isPinned ? 'white' : 'var(--foreground)',
-              }}
+              className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+                isPinned 
+                  ? 'bg-blue-500 text-white shadow-md hover:bg-blue-600' 
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
             >
               📌 {isPinned ? 'Desanclar' : 'Anclar'}
             </button>
@@ -139,11 +146,11 @@ export default function ModeratorActions({
             <button
               onClick={handleLock}
               disabled={isPending}
-              className="btn btn-sm flex items-center gap-1"
-              style={{
-                background: isLocked ? '#ef4444' : 'var(--card-bg)',
-                color: isLocked ? 'white' : 'var(--foreground)',
-              }}
+              className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+                isLocked 
+                  ? 'bg-red-500 text-white shadow-md hover:bg-red-600' 
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
             >
               {isLocked ? '🔓 Desbloquear' : '🔒 Bloquear'}
             </button>
@@ -153,36 +160,16 @@ export default function ModeratorActions({
             <button
               onClick={handleHide}
               disabled={isPending}
-              className="btn btn-sm flex items-center gap-1"
-              style={{
-                background: isHidden ? '#f59e0b' : 'var(--card-bg)',
-                color: isHidden ? 'white' : 'var(--foreground)',
-              }}
+              className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+                isHidden 
+                  ? 'bg-amber-500 text-white shadow-md hover:bg-amber-600' 
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
             >
               {isHidden ? '👁️ Mostrar' : '🙈 Ocultar'}
             </button>
           )}
         </div>
-
-        {(isLocked || isPinned || isHidden) && (
-          <div className="mt-3 flex flex-wrap gap-2 text-xs">
-            {isPinned && (
-              <span className="px-2 py-1 rounded-full bg-blue-500/20 text-blue-400">
-                📌 Anclado
-              </span>
-            )}
-            {isLocked && (
-              <span className="px-2 py-1 rounded-full bg-red-500/20 text-red-400">
-                🔒 Bloqueado
-              </span>
-            )}
-            {isHidden && (
-              <span className="px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400">
-                🙈 Oculto
-              </span>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Reason Modal */}

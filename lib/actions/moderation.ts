@@ -86,26 +86,36 @@ export async function togglePinThread(
   }
 
   if (pin) {
-    const { error } = await supabase.rpc('pin_thread', {
+    const { data, error } = await supabase.rpc('pin_thread', {
       p_thread_id: threadId,
+      p_user_id: user.id,
     });
 
     if (error) {
       console.error('Error pinning thread:', error);
-      // Check if it's max pinned error
-      if (error.message?.includes('Maximum') || error.message?.includes('máximo')) {
-        return { success: false, error: 'Máximo de hilos fijados alcanzado (3 por foro)' };
-      }
       return { success: false, error: error.message };
     }
+
+    // Check response from function
+    if (data && !data.success) {
+      const errorMsg = data.error?.includes('Maximum') 
+        ? 'Máximo de hilos fijados alcanzado (3 por foro)' 
+        : data.error;
+      return { success: false, error: errorMsg };
+    }
   } else {
-    const { error } = await supabase.rpc('unpin_thread', {
+    const { data, error } = await supabase.rpc('unpin_thread', {
       p_thread_id: threadId,
+      p_user_id: user.id,
     });
 
     if (error) {
       console.error('Error unpinning thread:', error);
       return { success: false, error: error.message };
+    }
+
+    if (data && !data.success) {
+      return { success: false, error: data.error };
     }
   }
 

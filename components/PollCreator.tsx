@@ -102,7 +102,7 @@ export default function PollCreator({ threadId, onCreated, onCancel }: PollCreat
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card border-l-4 border-l-[var(--brand)]">
+    <form onSubmit={handleSubmit} className="card p-6 border-l-4 border-l-[var(--brand)]">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-2xl">📊</span>
         <h3 className="font-semibold text-lg" style={{ color: 'var(--foreground)' }}>
@@ -281,7 +281,7 @@ export default function PollCreator({ threadId, onCreated, onCancel }: PollCreat
           <button
             type="button"
             onClick={onCancel}
-            className="btn-secondary"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             disabled={isPending}
           >
             {t('common.cancel') || 'Cancelar'}
@@ -289,7 +289,7 @@ export default function PollCreator({ threadId, onCreated, onCancel }: PollCreat
         )}
         <button
           type="submit"
-          className="btn-primary"
+          className="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-md hover:shadow-lg disabled:opacity-50"
           disabled={isPending}
         >
           {isPending 

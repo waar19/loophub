@@ -691,55 +691,87 @@
 
 ---
 
-### 7.2 Digest Semanal por Email
-**Prioridad**: Media | **Estimación**: 4-6 horas
+### 7.2 Digest Semanal por Email ✅
+**Prioridad**: Media | **Completado**: 2025-01-28 (ya existía)
 
-**Tareas**:
-- [ ] Template de email con Resend
-- [ ] Cron job semanal (Vercel)
-- [ ] Preferencia de usuario para recibir
-- [ ] Contenido: top threads, actividad, badges ganados
-- [ ] Botón de unsuscribe
+**Logros**:
+- [x] Template de email con Resend (lib/email-digest.ts)
+- [x] Cron job semanal en Vercel (lunes 9am)
+- [x] Preferencia de usuario para recibir
+- [x] Contenido: top threads, actividad, suscripciones
+- [x] Botón de unsubscribe
 
----
-
-### 7.3 Encuestas en Threads
-**Prioridad**: Baja | **Estimación**: 6-8 horas
-
-**Tareas**:
-- [ ] Tabla `polls` y `poll_votes`
-- [ ] UI para crear encuesta al hacer thread (nivel 3+)
-- [ ] Máximo 4 opciones
-- [ ] Mostrar resultados en tiempo real
-- [ ] Un voto por usuario
+**Archivos existentes**:
+- `lib/email-digest.ts`
+- `app/api/cron/digest/route.ts`
+- `supabase/migrations/022_email_digest_system.sql`
 
 ---
 
-### 7.4 Keyboard Shortcuts Globales
-**Prioridad**: Baja | **Estimación**: 2-3 horas
+### 7.3 Encuestas en Threads ✅
+**Prioridad**: Baja | **Completado**: 2025-01-28
 
-**Tareas**:
-- [ ] Hook `useKeyboardShortcuts`
-- [ ] Shortcuts:
-  - [ ] `g h` - Go Home
-  - [ ] `g n` - Go Notifications
-  - [ ] `g b` - Go Bookmarks
-  - [ ] `n` - New Thread (si está en foro)
-  - [ ] `/` - Focus search
-  - [ ] `?` - Mostrar ayuda
-- [ ] Modal de ayuda con lista de shortcuts
+**Logros**:
+- [x] Tablas `polls`, `poll_options`, `poll_votes`
+- [x] Funciones SQL: get_poll_results, user_has_voted, get_user_poll_votes
+- [x] UI para crear encuesta (nivel 3+)
+- [x] Máximo 6 opciones (mínimo 2)
+- [x] Mostrar resultados con porcentajes
+- [x] Un voto por usuario, opción múltiple opcional
+- [x] Fecha de expiración opcional
+- [x] Triggers para validar votos
+- [x] Traducciones ES, EN, PT
+
+**Archivos existentes/creados**:
+- `supabase/migrations/021_polls_system.sql` (ya existía)
+- `app/api/polls/route.ts`
+- `app/api/polls/[id]/route.ts`
+- `components/Poll.tsx`
 
 ---
 
-### 7.5 Draft Autosave
-**Prioridad**: Media | **Estimación**: 2-3 horas
+### 7.4 Keyboard Shortcuts Globales ✅
+**Prioridad**: Baja | **Completado**: 2025-01-28
 
-**Tareas**:
-- [ ] Guardar borrador en localStorage cada 30s
-- [ ] Key por foro/thread
-- [ ] Restaurar al cargar página
-- [ ] UI para descartar borrador
-- [ ] Limpiar al publicar exitosamente
+**Logros**:
+- [x] Hook `useKeyboardShortcuts`
+- [x] Shortcuts implementados:
+  - [x] `g h` - Go Home
+  - [x] `g n` - Go Notifications
+  - [x] `g b` - Go Bookmarks
+  - [x] `g s` - Go Settings
+  - [x] `c` - Create thread (en foro)
+  - [x] `/` - Focus search
+  - [x] `?` - Mostrar ayuda
+  - [x] `Escape` - Cerrar modal
+- [x] Modal de ayuda con lista de shortcuts
+- [x] Traducciones ES, EN, PT
+
+**Archivos creados**:
+- `hooks/useKeyboardShortcuts.ts`
+- `components/KeyboardShortcutsModal.tsx`
+
+---
+
+### 7.5 Draft Autosave ✅
+**Prioridad**: Media | **Completado**: 2025-01-28
+
+**Logros**:
+- [x] Hook `useDraftAutosave` con debounce
+- [x] Guardar borrador en localStorage cada 2s
+- [x] Key único por tipo (thread/comment/reply) + id
+- [x] Auto-limpieza de borradores >7 días
+- [x] Componente DraftIndicator existente
+
+**Archivos creados/existentes**:
+- `hooks/useDraftAutosave.ts`
+- `components/DraftIndicator.tsx` (existía)
+
+---
+
+## ✅ FASE 7: COMPLETADA
+
+Todas las funcionalidades avanzadas de la Fase 7 han sido implementadas.
 
 ---
 

@@ -138,6 +138,21 @@ export const translations = {
       emailNotConfirmed:
         "Email no confirmado. Por favor revisa tu email o reenvía el enlace de confirmación.",
     },
+    // Keyboard Shortcuts
+    shortcuts: {
+      title: "Atajos de Teclado",
+      navigation: "Navegación",
+      actions: "Acciones",
+      goToHome: "Ir al Inicio",
+      goToNotifications: "Ir a Notificaciones",
+      goToBookmarks: "Ir a Favoritos",
+      goToSettings: "Ir a Ajustes",
+      focusSearch: "Enfocar búsqueda",
+      createNewThread: "Crear nuevo hilo",
+      showShortcuts: "Mostrar atajos",
+      closeModal: "Cerrar modal",
+      pressQuestion: "Presiona ? en cualquier momento para ver esta ayuda",
+    },
     // Common
     common: {
       loading: "Cargando...",
@@ -289,6 +304,18 @@ export const translations = {
       pollCreated: "¡Encuesta creada!",
       createError: "Error al crear encuesta",
       needLevel3: "Necesitas nivel 3 para crear encuestas",
+      votes: "votos",
+      anonymous: "Anónima",
+      ended: "Finalizada",
+      submitVote: "Enviar voto",
+      alreadyVoted: "Ya has votado en esta encuesta",
+      questionTooShort: "La pregunta debe tener al menos 5 caracteres",
+      needMoreOptions: "Necesitas al menos 2 opciones válidas",
+      allowMultiple: "Permitir múltiples opciones",
+      anonymousVotes: "Votos anónimos",
+      setExpiry: "Establecer fecha de cierre",
+      levelRequirement: "Requiere nivel 3 o superior para crear encuestas",
+      addPoll: "Añadir encuesta",
     },
     // Notifications
     notifications: {
@@ -660,6 +687,21 @@ export const translations = {
       emailNotConfirmed:
         "Email not confirmed. Please check your email or resend the confirmation link.",
     },
+    // Keyboard Shortcuts
+    shortcuts: {
+      title: "Keyboard Shortcuts",
+      navigation: "Navigation",
+      actions: "Actions",
+      goToHome: "Go to Home",
+      goToNotifications: "Go to Notifications",
+      goToBookmarks: "Go to Bookmarks",
+      goToSettings: "Go to Settings",
+      focusSearch: "Focus search",
+      createNewThread: "Create new thread",
+      showShortcuts: "Show shortcuts",
+      closeModal: "Close modal",
+      pressQuestion: "Press ? anytime to see this help",
+    },
     // Common
     common: {
       loading: "Loading...",
@@ -810,6 +852,18 @@ export const translations = {
       pollCreated: "Poll created!",
       createError: "Error creating poll",
       needLevel3: "You need level 3 to create polls",
+      votes: "votes",
+      anonymous: "Anonymous",
+      ended: "Ended",
+      submitVote: "Submit vote",
+      alreadyVoted: "You have already voted in this poll",
+      questionTooShort: "Question must be at least 5 characters",
+      needMoreOptions: "You need at least 2 valid options",
+      allowMultiple: "Allow multiple options",
+      anonymousVotes: "Anonymous votes",
+      setExpiry: "Set expiry date",
+      levelRequirement: "Requires level 3 or higher to create polls",
+      addPoll: "Add poll",
     },
     // Notifications
     notifications: {
@@ -1180,6 +1234,21 @@ export const translations = {
       emailNotConfirmed:
         "Email não confirmado. Por favor verifique seu email ou reenvie o link de confirmação.",
     },
+    // Keyboard Shortcuts
+    shortcuts: {
+      title: "Atalhos de Teclado",
+      navigation: "Navegação",
+      actions: "Ações",
+      goToHome: "Ir para Início",
+      goToNotifications: "Ir para Notificações",
+      goToBookmarks: "Ir para Favoritos",
+      goToSettings: "Ir para Configurações",
+      focusSearch: "Focar busca",
+      createNewThread: "Criar novo tópico",
+      showShortcuts: "Mostrar atalhos",
+      closeModal: "Fechar modal",
+      pressQuestion: "Pressione ? a qualquer momento para ver esta ajuda",
+    },
     // Common
     common: {
       loading: "Carregando...",
@@ -1331,6 +1400,18 @@ export const translations = {
       pollCreated: "Enquete criada!",
       createError: "Erro ao criar enquete",
       needLevel3: "Você precisa de nível 3 para criar enquetes",
+      votes: "votos",
+      anonymous: "Anônima",
+      ended: "Finalizada",
+      submitVote: "Enviar voto",
+      alreadyVoted: "Você já votou nesta enquete",
+      questionTooShort: "A pergunta deve ter pelo menos 5 caracteres",
+      needMoreOptions: "Você precisa de pelo menos 2 opções válidas",
+      allowMultiple: "Permitir múltiplas opções",
+      anonymousVotes: "Votos anônimos",
+      setExpiry: "Definir data de encerramento",
+      levelRequirement: "Requer nível 3 ou superior para criar enquetes",
+      addPoll: "Adicionar enquete",
     },
     // Notifications
     notifications: {
