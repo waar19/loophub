@@ -149,6 +149,7 @@ export default function ForumPage({
   const { forum, threads, pagination } = data;
   const forumColor = forumColors[slug] || "var(--brand)";
   const forumIcon = forumIcons[slug] || "💬";
+  const threadCount = data.pagination?.total || data.threads.length;
 
   return (
     <>
@@ -158,6 +159,10 @@ export default function ForumPage({
           forum.description ||
           `Explore discussions in ${forum.name} forum on Loophub`
         }
+        ogParams={{
+          type: "forum",
+          threadCount: threadCount,
+        }}
       />
       <ForumStructuredData forum={forum} />
       <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">

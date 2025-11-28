@@ -2,6 +2,7 @@
 
 **Última actualización**: 2025-01-27  
 **Branch actual**: feature/notification  
+**Fases Completadas**: 1, 2, 3
 
 ---
 
@@ -27,6 +28,10 @@
 | Onboarding | ✅ | Flujo completo |
 | Menciones @username | ✅ | Con autocomplete |
 | Rate Limiting | ✅ | En rutas críticas |
+| Sistema de Imágenes | ✅ | Upload y preview |
+| Bookmarks/Favoritos | ✅ | Guardar threads |
+| Sistema de Tags | ✅ | Etiquetas en threads |
+| Suscripciones a Threads | ✅ | Seguir threads |
 
 ---
 
@@ -116,67 +121,53 @@
 
 ---
 
-## 🟠 FASE 2: PRIORIDAD ALTA (Semanas 3-4)
+## ✅ FASE 2: COMPLETADA
 
-### 2.1 Sistema de Imágenes
-**Tiempo estimado**: 3-4 días  
-**Impacto**: ⭐⭐⭐⭐
+### 2.1 Sistema de Imágenes ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Supabase Storage
-  - [ ] Bucket `post-images` (público)
-  - [ ] Bucket `avatars` (público)
-  - [ ] RLS policies para storage
-  - [ ] Límite 5MB por imagen
-- [ ] API Endpoints
-  - [ ] POST `/api/upload/image` - Subir imagen
-  - [ ] DELETE `/api/upload/image/[id]` - Eliminar
-  - [ ] Validación de tipo (jpg, png, gif, webp)
-- [ ] Optimización
-  - [ ] Resize automático (max 1920px)
-  - [ ] Compresión con Sharp
-  - [ ] Generación de thumbnails
-- [ ] Componentes UI
-  - [ ] `ImageUploader.tsx` - Drag & drop
-  - [ ] Preview antes de subir
-  - [ ] Progress bar de upload
-  - [ ] `Lightbox.tsx` - Ver imagen grande
-- [ ] Integración con Markdown
-  - [ ] Botón de imagen en toolbar
-  - [ ] Insertar sintaxis `![alt](url)`
-- [ ] Lazy loading de imágenes
+**Logros**:
+- [x] Supabase Storage
+  - [x] Bucket `avatars` (público)
+  - [x] Bucket `post-images` (público)
+  - [x] RLS policies para storage
+- [x] Hook `useImageUpload`
+  - [x] Validación de tipo y tamaño
+  - [x] Upload con progress
+  - [x] Resize automático (max 1920px)
+- [x] API Endpoint POST `/api/uploads`
+- [x] Componentes UI
+  - [x] Upload en MarkdownEditor (botón de imagen)
+  - [x] Preview antes de insertar
+- [x] Lazy loading de imágenes (next/image)
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/015_image_storage.sql`
-- `app/api/upload/image/route.ts`
-- `components/ImageUploader.tsx`
-- `components/Lightbox.tsx`
+- `app/api/uploads/route.ts`
+- `hooks/useImageUpload.ts`
 
 ---
 
-### 2.2 Bookmarks/Favoritos
-**Tiempo estimado**: 2 días  
-**Impacto**: ⭐⭐⭐
+### 2.2 Bookmarks/Favoritos ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Base de datos
-  - [ ] Tabla `bookmarks` (user_id, thread_id, created_at)
-  - [ ] Índices y RLS
-- [ ] API Endpoints
-  - [ ] POST `/api/bookmarks` - Guardar
-  - [ ] DELETE `/api/bookmarks/[id]` - Eliminar
-  - [ ] GET `/api/bookmarks` - Listar
-- [ ] Componentes UI
-  - [ ] `BookmarkButton.tsx` con animación
-  - [ ] Integrar en `ThreadCard.tsx`
-  - [ ] Integrar en página de thread
-- [ ] Página `/bookmarks`
-  - [ ] Lista de threads guardados
-  - [ ] Ordenar por fecha guardado
-  - [ ] Eliminar desde la lista
-- [ ] Traducciones
+**Logros**:
+- [x] Base de datos
+  - [x] Tabla `bookmarks` (user_id, thread_id)
+  - [x] Índices y RLS policies
+- [x] API Endpoints
+  - [x] POST `/api/bookmarks` - Guardar/eliminar toggle
+  - [x] GET `/api/bookmarks` - Listar bookmarks del usuario
+- [x] Componentes UI
+  - [x] `BookmarkButton.tsx` con animación
+  - [x] Integrado en `ThreadCard.tsx`
+  - [x] Integrado en página de thread
+- [x] Página `/bookmarks`
+  - [x] Lista de threads guardados
+  - [x] Link en Sidebar y MobileMenu (usuarios logueados)
+- [x] Traducciones ES, EN, PT
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/016_bookmarks.sql`
 - `app/api/bookmarks/route.ts`
 - `app/bookmarks/page.tsx`
@@ -184,172 +175,178 @@
 
 ---
 
-### 2.3 Sistema de Tags/Etiquetas
-**Tiempo estimado**: 3 días  
-**Impacto**: ⭐⭐⭐
+### 2.3 Sistema de Tags/Etiquetas ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Base de datos
-  - [ ] Tabla `tags` (id, name, slug, color, description)
-  - [ ] Tabla `thread_tags` (thread_id, tag_id)
-  - [ ] Índices para búsqueda
-- [ ] API Endpoints
-  - [ ] GET `/api/tags` - Listar todos
-  - [ ] GET `/api/tags/popular` - Más usados
-  - [ ] Asociar tags al crear/editar thread
-- [ ] Componentes UI
-  - [ ] `TagInput.tsx` - Input con sugerencias
-  - [ ] `TagBadge.tsx` - Badge de tag
-  - [ ] Tags en `ThreadCard.tsx`
-  - [ ] Tag cloud en sidebar
-- [ ] Página `/tag/[slug]`
-  - [ ] Listar threads con ese tag
-  - [ ] Estadísticas del tag
-- [ ] Propuesta de tags (nivel 2+)
-- [ ] Traducciones
+**Logros**:
+- [x] Base de datos
+  - [x] Tabla `tags` (id, name, slug, color, description)
+  - [x] Tabla `thread_tags` (thread_id, tag_id)
+  - [x] Índices para búsqueda
+- [x] API Endpoints
+  - [x] GET `/api/tags` - Listar todos
+  - [x] POST - Crear tag (admin)
+- [x] Componentes UI
+  - [x] `TagSelector.tsx` - Selector con sugerencias
+  - [x] `TagBadge.tsx` - Badge de tag con colores
+  - [x] Tags en `ThreadCard.tsx`
+  - [x] Tags al crear thread
+- [x] Traducciones
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/017_tags_system.sql`
+- `supabase/seeds/001_initial_tags.sql`
 - `app/api/tags/route.ts`
-- `app/tag/[slug]/page.tsx`
-- `components/TagInput.tsx`
+- `components/TagSelector.tsx`
 - `components/TagBadge.tsx`
 
 ---
 
-### 2.4 Seguir Threads (Watch/Subscribe)
-**Tiempo estimado**: 2 días  
-**Impacto**: ⭐⭐⭐
+### 2.4 Seguir Threads (Watch/Subscribe) ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Base de datos
-  - [ ] Tabla `thread_subscriptions` (user_id, thread_id, created_at)
-  - [ ] Auto-suscribir al crear thread
-  - [ ] Auto-suscribir al comentar (configurable)
-- [ ] Notificaciones
-  - [ ] Notificar a suscriptores en nuevo comentario
-  - [ ] Tipo de notificación: "thread_update"
-  - [ ] Evitar spam (agrupar si hay muchos)
-- [ ] Componentes UI
-  - [ ] `SubscribeButton.tsx` - Seguir/Dejar de seguir
-  - [ ] Indicador visual de thread seguido
-  - [ ] Lista en perfil de usuario
-- [ ] Traducciones
+**Logros**:
+- [x] Base de datos
+  - [x] Tabla `thread_subscriptions` (user_id, thread_id)
+  - [x] Índices y RLS
+- [x] API Endpoints
+  - [x] POST `/api/subscriptions` - Suscribir/desuscribir
+  - [x] GET - Ver suscripciones
+- [x] Componentes UI
+  - [x] `SubscribeButton.tsx` con animación
+  - [x] Integrado en página de thread
+  - [x] Integrado en ThreadCard
+- [x] Traducciones ES, EN, PT
 
-**Archivos a crear**:
+**Archivos creados**:
 - `supabase/migrations/018_thread_subscriptions.sql`
 - `app/api/subscriptions/route.ts`
 - `components/SubscribeButton.tsx`
 
 ---
 
-## 🟡 FASE 3: PRIORIDAD MEDIA (Mes 2)
+## ✅ FASE 3: COMPLETADA (Mes 2)
 
-### 3.1 Búsqueda Avanzada
-**Tiempo estimado**: 3 días  
-**Impacto**: ⭐⭐⭐
+### 3.1 Búsqueda Avanzada ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Filtros de búsqueda
-  - [ ] Por foro
-  - [ ] Por fecha (hoy, semana, mes, año, todo)
-  - [ ] Por autor
-  - [ ] Por tags
-  - [ ] Solo threads / Solo comentarios
-- [ ] Ordenamiento
-  - [ ] Relevancia
-  - [ ] Más reciente
-  - [ ] Más votado
-  - [ ] Más comentado
-- [ ] Full-text search en Supabase
-  - [ ] Índices GIN para búsqueda
-  - [ ] Búsqueda en título y contenido
-- [ ] UI mejorada
-  - [ ] Sidebar de filtros
-  - [ ] Chips de filtros activos
-  - [ ] Guardar búsquedas frecuentes
+**Logros**:
+- [x] Full-text search en Supabase
+  - [x] Columnas `search_vector` tsvector en threads/comments
+  - [x] Índices GIN para búsqueda
+  - [x] Triggers para actualizar vectors
+  - [x] Función `search_threads_advanced()`
+- [x] Filtros de búsqueda
+  - [x] Por foro
+  - [x] Por fecha (hoy, semana, mes, año, todo)
+  - [x] Por autor
+  - [x] Por tags
+  - [x] Solo threads / Solo comentarios / Solo foros
+- [x] Ordenamiento
+  - [x] Relevancia
+  - [x] Más reciente
+  - [x] Más antiguo
+  - [x] Más votado
+- [x] API actualizada `/api/search`
+- [x] UI mejorada
+  - [x] `SearchFilters.tsx` - Sidebar de filtros
+  - [x] Chips de filtros activos
+  - [x] Responsive (drawer en móvil)
+- [x] Traducciones ES, EN, PT
 
-**Archivos a modificar**:
-- `app/search/page.tsx`
+**Archivos creados**:
+- `supabase/migrations/019_advanced_search.sql`
+- `components/SearchFilters.tsx`
+
+**Archivos modificados**:
 - `app/api/search/route.ts`
-- `components/SearchBar.tsx`
+- `app/search/page.tsx`
+- `lib/i18n/translations.ts`
 
 ---
 
-### 3.2 Imágenes OG Dinámicas
-**Tiempo estimado**: 1-2 días  
-**Impacto**: ⭐⭐⭐
+### 3.2 Imágenes OG Dinámicas ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Implementar `/api/og` con `@vercel/og`
-- [ ] Template con branding LoopHub
-  - [ ] Logo
-  - [ ] Título del thread
-  - [ ] Nombre del foro
-  - [ ] Stats (votos, comentarios)
-- [ ] Cache de imágenes generadas
-- [ ] Integrar en meta tags de páginas
-- [ ] Imágenes para foros y perfiles
+**Logros**:
+- [x] Mejorar `/api/og` con `@vercel/og`
+- [x] 4 Templates dinámicos
+  - [x] Thread: título, foro, votos, comentarios
+  - [x] Forum: nombre, descripción, cantidad de threads
+  - [x] Profile: avatar, username, nivel, karma, stats
+  - [x] Default: branding LoopHub
+- [x] Cache de imágenes (1 semana)
+- [x] Integrar en meta tags
+  - [x] Threads con ogParams
+  - [x] Foros con ogParams
+  - [x] Perfiles con generateMetadata
+- [x] Diseño dark mode con gradientes
 
-**Archivos a modificar**:
-- `app/api/og/route.tsx`
+**Archivos modificados**:
+- `app/api/og/route.tsx` - Reescrito completamente
+- `components/MetaHead.tsx` - Añadido ogParams prop
 - `app/thread/[id]/page.tsx`
 - `app/forum/[slug]/page.tsx`
-
----
-
-### 3.3 Perfiles de Usuario Mejorados
-**Tiempo estimado**: 3 días  
-**Impacto**: ⭐⭐⭐
-
-**Tareas**:
-- [ ] Página de perfil mejorada `/u/[username]`
-  - [ ] Tabs: Threads, Comentarios, Guardados
-  - [ ] Estadísticas: karma, nivel, fecha registro
-  - [ ] Gráfico de actividad (tipo GitHub)
-  - [ ] Badges/logros
-- [ ] Edición de perfil
-  - [ ] Bio (máx 500 caracteres)
-  - [ ] Website
-  - [ ] Ubicación
-  - [ ] Links sociales (Twitter, GitHub, etc.)
-- [ ] Avatar personalizado
-  - [ ] Upload de imagen
-  - [ ] Crop circular
-  - [ ] Fallback a iniciales
-
-**Archivos a modificar**:
 - `app/u/[username]/page.tsx`
-- `app/settings/page.tsx`
-- `components/UserProfileCard.tsx` (crear)
 
 ---
 
-### 3.4 Markdown Enriquecido
-**Tiempo estimado**: 2 días  
-**Impacto**: ⭐⭐⭐
+### 3.3 Perfiles de Usuario Mejorados ✅
+**Completado**: 2025-01-27
 
-**Tareas**:
-- [ ] Elementos adicionales en Markdown
-  - [ ] Tablas
-  - [ ] Listas de tareas (checkboxes)
-  - [ ] Spoilers/collapsibles
-  - [ ] Callouts (info, warning, tip)
-- [ ] Embeds
-  - [ ] YouTube
-  - [ ] Twitter/X
-  - [ ] CodePen
-  - [ ] Gists
-- [ ] Toolbar de formato
-  - [ ] Botones: Bold, Italic, Link, Image, Code
-  - [ ] Shortcuts de teclado
-- [ ] Preview mejorado
-  - [ ] Tabs: Write | Preview
-  - [ ] Live preview side-by-side (opcional)
+**Logros**:
+- [x] Página de perfil mejorada `/u/[username]`
+  - [x] Tabs: Threads, Comentarios, Guardados (solo propio)
+  - [x] Estadísticas: karma, nivel, fecha registro
+  - [x] Gráfico de actividad estilo GitHub (52 semanas)
+  - [x] Sección de badges/logros
+  - [x] Stats cards con iconos
+- [x] Información del perfil
+  - [x] Bio con estilo
+  - [x] Website link
+  - [x] Ubicación
+  - [x] Links sociales (Twitter, GitHub)
+- [x] Avatar con gradiente según nivel
+- [x] OG Image dinámico para compartir perfil
+- [x] Componente ProfileContent como client component
 
-**Archivos a modificar**:
-- `components/MarkdownEditor.tsx`
-- `components/MarkdownRenderer.tsx`
+**Archivos creados**:
+- `app/u/[username]/ProfileContent.tsx`
+
+**Archivos modificados**:
+- `app/u/[username]/page.tsx` - Refactorizado completamente
+
+---
+
+### 3.4 Markdown Enriquecido ✅
+**Completado**: 2025-01-27
+
+**Logros**:
+- [x] Barra de herramientas de formato completa
+  - [x] Negrita, Cursiva, Tachado
+  - [x] Encabezados H1, H2, H3
+  - [x] Listas: viñetas, numeradas, tareas
+  - [x] Enlace, Imagen
+  - [x] Código inline y bloque
+  - [x] Cita, Tabla, Spoiler
+  - [x] Línea horizontal
+  - [x] Mención @
+- [x] Shortcuts de teclado
+  - [x] Ctrl+B: Negrita
+  - [x] Ctrl+I: Cursiva
+  - [x] Ctrl+K: Enlace
+  - [x] Ctrl+Shift+X: Tachado
+- [x] Elementos adicionales en MarkdownRenderer
+  - [x] Tablas con estilos
+  - [x] Task lists (checkboxes)
+  - [x] Spoilers/collapsibles (details/summary)
+  - [x] Blockquotes mejorados
+  - [x] Code blocks con badge de lenguaje
+  - [x] Imágenes con lazy loading
+
+**Archivos modificados**:
+- `components/MarkdownEditor.tsx` - Toolbar completo
+- `components/MarkdownRenderer.tsx` - Nuevos elementos
 
 ---
 

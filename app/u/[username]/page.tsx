@@ -1,12 +1,67 @@
 import { createClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import Tooltip from "@/components/Tooltip";
+import { Metadata } from "next";
+import ProfileContent from "./ProfileContent";
 
 interface UserProfilePageProps {
   params: Promise<{
     username: string;
   }>;
+}
+
+// Generate dynamic metadata for OG images
+export async function generateMetadata({
+  params,
+}: UserProfilePageProps): Promise<Metadata> {
+  const { username } = await params;
+  const supabase = await createClient();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, username, karma, level")
+    .eq("username", username)
+    .single();
+
+  if (!profile) {
+    return { title: "Usuario no encontrado - Loophub" };
+  }
+
+  // Get counts
+  const [{ count: threadCount }, { count: commentCount }] = await Promise.all([
+    supabase
+      .from("threads")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.id),
+    supabase
+      .from("comments")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.id),
+  ]);
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+  const ogParams = new URLSearchParams({
+    type: "profile",
+    title: profile.username,
+    karma: String(profile.karma || 0),
+    level: String(profile.level || 0),
+    threads: String(threadCount || 0),
+    comments: String(commentCount || 0),
+  });
+
+  return {
+    title: `@${profile.username} - Loophub`,
+    description: `Perfil de ${profile.username} en Loophub. Nivel ${profile.level || 0} con ${profile.karma || 0} karma.`,
+    openGraph: {
+      title: `@${profile.username} - Loophub`,
+      description: `Perfil de ${profile.username} en Loophub`,
+      images: [`${baseUrl}/api/og?${ogParams.toString()}`],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `@${profile.username} - Loophub`,
+      images: [`${baseUrl}/api/og?${ogParams.toString()}`],
+    },
+  };
 }
 
 export default async function UserProfilePage({
@@ -15,7 +70,7 @@ export default async function UserProfilePage({
   const { username } = await params;
   const supabase = await createClient();
 
-  // Get user profile
+  // Get user profile with extended fields
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
@@ -26,7 +81,7 @@ export default async function UserProfilePage({
     notFound();
   }
 
-  // Get user's threads
+  // Get user's threads with forum info and comment count
   const { data: threads } = await supabase
     .from("threads")
     .select(
@@ -39,14 +94,15 @@ export default async function UserProfilePage({
       downvote_count,
       score,
       created_at,
-      forums(name, slug)
+      forums(name, slug),
+      comments(count)
     `
     )
     .eq("user_id", profile.id)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(20);
 
-  // Get user's comments
+  // Get user's comments with thread info
   const { data: comments } = await supabase
     .from("comments")
     .select(
@@ -63,345 +119,169 @@ export default async function UserProfilePage({
     )
     .eq("user_id", profile.id)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(20);
 
-  const threadCount = threads?.length || 0;
-  const commentCount = comments?.length || 0;
+  // Get user's bookmarked threads (only if viewing own profile)
+  const { data: { user } } = await supabase.auth.getUser();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let bookmarkedData: any[] = [];
+  
+  if (user?.id === profile.id) {
+    const { data: bookmarkedThreads } = await supabase
+      .from("bookmarks")
+      .select(`
+        thread:threads(
+          id,
+          title,
+          content,
+          like_count,
+          upvote_count,
+          downvote_count,
+          score,
+          created_at,
+          forums(name, slug),
+          comments(count),
+          profiles(username)
+        )
+      `)
+      .eq("user_id", profile.id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    
+    // Extract threads from bookmark relations
+    bookmarkedData = bookmarkedThreads?.map(b => b.thread).filter(Boolean) || [];
+  }
+
+  // Get activity data (threads and comments by date for the last year)
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  
+  const [{ data: threadActivity }, { data: commentActivity }] = await Promise.all([
+    supabase
+      .from("threads")
+      .select("created_at")
+      .eq("user_id", profile.id)
+      .gte("created_at", oneYearAgo.toISOString()),
+    supabase
+      .from("comments")
+      .select("created_at")
+      .eq("user_id", profile.id)
+      .gte("created_at", oneYearAgo.toISOString()),
+  ]);
+
+  // Aggregate activity by date
+  const activityMap = new Map<string, number>();
+  
+  threadActivity?.forEach(t => {
+    const date = t.created_at.split('T')[0];
+    activityMap.set(date, (activityMap.get(date) || 0) + 1);
+  });
+  
+  commentActivity?.forEach(c => {
+    const date = c.created_at.split('T')[0];
+    activityMap.set(date, (activityMap.get(date) || 0) + 1);
+  });
+
+  const activityData = Array.from(activityMap.entries()).map(([date, count]) => ({
+    date,
+    count
+  }));
+
+  // Get user badges (if table exists)
+  let badges: Array<{ id: string; name: string; description: string; icon: string; earned_at: string }> = [];
+  try {
+    const { data: userBadges } = await supabase
+      .from("user_badges")
+      .select(`
+        earned_at,
+        badge:badges(id, name, description, icon)
+      `)
+      .eq("user_id", profile.id)
+      .order("earned_at", { ascending: false });
+    
+    if (userBadges) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      badges = userBadges.map((ub: any) => {
+        const badge = Array.isArray(ub.badge) ? ub.badge[0] : ub.badge;
+        return {
+          id: badge?.id || '',
+          name: badge?.name || '',
+          description: badge?.description || '',
+          icon: badge?.icon || '🏆',
+          earned_at: ub.earned_at
+        };
+      }).filter(b => b.id);
+    }
+  } catch {
+    // Badges table doesn't exist yet, ignore
+  }
+
+  // Check if current user is viewing their own profile
+  const isOwnProfile = user?.id === profile.id;
+
+  // Format data for ProfileContent
+  const formattedThreads = threads?.map(t => ({
+    id: t.id,
+    title: t.title,
+    content: t.content,
+    score: t.score || 0,
+    created_at: t.created_at,
+    comment_count: Array.isArray(t.comments) ? t.comments.length : ((t.comments as { count?: number })?.count || 0),
+    forum: t.forums && Array.isArray(t.forums) && t.forums[0] 
+      ? { name: t.forums[0].name, slug: t.forums[0].slug }
+      : undefined
+  })) || [];
+
+  const formattedComments = comments?.map(c => ({
+    id: c.id,
+    content: c.content,
+    score: c.score || 0,
+    created_at: c.created_at,
+    thread: c.thread && Array.isArray(c.thread) && c.thread[0]
+      ? { id: c.thread[0].id, title: c.thread[0].title }
+      : undefined
+  })) || [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const formattedBookmarks = bookmarkedData?.map((t: any) => ({
+    id: t.id,
+    title: t.title,
+    content: t.content,
+    score: t.score || 0,
+    created_at: t.created_at,
+    comment_count: Array.isArray(t.comments) ? t.comments.length : (t.comments?.count || 0),
+    forum: t.forums && Array.isArray(t.forums) && t.forums[0]
+      ? { name: t.forums[0].name, slug: t.forums[0].slug }
+      : undefined,
+    author: t.profiles?.username
+  })) || [];
+
+  const profileData = {
+    id: profile.id,
+    username: profile.username,
+    bio: profile.bio,
+    avatar_url: profile.avatar_url,
+    location: profile.location,
+    website: profile.website,
+    github_username: profile.github_username,
+    twitter_username: profile.twitter_username,
+    karma: profile.karma || profile.reputation || 0,
+    level: profile.level || 0,
+    is_admin: profile.is_admin,
+    created_at: profile.created_at,
+    thread_count: threads?.length || 0,
+    comment_count: comments?.length || 0
+  };
 
   return (
-    <div className="container max-w-4xl mx-auto py-8 px-4">
-      {/* Profile Header */}
-      <div className="card mb-8 p-8">
-        <div className="flex items-start gap-6">
-          {/* Avatar */}
-          <div
-            className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shrink-0"
-            style={{
-              background: "var(--brand-light)",
-              color: "var(--brand-dark)",
-            }}
-          >
-            {profile.username.charAt(0).toUpperCase()}
-          </div>
-
-          {/* User Info */}
-          <div className="flex-1">
-            <h1
-              className="text-3xl font-bold mb-2"
-              style={{ color: "var(--foreground)" }}
-            >
-              {profile.username}
-              {profile.is_admin && (
-                <Tooltip content="Administrador" position="top">
-                  <span
-                    className="ml-2 text-xs px-2 py-1 rounded-full font-normal"
-                    style={{
-                      background: "var(--brand)",
-                      color: "white",
-                    }}
-                  >
-                    ADMIN
-                  </span>
-                </Tooltip>
-              )}
-            </h1>
-
-            {/* Bio */}
-            {profile.bio && (
-              <p className="mb-3" style={{ color: "var(--muted)" }}>
-                {profile.bio}
-              </p>
-            )}
-
-            {/* Location and Website */}
-            <div className="flex items-center gap-4 mb-4 flex-wrap">
-              {profile.location && (
-                <div className="flex items-center gap-1 text-sm">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    style={{ color: "var(--muted)" }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <span style={{ color: "var(--muted)" }}>
-                    {profile.location}
-                  </span>
-                </div>
-              )}
-
-              {profile.website && (
-                <a
-                  href={profile.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-sm hover:underline"
-                  style={{ color: "var(--brand)" }}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                    />
-                  </svg>
-                  {profile.website.replace(/^https?:\/\//, "")}
-                </a>
-              )}
-            </div>
-
-            {/* Stats */}
-            <div className="flex items-center gap-6">
-              <Tooltip content="Reputación ganada por likes" position="top">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="px-3 py-1.5 rounded-lg font-bold"
-                    style={{
-                      background: "var(--brand-light)",
-                      color: "var(--brand-dark)",
-                    }}
-                  >
-                    ⭐ {profile.reputation} Karma
-                  </div>
-                </div>
-              </Tooltip>
-
-              <div className="text-sm" style={{ color: "var(--muted)" }}>
-                {threadCount} thread{threadCount !== 1 ? "s" : ""} •{" "}
-                {commentCount} comentario{commentCount !== 1 ? "s" : ""}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="mb-6">
-        <div
-          className="flex gap-4 border-b pb-2"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <button
-            className="px-4 py-2 font-semibold border-b-2"
-            style={{
-              borderColor: "var(--brand)",
-              color: "var(--brand)",
-            }}
-          >
-            Threads
-          </button>
-        </div>
-      </div>
-
-      {/* User's Threads */}
-      <div className="space-y-6">
-        {threads && threads.length > 0 ? (
-          threads.map((thread) => (
-            <Link
-              key={thread.id}
-              href={`/thread/${thread.id}`}
-              className="card card-interactive block p-6"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3
-                    className="font-semibold mb-2 line-clamp-2"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    {thread.title}
-                  </h3>
-
-                  <div className="flex items-center gap-3 flex-wrap text-sm">
-                    {thread.forums &&
-                      Array.isArray(thread.forums) &&
-                      thread.forums[0] && (
-                        <span
-                          className="badge text-xs"
-                          style={{
-                            background: "var(--brand-light)",
-                            color: "var(--brand-dark)",
-                          }}
-                        >
-                          {thread.forums[0].name}
-                        </span>
-                      )}
-
-                    <span style={{ color: "var(--muted)" }}>
-                      {new Date(thread.created_at).toLocaleDateString("es-ES", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-
-                    {thread.score !== undefined &&
-                      thread.score !== null &&
-                      thread.score !== 0 && (
-                        <div className="flex items-center gap-1">
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            style={{
-                              color:
-                                thread.score > 0
-                                  ? "var(--success)"
-                                  : thread.score < 0
-                                  ? "var(--danger)"
-                                  : "var(--muted)",
-                            }}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d={
-                                thread.score > 0
-                                  ? "M5 15l7-7 7 7"
-                                  : "M19 9l-7 7-7-7"
-                              }
-                            />
-                          </svg>
-                          <span
-                            style={{
-                              color:
-                                thread.score > 0
-                                  ? "var(--success)"
-                                  : thread.score < 0
-                                  ? "var(--danger)"
-                                  : "var(--muted)",
-                            }}
-                          >
-                            {thread.score}
-                          </span>
-                        </div>
-                      )}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))
-        ) : (
-          <div
-            className="card text-center py-8"
-            style={{ color: "var(--muted)" }}
-          >
-            <p>Este usuario no ha creado ningún thread todavía.</p>
-          </div>
-        )}
-      </div>
-
-      {/* User's Comments Section */}
-      {comments && comments.length > 0 && (
-        <>
-          <div className="mt-8 mb-4">
-            <h2
-              className="text-xl font-bold"
-              style={{ color: "var(--foreground)" }}
-            >
-              Comentarios Recientes
-            </h2>
-          </div>
-          <div className="space-y-6">
-            {comments.map((comment) => (
-              <div key={comment.id} className="card p-6">
-                <div className="mb-2">
-                  {comment.thread &&
-                    Array.isArray(comment.thread) &&
-                    comment.thread[0] && (
-                      <Link
-                        href={`/thread/${comment.thread[0].id}`}
-                        className="text-sm font-medium hover:underline"
-                        style={{ color: "var(--brand)" }}
-                      >
-                        Re: {comment.thread[0].title}
-                      </Link>
-                    )}
-                </div>
-                <p
-                  className="text-sm mb-2 line-clamp-3"
-                  style={{ color: "var(--muted)" }}
-                >
-                  {comment.content.substring(0, 200)}
-                  {comment.content.length > 200 ? "..." : ""}
-                </p>
-                <div className="flex items-center gap-3 text-xs">
-                  <span style={{ color: "var(--muted)" }}>
-                    {new Date(comment.created_at).toLocaleDateString("es-ES", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                  {comment.score !== undefined &&
-                    comment.score !== null &&
-                    comment.score !== 0 && (
-                      <div className="flex items-center gap-1">
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          style={{
-                            color:
-                              comment.score > 0
-                                ? "var(--success)"
-                                : comment.score < 0
-                                ? "var(--danger)"
-                                : "var(--muted)",
-                          }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d={
-                              comment.score > 0
-                                ? "M5 15l7-7 7 7"
-                                : "M19 9l-7 7-7-7"
-                            }
-                          />
-                        </svg>
-                        <span
-                          style={{
-                            color:
-                              comment.score > 0
-                                ? "var(--success)"
-                                : comment.score < 0
-                                ? "var(--danger)"
-                                : "var(--muted)",
-                          }}
-                        >
-                          {comment.score}
-                        </span>
-                      </div>
-                    )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    <ProfileContent
+      profile={profileData}
+      threads={formattedThreads}
+      comments={formattedComments}
+      bookmarks={formattedBookmarks}
+      badges={badges}
+      activityData={activityData}
+      isOwnProfile={isOwnProfile}
+    />
   );
 }
