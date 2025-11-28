@@ -22,52 +22,52 @@ const siteUrl = getFullUrl("");
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "LoopHub - Minimalismo Digital y Organización Personal",
+    default: "LoopHub - Digital Minimalism & Personal Organization",
     template: "%s | LoopHub",
   },
   description:
-    "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
+    "Community focused on digital minimalism, personal organization, realistic productivity and systems like PARA, GTD and Zettelkasten",
   keywords: [
-    "minimalismo digital",
-    "organización personal",
-    "productividad",
+    "digital minimalism",
+    "personal organization",
+    "productivity",
     "GTD",
     "PARA",
     "Zettelkasten",
     "Notion",
     "Obsidian",
-    "gestión del tiempo",
+    "time management",
   ],
   authors: [{ name: "LoopHub" }],
   creator: "LoopHub",
   publisher: "LoopHub",
   openGraph: {
     type: "website",
-    locale: "es_ES",
+    locale: "en_US",
     url: siteUrl,
     siteName: "LoopHub",
-    title: "LoopHub - Minimalismo Digital y Organización Personal",
+    title: "LoopHub - Digital Minimalism & Personal Organization",
     description:
-      "Comunidad enfocada en minimalismo digital, organización personal, productividad realista y sistemas como PARA, GTD y Zettelkasten",
+      "Community focused on digital minimalism, personal organization, realistic productivity and systems like PARA, GTD and Zettelkasten",
     images: [
       {
         url: `${baseUrl}/og-image.png`, // Update with your actual OG image
         width: 1200,
         height: 630,
-        alt: "LoopHub - Minimalismo Digital y Organización Personal",
+        alt: "LoopHub - Digital Minimalism & Personal Organization",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LoopHub - Minimalismo Digital y Organización Personal",
+    title: "LoopHub - Digital Minimalism & Personal Organization",
     description:
-      "Comunidad enfocada en minimalismo digital, organización personal, productividad realista",
+      "Community focused on digital minimalism, personal organization, realistic productivity",
     creator: "@loophub",
     images: [
       {
         url: `${baseUrl}/api/og?title=LoopHub`,
-        alt: "LoopHub - Minimalismo Digital y Organización Personal",
+        alt: "LoopHub - Digital Minimalism & Personal Organization",
       },
     ],
   },
