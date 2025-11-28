@@ -4,13 +4,24 @@ import type { CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import LinkPreview from "./LinkPreview";
 
 const syntaxHighlighterTheme = vscDarkPlus as Record<string, CSSProperties>;
+
+// Extended sanitize schema to allow details/summary for spoilers
+const sanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames || []), 'details', 'summary'],
+  attributes: {
+    ...defaultSchema.attributes,
+    details: ['open'],
+    summary: [],
+  },
+};
 
 interface MarkdownRendererProps {
   content: string;
@@ -38,7 +49,7 @@ export default function MarkdownRenderer({
     <div className={`markdown-content ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw, rehypeSanitize]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema]]}
         components={{
           // Customize heading styles
           h1: ({ ...props }) => (
@@ -49,6 +60,9 @@ export default function MarkdownRenderer({
           ),
           h3: ({ ...props }) => (
             <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />
+          ),
+          h4: ({ ...props }) => (
+            <h4 className="text-lg font-semibold mt-3 mb-2" {...props} />
           ),
           // Customize paragraph
           p: ({ ...props }) => (
@@ -106,6 +120,83 @@ export default function MarkdownRenderer({
               {...props}
             />
           ),
+          // Task list items (GFM)
+          li: ({ className, children, ...props }) => {
+            // Check if this is a task list item
+            const isTask = className?.includes('task-list-item');
+            return (
+              <li 
+                className={isTask ? "list-none flex items-start gap-2" : ""} 
+                {...props}
+              >
+                {children}
+              </li>
+            );
+          },
+          // Task list checkboxes
+          input: ({ type, checked, ...props }) => {
+            if (type === 'checkbox') {
+              return (
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  readOnly
+                  className="mt-1 rounded"
+                  style={{ accentColor: "var(--brand)" }}
+                  {...props}
+                />
+              );
+            }
+            return <input type={type} {...props} />;
+          },
+          // Tables
+          table: ({ ...props }) => (
+            <div className="overflow-x-auto mb-4">
+              <table 
+                className="min-w-full border-collapse"
+                style={{ borderColor: "var(--border)" }}
+                {...props} 
+              />
+            </div>
+          ),
+          thead: ({ ...props }) => (
+            <thead style={{ background: "var(--card-bg)" }} {...props} />
+          ),
+          th: ({ ...props }) => (
+            <th 
+              className="px-4 py-2 text-left font-semibold border"
+              style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+              {...props} 
+            />
+          ),
+          td: ({ ...props }) => (
+            <td 
+              className="px-4 py-2 border"
+              style={{ borderColor: "var(--border)" }}
+              {...props} 
+            />
+          ),
+          tr: ({ ...props }) => (
+            <tr 
+              className="hover:bg-[var(--border)]/20"
+              {...props} 
+            />
+          ),
+          // Spoiler/Details
+          details: ({ ...props }) => (
+            <details 
+              className="mb-4 border rounded-lg overflow-hidden"
+              style={{ borderColor: "var(--border)" }}
+              {...props} 
+            />
+          ),
+          summary: ({ ...props }) => (
+            <summary 
+              className="px-4 py-2 cursor-pointer font-medium select-none"
+              style={{ background: "var(--card-bg)", color: "var(--foreground)" }}
+              {...props} 
+            />
+          ),
           // Customize code blocks
           code: ({
             className,
@@ -137,7 +228,14 @@ export default function MarkdownRenderer({
             const codeString = String(children).replace(/\n$/, "");
 
             return (
-              <div className="mb-4">
+              <div className="mb-4 relative group">
+                {/* Language badge */}
+                <div 
+                  className="absolute top-0 right-0 px-2 py-1 text-xs rounded-bl opacity-75"
+                  style={{ background: "var(--border)", color: "var(--muted)" }}
+                >
+                  {language}
+                </div>
                 <SyntaxHighlighter
                   language={language}
                   style={syntaxHighlighterTheme}
@@ -158,8 +256,11 @@ export default function MarkdownRenderer({
             <blockquote
               className="border-l-4 pl-4 italic my-4"
               style={{
-                borderColor: "var(--border)",
+                borderColor: "var(--brand)",
                 color: "var(--muted)",
+                background: "var(--brand-light)",
+                padding: "0.75rem 1rem",
+                borderRadius: "0 0.5rem 0.5rem 0",
               }}
               {...props}
             />
@@ -169,6 +270,17 @@ export default function MarkdownRenderer({
             <hr
               className="my-6"
               style={{ borderColor: "var(--border)" }}
+              {...props}
+            />
+          ),
+          // Images with better styling
+          img: ({ src, alt, ...props }) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={src}
+              alt={alt || ""}
+              className="max-w-full h-auto rounded-lg my-4"
+              loading="lazy"
               {...props}
             />
           ),
