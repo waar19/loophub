@@ -222,7 +222,20 @@ export default function AnalyticsContent() {
   }, [supabase, dateRange]);
 
   useEffect(() => {
-    fetchAnalytics();
+    // Use a flag to prevent state updates on unmounted component
+    let isMounted = true;
+    
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchAnalytics();
+      }
+    };
+    
+    loadData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [fetchAnalytics]);
 
   const exportCSV = () => {
