@@ -169,6 +169,7 @@ h4 {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  padding: 1rem;
 }
 
 .card:hover {
