@@ -665,15 +665,29 @@
 
 ## 🎯 FASE 7: FUNCIONALIDADES AVANZADAS
 
-### 7.1 Hilos Destacados (Sticky Threads)
-**Prioridad**: Media | **Estimación**: 3-4 horas
+### 7.1 Hilos Destacados (Sticky Threads) ✅
+**Prioridad**: Media | **Completado**: 2025-01-28
 
-**Tareas**:
-- [ ] Campo `is_pinned` en threads
-- [ ] UI para admins/mods para anclar
-- [ ] Mostrar primero en listados
-- [ ] Límite de pins por foro (ej: 3)
-- [ ] Traducciones
+**Logros**:
+- [x] Campo `is_pinned`, `pinned_at`, `pinned_by` en threads
+- [x] Funciones SQL `pin_thread()` y `unpin_thread()` con validaciones
+- [x] UI para admins/mods para anclar (ModeratorActions)
+- [x] Mostrar primero en listados de foro
+- [x] Límite de pins por foro (máx 3)
+- [x] Indicador visual 📌 en ThreadCard
+- [x] Traducciones ES, EN, PT
+
+**Archivos creados**:
+- `supabase/migrations/024_sticky_threads.sql`
+- `app/api/threads/[id]/pin/route.ts`
+- `components/PinButton.tsx`
+
+**Archivos modificados**:
+- `lib/database.types.ts`
+- `lib/i18n/translations.ts`
+- `lib/actions/moderation.ts`
+- `components/ThreadCard.tsx`
+- `app/api/forums/[slug]/threads/route.ts`
 
 ---
 

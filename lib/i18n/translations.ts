@@ -89,6 +89,15 @@ export const translations = {
       rule1: "Mantén las discusiones respetuosas",
       rule2: "Busca antes de crear duplicados",
       rule3: "Usa títulos descriptivos",
+      // Pinned threads
+      pin: "Fijar",
+      unpin: "Desfijar",
+      pinThread: "Fijar hilo",
+      unpinThread: "Desfijar hilo",
+      pinnedThread: "Hilo fijado",
+      threadPinned: "Hilo fijado correctamente",
+      threadUnpinned: "Hilo desfijado correctamente",
+      maxPinnedReached: "Máximo de hilos fijados alcanzado",
     },
     // Voting
     voting: {
@@ -602,6 +611,15 @@ export const translations = {
       rule1: "Keep discussions respectful",
       rule2: "Search before creating duplicates",
       rule3: "Use descriptive titles",
+      // Pinned threads
+      pin: "Pin",
+      unpin: "Unpin",
+      pinThread: "Pin thread",
+      unpinThread: "Unpin thread",
+      pinnedThread: "Pinned thread",
+      threadPinned: "Thread pinned successfully",
+      threadUnpinned: "Thread unpinned successfully",
+      maxPinnedReached: "Maximum pinned threads reached",
     },
     // Voting
     voting: {
@@ -1113,6 +1131,15 @@ export const translations = {
       rule1: "Mantenha as discussões respeitosas",
       rule2: "Pesquise antes de criar duplicatas",
       rule3: "Use títulos descritivos",
+      // Pinned threads
+      pin: "Fixar",
+      unpin: "Desafixar",
+      pinThread: "Fixar tópico",
+      unpinThread: "Desafixar tópico",
+      pinnedThread: "Tópico fixado",
+      threadPinned: "Tópico fixado com sucesso",
+      threadUnpinned: "Tópico desafixado com sucesso",
+      maxPinnedReached: "Máximo de tópicos fixados atingido",
     },
     // Voting
     voting: {
