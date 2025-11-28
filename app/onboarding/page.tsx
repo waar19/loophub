@@ -151,7 +151,7 @@ export default function OnboardingPage() {
       />
       <div className="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12">
         <div className="max-w-md w-full">
-          <div className="card" style={{ borderLeft: "4px solid var(--brand)" }}>
+          <div className="card p-6 sm:p-8" style={{ borderLeft: "4px solid var(--brand)" }}>
             {/* Header */}
             <div className="text-center mb-6 sm:mb-8">
               <div

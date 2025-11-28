@@ -108,7 +108,7 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Add Moderator Form */}
       <div className="lg:col-span-1">
-        <div className="card sticky top-4">
+        <div className="card p-6 sticky top-4">
           <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
             <span>➕</span> Añadir Moderador
           </h2>
@@ -186,7 +186,7 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
         </h2>
 
         {moderatorsByForum.map(({ forum, mods }) => (
-          <div key={forum.id} className="card">
+          <div key={forum.id} className="card p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <span className="text-xl">📁</span>

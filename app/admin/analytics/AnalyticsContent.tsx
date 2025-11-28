@@ -287,10 +287,11 @@ export default function AnalyticsContent() {
   const prevMetric = dailyMetrics[dailyMetrics.length - 8] || dailyMetrics[0];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold">📊 Analytics Dashboard</h1>
+    <div className="lg:ml-(--sidebar-width) min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl font-bold">📊 Analytics Dashboard</h1>
         <div className="flex gap-2">
           <select
             value={dateRange}
@@ -574,6 +575,7 @@ export default function AnalyticsContent() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -64,8 +64,8 @@ export default function SignupPage() {
         title="Loophub - Sign Up"
         description="Create an account on Loophub"
       />
-      <div className="max-w-md mx-auto mt-16">
-        <div className="card" style={{ borderLeft: "4px solid var(--brand)" }}>
+      <div className="max-w-md mx-auto mt-16 px-4">
+        <div className="card p-6 sm:p-8" style={{ borderLeft: "4px solid var(--brand)" }}>
           <div className="flex items-center gap-3 mb-8">
             <div
               className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"

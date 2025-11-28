@@ -49,32 +49,34 @@ export default async function ModeratorsPage() {
     .order('username');
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Gestión de Moderadores</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
-            Asigna moderadores a foros específicos
-          </p>
+    <div className="lg:ml-(--sidebar-width) min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Gestión de Moderadores</h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
+              Asigna moderadores a foros específicos
+            </p>
+          </div>
+          <Link
+            href="/admin"
+            className="btn"
+            style={{
+              background: 'var(--card-bg)',
+              color: 'var(--foreground)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            ← Volver al Admin
+          </Link>
         </div>
-        <Link
-          href="/admin"
-          className="btn"
-          style={{
-            background: 'var(--card-bg)',
-            color: 'var(--foreground)',
-            border: '1px solid var(--border)',
-          }}
-        >
-          ← Volver al Admin
-        </Link>
-      </div>
 
-      <ModeratorManager
-        forums={forums || []}
-        moderators={moderators}
-        users={users || []}
-      />
+        <ModeratorManager
+          forums={forums || []}
+          moderators={moderators}
+          users={users || []}
+        />
+      </div>
     </div>
   );
 }
