@@ -115,7 +115,7 @@ interface WebsiteStructuredDataProps {
 
 export function WebsiteStructuredData({
   name = "LoopHub",
-  description = "Comunidad de minimalismo digital y organización personal",
+  description = "Digital minimalism and personal organization community",
   url,
 }: WebsiteStructuredDataProps) {
   const baseUrl = url || getFullUrl("");
