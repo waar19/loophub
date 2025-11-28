@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Comment } from "@/lib/supabase";
 import ReportButton from "@/components/ReportButton";
 import EditCommentButton from "@/components/EditCommentButton";
@@ -11,6 +11,7 @@ import VoteButtons from "./VoteButtons";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "./TranslationsProvider";
 import { useToast } from "@/contexts/ToastContext";
+import { MentionAutocomplete, useMentionAutocomplete } from "./MentionAutocomplete";
 
 // Lazy load MarkdownRenderer
 const MarkdownRenderer = dynamic(
@@ -41,6 +42,17 @@ export default function CommentCard({
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Mention autocomplete for reply form
+  const {
+    isOpen: isMentionOpen,
+    query: mentionQuery,
+    position: mentionPosition,
+    checkForMention,
+    insertMention,
+    close: closeMention,
+  } = useMentionAutocomplete(replyTextareaRef);
 
   const isOwner = user?.id === comment.user_id;
 
@@ -199,10 +211,22 @@ export default function CommentCard({
 
         {/* Reply form (inline) */}
         {isReplying && (
-          <div className="mt-3">
+          <div className="mt-3 relative">
             <textarea
+              ref={replyTextareaRef}
               value={replyContent}
-              onChange={(e) => setReplyContent(e.target.value)}
+              onChange={(e) => {
+                setReplyContent(e.target.value);
+                checkForMention(e.target.value, e.target.selectionStart);
+              }}
+              onKeyUp={(e) => {
+                const textarea = e.currentTarget;
+                checkForMention(textarea.value, textarea.selectionStart);
+              }}
+              onClick={(e) => {
+                const textarea = e.currentTarget;
+                checkForMention(textarea.value, textarea.selectionStart);
+              }}
               placeholder={t("threads.replyPlaceholder")}
               className="w-full p-1.5 rounded border resize-none focus:outline-none focus:ring-1 transition-all"
               style={{
@@ -213,7 +237,19 @@ export default function CommentCard({
               }}
               rows={2}
             />
+            {/* Mention Autocomplete */}
+            {isMentionOpen && (
+              <MentionAutocomplete
+                query={mentionQuery}
+                position={mentionPosition}
+                onSelect={(username) => insertMention(username, replyContent, setReplyContent)}
+                onClose={closeMention}
+              />
+            )}
             <div className="flex items-center gap-1 mt-2">
+              <span className="text-xs mr-2" style={{ color: "var(--muted)" }}>
+                Type @ to mention users
+              </span>
               <button
                 onClick={handleReply}
                 disabled={isSubmitting || !replyContent.trim()}

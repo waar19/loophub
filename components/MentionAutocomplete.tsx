@@ -29,8 +29,10 @@ export function MentionAutocomplete({
 
   // Fetch users matching the query
   useEffect(() => {
+    // Allow empty query to show a hint, but don't fetch until query has at least 1 char
     if (query.length < 1) {
       setUsers([]);
+      setIsLoading(false);
       return;
     }
 
@@ -38,15 +40,20 @@ export function MentionAutocomplete({
       setIsLoading(true);
       try {
         const response = await fetch(
-          `/api/users/search?q=${encodeURIComponent(query)}&limit=5`
+          `/api/users/search?q=${encodeURIComponent(query)}&limit=5`,
+          { credentials: 'include' }
         );
         if (response.ok) {
           const data = await response.json();
-          setUsers(data);
+          setUsers(Array.isArray(data) ? data : []);
           setSelectedIndex(0);
+        } else {
+          console.error("Error fetching users:", response.status, await response.text());
+          setUsers([]);
         }
       } catch (error) {
         console.error("Error fetching users:", error);
+        setUsers([]);
       } finally {
         setIsLoading(false);
       }
@@ -106,7 +113,10 @@ export function MentionAutocomplete({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  if (users.length === 0 && !isLoading) return null;
+  if (users.length === 0 && !isLoading && query.length > 0) return null;
+
+  // Show hint when query is empty
+  const showHint = query.length === 0 && users.length === 0 && !isLoading;
 
   const levelColors: Record<number, string> = {
     1: "#9CA3AF", // Novato - gray
@@ -128,7 +138,11 @@ export function MentionAutocomplete({
         borderColor: "var(--border)",
       }}
     >
-      {isLoading ? (
+      {showHint ? (
+        <div className="p-3" style={{ color: "var(--muted)" }}>
+          <p className="text-sm">Type a username to mention...</p>
+        </div>
+      ) : isLoading ? (
         <div className="p-3 text-center" style={{ color: "var(--muted)" }}>
           <span className="animate-pulse">Searching...</span>
         </div>
@@ -244,22 +258,20 @@ export function useMentionAutocomplete(
       // Calculate position for the dropdown
       if (textareaRef.current) {
         const textarea = textareaRef.current;
-        const rect = textarea.getBoundingClientRect();
         const style = window.getComputedStyle(textarea);
         const lineHeight = parseInt(style.lineHeight) || 20;
-        const paddingTop = parseInt(style.paddingTop) || 0;
-        const paddingLeft = parseInt(style.paddingLeft) || 0;
+        const paddingTop = parseInt(style.paddingTop) || 8;
+        const paddingLeft = parseInt(style.paddingLeft) || 8;
 
-        // Simple approximation - place below the textarea at left
-        // In a real implementation, you'd calculate exact caret position
+        // Simple approximation - place below current line
         const lines = textBeforeCursor.split("\n");
         const currentLineIndex = lines.length - 1;
+        
+        // Position dropdown below the current line
+        const calculatedTop = paddingTop + lineHeight * (currentLineIndex + 1) + 4;
 
         setPosition({
-          top: Math.min(
-            paddingTop + lineHeight * (currentLineIndex + 1) + 4,
-            rect.height - 200
-          ),
+          top: Math.max(calculatedTop, 30), // Ensure minimum top position
           left: paddingLeft,
         });
       }
