@@ -56,3 +56,35 @@ export type CreateCommentInput = z.infer<typeof createCommentSchema>;
 export type SuperlikeInput = z.infer<typeof superlikeSchema>;
 export type HidePostInput = z.infer<typeof hidePostSchema>;
 export type MarkResourceInput = z.infer<typeof markResourceSchema>;
+
+// Utility validation functions
+export function validateUsername(username: string): boolean {
+  const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+  return usernameRegex.test(username);
+}
+
+export function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+export function validatePassword(password: string): boolean {
+  // At least 8 characters, with at least one letter and one number
+  const minLength = password.length >= 8;
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  return minLength && hasLetter && hasNumber;
+}
+
+export function sanitizeHtml(html: string): string {
+  // Basic HTML sanitization - remove script tags and event handlers
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+    .replace(/on\w+='[^']*'/gi, '');
+}
+
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength - 3) + '...';
+}

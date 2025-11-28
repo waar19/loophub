@@ -26,16 +26,42 @@ export default async function AdminDashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <Link
-          href="/"
-          className="btn"
-          style={{
-            background: "var(--card-bg)",
-            color: "var(--foreground)",
-            border: "1px solid var(--border)",
-          }}
-        >
-          Back to Site
+        <div className="flex gap-2">
+          <Link
+            href="/admin/analytics"
+            className="btn btn-primary"
+          >
+            📊 Analytics
+          </Link>
+          <Link
+            href="/"
+            className="btn"
+            style={{
+              background: "var(--card-bg)",
+              color: "var(--foreground)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            Back to Site
+          </Link>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <QuickStatCard label="Reports" count={reports?.length || 0} icon="🚨" />
+        <QuickStatCard label="Recent Threads" count={threads?.length || 0} icon="📝" />
+        <Link href="/admin/analytics" className="contents">
+          <div className="card text-center hover:shadow-lg transition-shadow cursor-pointer">
+            <span className="text-2xl">📊</span>
+            <p className="text-sm font-medium mt-1">View Analytics</p>
+          </div>
+        </Link>
+        <Link href="/admin/analytics" className="contents">
+          <div className="card text-center hover:shadow-lg transition-shadow cursor-pointer">
+            <span className="text-2xl">🏆</span>
+            <p className="text-sm font-medium mt-1">Manage Badges</p>
+          </div>
         </Link>
       </div>
 
@@ -106,6 +132,16 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function QuickStatCard({ label, count, icon }: { label: string; count: number; icon: string }) {
+  return (
+    <div className="card text-center">
+      <span className="text-2xl">{icon}</span>
+      <p className="text-2xl font-bold">{count}</p>
+      <p className="text-sm" style={{ color: "var(--muted)" }}>{label}</p>
     </div>
   );
 }
