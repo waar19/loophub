@@ -28,6 +28,8 @@ import { useTranslations } from "@/components/TranslationsProvider";
 import MetaHead from "@/components/MetaHead";
 import { ThreadStructuredData } from "@/components/StructuredData";
 import ModeratorActions from "@/components/ModeratorActions";
+import Poll from "@/components/Poll";
+import PollCreator from "@/components/PollCreator";
 import { checkModeratorStatus } from "@/lib/actions/moderation";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
@@ -62,6 +64,9 @@ export default function ThreadPage({
   const [page, setPage] = useState(1);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [modStatus, setModStatus] = useState<ModeratorStatus | null>(null);
+  const [pollId, setPollId] = useState<string | null>(null);
+  const [showPollCreator, setShowPollCreator] = useState(false);
+  const [canCreatePoll, setCanCreatePoll] = useState(false);
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const { t } = useTranslations();
@@ -111,6 +116,29 @@ export default function ThreadPage({
       });
     }
   }, [data?.thread?.forum_id, user]);
+
+  // Check for existing poll and user permissions
+  useEffect(() => {
+    if (id && user) {
+      // Check if thread has a poll
+      fetch(`/api/polls/by-thread/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.pollId) {
+            setPollId(data.pollId);
+          }
+        })
+        .catch(() => {});
+      
+      // Check if user can create polls (admin or level 3+)
+      fetch('/api/profile')
+        .then(res => res.json())
+        .then(profile => {
+          setCanCreatePoll(profile?.is_admin || (profile?.level ?? 0) >= 3);
+        })
+        .catch(() => {});
+    }
+  }, [id, user]);
 
   const handleLoadMore = () => {
     if (!isLoadingMore && data?.pagination.hasMore) {
@@ -302,6 +330,77 @@ export default function ThreadPage({
                   isHidden={thread.is_hidden || false}
                   permissions={modStatus.permissions}
                 />
+              )}
+
+              {/* Poll Section */}
+              {pollId && (
+                <Poll 
+                  pollId={pollId} 
+                  onVote={() => {
+                    // Refresh poll after voting
+                  }} 
+                />
+              )}
+
+              {/* Create Poll Button - only for admins/level 3+ if no poll exists */}
+              {!pollId && canCreatePoll && user?.id === thread.user_id && !showPollCreator && (
+                <div 
+                  className="card p-4 mb-4 cursor-pointer hover:shadow-md transition-all group"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05))',
+                    border: '2px dashed rgba(59, 130, 246, 0.3)',
+                  }}
+                  onClick={() => setShowPollCreator(true)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform"
+                      style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
+                    >
+                      📊
+                    </div>
+                    <div>
+                      <p className="font-medium" style={{ color: 'var(--foreground)' }}>
+                        {t('polls.addPoll')}
+                      </p>
+                      <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                        {t('polls.levelRequirement')}
+                      </p>
+                    </div>
+                    <div className="ml-auto">
+                      <span 
+                        className="px-3 py-1.5 rounded-lg text-sm font-medium"
+                        style={{ 
+                          background: 'var(--brand)', 
+                          color: 'white' 
+                        }}
+                      >
+                        + {t('polls.createPoll')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Poll Creator Form */}
+              {showPollCreator && (
+                <div className="mb-6">
+                  <PollCreator
+                    threadId={id}
+                    onCreated={() => {
+                      setShowPollCreator(false);
+                      // Fetch the new poll
+                      fetch(`/api/polls/by-thread/${id}`)
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.pollId) {
+                            setPollId(data.pollId);
+                          }
+                        });
+                    }}
+                    onCancel={() => setShowPollCreator(false)}
+                  />
+                </div>
               )}
 
               {/* Comments Section */}

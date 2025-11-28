@@ -35,6 +35,9 @@ export type Database = {
           score?: number;
           is_hidden: boolean;
           is_resource: boolean;
+          is_pinned: boolean;
+          pinned_at: string | null;
+          pinned_by: string | null;
           hidden_at: string | null;
           hidden_until: string | null;
           created_at: string;
@@ -48,6 +51,9 @@ export type Database = {
           like_count?: number;
           upvote_count?: number;
           downvote_count?: number;
+          is_pinned?: boolean;
+          pinned_at?: string | null;
+          pinned_by?: string | null;
           is_hidden?: boolean;
           is_resource?: boolean;
           hidden_at?: string | null;
@@ -65,6 +71,9 @@ export type Database = {
           downvote_count?: number;
           is_hidden?: boolean;
           is_resource?: boolean;
+          is_pinned?: boolean;
+          pinned_at?: string | null;
+          pinned_by?: string | null;
           hidden_at?: string | null;
           hidden_until?: string | null;
           created_at?: string;

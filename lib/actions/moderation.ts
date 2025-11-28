@@ -85,14 +85,38 @@ export async function togglePinThread(
     return { success: false, error: 'Debes iniciar sesión' };
   }
 
-  const { error } = await supabase.rpc('toggle_thread_pin', {
-    p_thread_id: threadId,
-    p_pin: pin,
-  });
+  if (pin) {
+    const { data, error } = await supabase.rpc('pin_thread', {
+      p_thread_id: threadId,
+      p_user_id: user.id,
+    });
 
-  if (error) {
-    console.error('Error toggling pin:', error);
-    return { success: false, error: error.message };
+    if (error) {
+      console.error('Error pinning thread:', error);
+      return { success: false, error: error.message };
+    }
+
+    // Check response from function
+    if (data && !data.success) {
+      const errorMsg = data.error?.includes('Maximum') 
+        ? 'Máximo de hilos fijados alcanzado (3 por foro)' 
+        : data.error;
+      return { success: false, error: errorMsg };
+    }
+  } else {
+    const { data, error } = await supabase.rpc('unpin_thread', {
+      p_thread_id: threadId,
+      p_user_id: user.id,
+    });
+
+    if (error) {
+      console.error('Error unpinning thread:', error);
+      return { success: false, error: error.message };
+    }
+
+    if (data && !data.success) {
+      return { success: false, error: data.error };
+    }
   }
 
   revalidatePath('/forum/[slug]', 'page');

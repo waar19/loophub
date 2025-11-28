@@ -75,10 +75,12 @@ export async function GET(
     }
 
     // Get threads for this forum with pagination
+    // Always order pinned threads first, then by the selected sort
     const { data: threads, error: threadsError } = await supabase
       .from("threads")
       .select("*")
       .eq("forum_id", forum.id)
+      .order("is_pinned", { ascending: false, nullsFirst: false })
       .order(sortColumn, { ascending })
       .range(offset, offset + limit - 1);
 

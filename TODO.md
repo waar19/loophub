@@ -1,8 +1,8 @@
 # 🚀 Plan de Desarrollo LoopHub
 
-**Última actualización**: 2025-11-27  
-**Branch actual**: feature/advanced_search_profiles_modetarion  
-**Fases Completadas**: 1, 2, 3, 4
+**Última actualización**: 2025-11-28  
+**Branch actual**: main  
+**Fases Completadas**: 1, 2, 3, 4, 5
 
 ---
 
@@ -20,9 +20,9 @@
 | Modo Oscuro | ✅ | Automático + toggle |
 | Diseño Responsive | ✅ | Mobile-first |
 | SEO Básico | ✅ | Meta tags, sitemap |
-| Panel de Administración | ✅ | Con Analytics |
+| Panel de Administración | ✅ | Con Analytics + Gestión Foros |
 | Sistema de Reportes | ✅ | Completo |
-| Internacionalización | ✅ | ES, EN, PT |
+| Internacionalización | ✅ | ES, EN, PT (cookie sync) |
 | Notificaciones Realtime | ✅ | Completo con preferencias |
 | Cambio de Username | ✅ | Una vez gratis |
 | Onboarding | ✅ | Flujo completo |
@@ -41,6 +41,8 @@
 | Sistema de Badges | ✅ | 19 badges automáticos |
 | Testing Setup | ✅ | Vitest configurado |
 | Error Boundaries | ✅ | Global error handling |
+| Gestión de Foros | ✅ | CRUD en admin |
+| Moderadores por Foro | ✅ | Permisos granulares |
 
 ---
 
@@ -526,26 +528,273 @@
 
 ---
 
+## ✅ FASE 5: MODERACIÓN Y UX - COMPLETADA
+
+### 5.1 Gestión de Foros ✅
+**Completado**: 2025-11-28
+
+**Logros**:
+- [x] Página `/admin/forums` para gestionar foros
+- [x] CRUD completo de foros (crear, editar, eliminar)
+- [x] Validación: no eliminar foros con threads
+- [x] Auto-generación de slug desde nombre
+- [x] Contador de threads por foro
+- [x] API endpoints:
+  - [x] GET/POST `/api/admin/forums`
+  - [x] GET/PUT/DELETE `/api/admin/forums/[id]`
+
+**Archivos creados**:
+- `app/admin/forums/page.tsx`
+- `app/admin/forums/ForumManager.tsx`
+- `app/api/admin/forums/route.ts`
+- `app/api/admin/forums/[id]/route.ts`
+
+---
+
+### 5.2 Moderadores por Foro ✅
+**Completado**: 2025-11-28
+
+**Logros**:
+- [x] Página `/admin/moderators` para gestionar moderadores
+- [x] Asignar/remover moderadores por foro
+- [x] Permisos granulares por moderador:
+  - [x] Eliminar threads
+  - [x] Eliminar comentarios
+  - [x] Ocultar contenido
+  - [x] Anclar threads
+  - [x] Bloquear threads
+  - [x] Gestionar reportes
+- [x] Vista agrupada por foro
+- [x] Server Actions para operaciones
+
+**Archivos creados**:
+- `app/admin/moderators/page.tsx`
+- `app/admin/moderators/ModeratorManager.tsx`
+- `lib/actions/moderation.ts`
+
+---
+
+### 5.3 Mejoras de UX ✅
+**Completado**: 2025-11-28
+
+**Logros**:
+- [x] Menciones en CommentCard (respuestas inline)
+- [x] Padding corregido en formularios (new thread, signup, onboarding)
+- [x] Layout de admin corregido (sidebar overlap)
+- [x] Padding en cards de admin (reportes, analytics, moderators)
+- [x] Loading state de Analytics con skeleton apropiado
+- [x] Botón "Volver al Admin" en todas las subpáginas
+
+---
+
+### 5.4 Traducciones Admin ✅
+**Completado**: 2025-11-28
+
+**Logros**:
+- [x] Traducciones ES, EN, PT para gestión de foros
+- [x] Traducciones ES, EN, PT para moderadores
+- [x] Sincronización de idioma con cookie para SSR
+- [x] Metadata del sitio en inglés (título, descripción, SEO)
+
+**Archivos modificados**:
+- `lib/i18n/translations.ts` - Añadidas 40+ claves de admin
+- `components/TranslationsProvider.tsx` - Cookie sync
+- `app/layout.tsx` - Metadata en inglés
+
+---
+
+## 🚀 FASE 6: INFRAESTRUCTURA Y CALIDAD
+
+### 6.1 CI/CD Pipeline
+**Prioridad**: Alta | **Estimación**: 4-6 horas
+
+**Tareas**:
+- [ ] GitHub Actions workflow para:
+  - [ ] Lint y type check en PRs
+  - [ ] Tests unitarios automáticos
+  - [ ] Build de verificación
+  - [ ] Deploy automático a Vercel (preview y production)
+- [ ] Branch protection rules
+- [ ] Notificaciones de fallos
+
+**Archivos a crear**:
+- `.github/workflows/ci.yml`
+- `.github/workflows/deploy.yml`
+
+---
+
+### 6.2 Monitoreo con Sentry
+**Prioridad**: Alta | **Estimación**: 2-3 horas
+
+**Tareas**:
+- [ ] Instalar @sentry/nextjs
+- [ ] Configurar Sentry DSN
+- [ ] Error tracking en cliente y servidor
+- [ ] Source maps para debugging
+- [ ] Performance monitoring
+- [ ] Alertas configuradas
+
+**Archivos a crear**:
+- `sentry.client.config.ts`
+- `sentry.server.config.ts`
+- `sentry.edge.config.ts`
+
+---
+
+### 6.3 E2E Tests con Playwright
+**Prioridad**: Media | **Estimación**: 6-8 horas
+
+**Tareas**:
+- [ ] Configurar Playwright
+- [ ] Tests críticos:
+  - [ ] Login/Signup flow
+  - [ ] Crear thread
+  - [ ] Comentar
+  - [ ] Votar
+  - [ ] Buscar
+- [ ] CI integration
+- [ ] Visual regression tests (opcional)
+
+**Archivos a crear**:
+- `playwright.config.ts`
+- `e2e/auth.spec.ts`
+- `e2e/threads.spec.ts`
+- `e2e/comments.spec.ts`
+
+---
+
+## 🎯 FASE 7: FUNCIONALIDADES AVANZADAS
+
+### 7.1 Hilos Destacados (Sticky Threads) ✅
+**Prioridad**: Media | **Completado**: 2025-01-28
+
+**Logros**:
+- [x] Campo `is_pinned`, `pinned_at`, `pinned_by` en threads
+- [x] Funciones SQL `pin_thread()` y `unpin_thread()` con validaciones
+- [x] UI para admins/mods para anclar (ModeratorActions)
+- [x] Mostrar primero en listados de foro
+- [x] Límite de pins por foro (máx 3)
+- [x] Indicador visual 📌 en ThreadCard
+- [x] Traducciones ES, EN, PT
+
+**Archivos creados**:
+- `supabase/migrations/024_sticky_threads.sql`
+- `app/api/threads/[id]/pin/route.ts`
+- `components/PinButton.tsx`
+
+**Archivos modificados**:
+- `lib/database.types.ts`
+- `lib/i18n/translations.ts`
+- `lib/actions/moderation.ts`
+- `components/ThreadCard.tsx`
+- `app/api/forums/[slug]/threads/route.ts`
+
+---
+
+### 7.2 Digest Semanal por Email ✅
+**Prioridad**: Media | **Completado**: 2025-01-28 (ya existía)
+
+**Logros**:
+- [x] Template de email con Resend (lib/email-digest.ts)
+- [x] Cron job semanal en Vercel (lunes 9am)
+- [x] Preferencia de usuario para recibir
+- [x] Contenido: top threads, actividad, suscripciones
+- [x] Botón de unsubscribe
+
+**Archivos existentes**:
+- `lib/email-digest.ts`
+- `app/api/cron/digest/route.ts`
+- `supabase/migrations/022_email_digest_system.sql`
+
+---
+
+### 7.3 Encuestas en Threads ✅
+**Prioridad**: Baja | **Completado**: 2025-01-28
+
+**Logros**:
+- [x] Tablas `polls`, `poll_options`, `poll_votes`
+- [x] Funciones SQL: get_poll_results, user_has_voted, get_user_poll_votes
+- [x] UI para crear encuesta (nivel 3+)
+- [x] Máximo 6 opciones (mínimo 2)
+- [x] Mostrar resultados con porcentajes
+- [x] Un voto por usuario, opción múltiple opcional
+- [x] Fecha de expiración opcional
+- [x] Triggers para validar votos
+- [x] Traducciones ES, EN, PT
+
+**Archivos existentes/creados**:
+- `supabase/migrations/021_polls_system.sql` (ya existía)
+- `app/api/polls/route.ts`
+- `app/api/polls/[id]/route.ts`
+- `components/Poll.tsx`
+
+---
+
+### 7.4 Keyboard Shortcuts Globales ✅
+**Prioridad**: Baja | **Completado**: 2025-01-28
+
+**Logros**:
+- [x] Hook `useKeyboardShortcuts`
+- [x] Shortcuts implementados:
+  - [x] `g h` - Go Home
+  - [x] `g n` - Go Notifications
+  - [x] `g b` - Go Bookmarks
+  - [x] `g s` - Go Settings
+  - [x] `c` - Create thread (en foro)
+  - [x] `/` - Focus search
+  - [x] `?` - Mostrar ayuda
+  - [x] `Escape` - Cerrar modal
+- [x] Modal de ayuda con lista de shortcuts
+- [x] Traducciones ES, EN, PT
+
+**Archivos creados**:
+- `hooks/useKeyboardShortcuts.ts`
+- `components/KeyboardShortcutsModal.tsx`
+
+---
+
+### 7.5 Draft Autosave ✅
+**Prioridad**: Media | **Completado**: 2025-01-28
+
+**Logros**:
+- [x] Hook `useDraftAutosave` con debounce
+- [x] Guardar borrador en localStorage cada 2s
+- [x] Key único por tipo (thread/comment/reply) + id
+- [x] Auto-limpieza de borradores >7 días
+- [x] Componente DraftIndicator existente
+
+**Archivos creados/existentes**:
+- `hooks/useDraftAutosave.ts`
+- `components/DraftIndicator.tsx` (existía)
+
+---
+
+## ✅ FASE 7: COMPLETADA
+
+Todas las funcionalidades avanzadas de la Fase 7 han sido implementadas.
+
+---
+
 ## 🛠️ Mejoras Técnicas Pendientes
 
 | Mejora | Prioridad | Estado |
 |--------|-----------|--------|
 | Migrar a Server Actions donde aplique | Media | ⬜ Pendiente |
-| Logging estructurado (Winston/Pino) | Media | ⬜ Pendiente |
-| Monitoreo con Sentry | Alta | ⬜ Pendiente |
+| Logging estructurado (Winston/Pino) | Baja | ⬜ Pendiente |
 | Optimizar bundle size | Baja | ⬜ Pendiente |
-| E2E tests con Playwright | Media | ⬜ Pendiente |
-| CI/CD pipeline (GitHub Actions) | Alta | ⬜ Pendiente |
 
 ---
 
 ## 💡 Ideas Futuras (Backlog)
 
-- [ ] Encuestas en Threads (nivel 3+)
 - [ ] Modo Wiki - Threads editables por comunidad
-- [ ] Digest semanal por email
 - [ ] API pública para integraciones
 - [ ] Dark mode scheduling (por hora)
+- [ ] Exportar datos personales (GDPR)
+- [ ] Modo lectura sin distracciones
+- [ ] Webhooks para eventos
+- [ ] Sistema de recompensas (achievements avanzados)
+- [ ] Threads programados (scheduled posts)
 - [ ] Keyboard shortcuts globales
 - [ ] Draft autosave en localStorage
 - [ ] Exportar datos personales (GDPR)
@@ -572,6 +821,8 @@
 
 | Fecha | Cambio |
 |-------|--------|
+| 2025-11-28 | Fase 5 completada: Gestión foros, moderadores, UX, traducciones |
+| 2025-11-28 | Plan reorganizado con Fases 6 y 7 |
 | 2025-11-27 | Plan reorganizado y actualizado |
 | 2025-11-26 | Sistema de votos completado |
 | 2025-11-26 | Notificaciones realtime (parcial) |
@@ -579,4 +830,4 @@
 
 ---
 
-**Próximo paso sugerido**: Completar sistema de notificaciones (1.1)
+**Próximo paso sugerido**: Fase 6.1 - CI/CD Pipeline con GitHub Actions
