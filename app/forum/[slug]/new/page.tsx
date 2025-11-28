@@ -2,13 +2,14 @@
 
 import { use } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import SimpleForm from "@/components/SimpleForm";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import TagSelector from "@/components/TagSelector";
 import { createClient } from "@/lib/supabase-browser";
 import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
+import { createThread } from "@/lib/actions";
 
 interface Tag {
   id: string;
@@ -26,6 +27,7 @@ export default function NewThreadPage({
   const router = useRouter();
   const [forumName, setForumName] = useState("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [isPending, startTransition] = useTransition();
   const { showSuccess, showError } = useToast();
   const { t } = useTranslations();
 
@@ -43,30 +45,22 @@ export default function NewThreadPage({
   }, [slug]);
 
   const handleSubmit = async (data: Record<string, string>) => {
-    try {
-      const res = await fetch(`/api/forums/${slug}/threads`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          tags: selectedTags.map(tag => tag.id),
-        }),
+    startTransition(async () => {
+      const result = await createThread({
+        title: data.title,
+        content: data.content,
+        forumSlug: slug,
+        tags: selectedTags.map(tag => tag.id),
       });
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || t("threads.errorCreating"));
+      if (result.success && result.data) {
+        showSuccess(t("threads.threadCreated") || "¡Hilo creado exitosamente!");
+        router.push(`/thread/${result.data.id}`);
+      } else {
+        showError(result.error || t("threads.errorCreating"));
+        throw new Error(result.error);
       }
-
-      const thread = await res.json();
-      showSuccess(t("threads.threadCreated") || "¡Hilo creado exitosamente!");
-      router.push(`/thread/${thread.id}`);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : t("threads.errorCreating");
-      showError(errorMessage);
-      throw error;
-    }
+    });
   };
 
   return (
