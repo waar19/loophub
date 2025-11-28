@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useToast } from '@/contexts/ToastContext';
+import { useTranslations } from '@/components/TranslationsProvider';
 
 interface Forum {
   id: string;
@@ -23,6 +24,7 @@ export default function ForumManager({ forums }: Props) {
   const [isCreating, setIsCreating] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { showToast } = useToast();
+  const { t } = useTranslations();
 
   // Form state - only name and slug (table doesn't have other columns)
   const [formData, setFormData] = useState({
@@ -68,7 +70,7 @@ export default function ForumManager({ forums }: Props) {
 
   const handleSave = async () => {
     if (!formData.name.trim() || !formData.slug.trim()) {
-      showToast('Nombre y slug son requeridos', 'error');
+      showToast(t('admin.forumName') + ' ' + t('admin.forumSlug') + ' ' + t('common.error'), 'error');
       return;
     }
 
@@ -86,18 +88,18 @@ export default function ForumManager({ forums }: Props) {
 
         if (!res.ok) {
           const error = await res.json();
-          throw new Error(error.error || 'Error al guardar foro');
+          throw new Error(error.error || t('admin.errorCreatingForum'));
         }
 
         showToast(
-          editingForum ? 'Foro actualizado correctamente' : 'Foro creado correctamente',
+          editingForum ? t('admin.forumUpdated') : t('admin.forumCreated'),
           'success'
         );
         resetForm();
         window.location.reload();
       } catch (error) {
         showToast(
-          error instanceof Error ? error.message : 'Error al guardar foro',
+          error instanceof Error ? error.message : t('admin.errorCreatingForum'),
           'error'
         );
       }
@@ -107,13 +109,13 @@ export default function ForumManager({ forums }: Props) {
   const handleDelete = async (forum: Forum) => {
     if (forum.thread_count > 0) {
       showToast(
-        `No puedes eliminar este foro porque tiene ${forum.thread_count} threads`,
+        t('admin.cannotDeleteForumWithThreads'),
         'error'
       );
       return;
     }
 
-    if (!confirm(`¿Estás seguro de eliminar el foro "${forum.name}"?`)) return;
+    if (!confirm(t('admin.deleteForumConfirm'))) return;
 
     startTransition(async () => {
       try {
@@ -123,14 +125,14 @@ export default function ForumManager({ forums }: Props) {
 
         if (!res.ok) {
           const error = await res.json();
-          throw new Error(error.error || 'Error al eliminar foro');
+          throw new Error(error.error || t('admin.errorDeletingForum'));
         }
 
-        showToast('Foro eliminado correctamente', 'success');
+        showToast(t('admin.forumDeleted'), 'success');
         window.location.reload();
       } catch (error) {
         showToast(
-          error instanceof Error ? error.message : 'Error al eliminar foro',
+          error instanceof Error ? error.message : t('admin.errorDeletingForum'),
           'error'
         );
       }
@@ -144,30 +146,30 @@ export default function ForumManager({ forums }: Props) {
         <div className="card p-6 sticky top-4">
           <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
             <span>{editingForum ? '✏️' : '➕'}</span>
-            {editingForum ? 'Editar Foro' : isCreating ? 'Nuevo Foro' : 'Gestionar Foros'}
+            {editingForum ? t('admin.editForum') : isCreating ? t('admin.createNewForum') : t('admin.manageForums')}
           </h2>
 
           {(isCreating || editingForum) ? (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Nombre *</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.forumName')} *</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   className="input w-full"
-                  placeholder="Nombre del foro"
+                  placeholder={t('admin.forumNamePlaceholder')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Slug *</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.forumSlug')} *</label>
                 <input
                   type="text"
                   value={formData.slug}
                   onChange={(e) => setFormData((p) => ({ ...p, slug: e.target.value }))}
                   className="input w-full"
-                  placeholder="slug-del-foro"
+                  placeholder={t('admin.forumSlugPlaceholder')}
                 />
                 <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
                   URL: /forum/{formData.slug || 'slug'}
@@ -180,7 +182,7 @@ export default function ForumManager({ forums }: Props) {
                   disabled={isPending}
                   className="btn btn-primary flex-1"
                 >
-                  {isPending ? 'Guardando...' : editingForum ? 'Guardar Cambios' : 'Crear Foro'}
+                  {isPending ? t('common.saving') : editingForum ? t('admin.updateForum') : t('admin.createForum')}
                 </button>
                 <button
                   onClick={resetForm}
@@ -190,17 +192,17 @@ export default function ForumManager({ forums }: Props) {
                     border: '1px solid var(--border)',
                   }}
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
           ) : (
             <div className="text-center py-8">
               <p className="text-sm mb-4" style={{ color: 'var(--muted)' }}>
-                Selecciona un foro para editar o crea uno nuevo
+                {t('admin.selectForumOrCreate')}
               </p>
               <button onClick={handleCreate} className="btn btn-primary">
-                ➕ Crear Nuevo Foro
+                ➕ {t('admin.createNewForum')}
               </button>
             </div>
           )}
@@ -211,13 +213,13 @@ export default function ForumManager({ forums }: Props) {
       <div className="lg:col-span-2 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-lg flex items-center gap-2">
-            <span>📁</span> Foros ({forums.length})
+            <span>📁</span> {t('forums.forums')} ({forums.length})
           </h2>
         </div>
 
         {forums.length === 0 ? (
           <div className="card p-6 text-center">
-            <p style={{ color: 'var(--muted)' }}>No hay foros creados</p>
+            <p style={{ color: 'var(--muted)' }}>{t('common.noForumsAvailable')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -259,7 +261,7 @@ export default function ForumManager({ forums }: Props) {
                       padding: '0.5rem 1rem',
                     }}
                   >
-                    ✏️ Editar
+                    ✏️ {t('common.edit')}
                   </button>
                   <button
                     onClick={() => handleDelete(forum)}
@@ -271,7 +273,7 @@ export default function ForumManager({ forums }: Props) {
                       padding: '0.5rem 1rem',
                       cursor: forum.thread_count > 0 ? 'not-allowed' : 'pointer',
                     }}
-                    title={forum.thread_count > 0 ? 'No puedes eliminar foros con threads' : 'Eliminar foro'}
+                    title={forum.thread_count > 0 ? t('admin.cannotDeleteForumWithThreads') : t('admin.deleteForum')}
                   >
                     🗑️
                   </button>
