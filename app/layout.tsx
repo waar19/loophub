@@ -8,6 +8,7 @@ import { TranslationsProvider } from "@/components/TranslationsProvider";
 import { WebsiteStructuredData } from "@/components/StructuredData";
 import { getBaseUrl, getFullUrl } from "@/lib/url-helpers";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import { QueryProvider } from "@/lib/query-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -133,14 +134,16 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <TranslationsProvider>
-          <ToastProvider>
-            <OnboardingGuard>
-              <AppLayout>{children}</AppLayout>
-              <PWAInstallPrompt />
-            </OnboardingGuard>
-          </ToastProvider>
-        </TranslationsProvider>
+        <QueryProvider>
+          <TranslationsProvider>
+            <ToastProvider>
+              <OnboardingGuard>
+                <AppLayout>{children}</AppLayout>
+                <PWAInstallPrompt />
+              </OnboardingGuard>
+            </ToastProvider>
+          </TranslationsProvider>
+        </QueryProvider>
       </body>
     </html>
   );

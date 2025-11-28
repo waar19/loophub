@@ -460,13 +460,69 @@
 
 ---
 
-## 🛠️ Mejoras Técnicas Pendientes
-- [ ] Configurar Vitest
-- [ ] Unit tests para utils
-- [ ] Unit tests para hooks
-- [ ] Integration tests para API routes
-- [ ] E2E tests con Playwright
-- [ ] CI/CD pipeline (GitHub Actions)
+## ✅ Mejoras Técnicas Completadas
+
+### React Query para Cache ✅
+**Completado**: 2025-11-27
+
+**Logros**:
+- [x] Instalar @tanstack/react-query
+- [x] QueryProvider integrado en layout
+- [x] Query client con configuración optimizada
+- [x] Query keys centralizados
+- [x] Hooks implementados:
+  - [x] `useThreadsQuery` - CRUD threads con cache
+  - [x] `useNotificationsQuery` - Notificaciones con invalidación
+  - [x] `useBookmarksQuery` - Bookmarks con optimistic updates
+  - [x] `useSearchQuery` - Búsqueda con debounce e infinite scroll
+- [x] React Query DevTools (solo dev)
+
+**Archivos creados**:
+- `lib/query-provider.tsx`
+- `lib/query-client.ts`
+- `hooks/useThreadsQuery.ts`
+- `hooks/useNotificationsQuery.ts`
+- `hooks/useBookmarksQuery.ts`
+- `hooks/useSearchQuery.ts`
+
+---
+
+### Lazy Loading de Componentes ✅
+**Completado**: 2025-11-27
+
+**Logros**:
+- [x] Componentes lazy exportados centralizados
+  - [x] MarkdownEditor (SSR disabled)
+  - [x] MarkdownRenderer
+  - [x] CommentThread
+  - [x] LinkPreview
+  - [x] TrendingPanel
+  - [x] BadgeDisplay
+  - [x] ShareButtons
+  - [x] KarmaProgress
+  - [x] InfiniteScroll
+  - [x] SearchBar
+  - [x] ThreadSortFilter
+  - [x] MobileMenu/MobileThreadSidebar
+  - [x] PWAInstallPrompt
+  - [x] NotificationBell
+  - [x] ToastContainer
+- [x] Loading fallbacks con skeleton
+- [x] Hook `usePrefetch` para prefetch inteligente
+  - [x] Prefetch en hover con delay
+  - [x] Prefetch on visible (Intersection Observer)
+  - [x] Prefetch de rutas críticas
+  - [x] Prefetch de threads relacionados
+- [x] Componente `OptimizedImage`
+  - [x] Lazy loading nativo
+  - [x] Blur placeholder
+  - [x] Fallback en error
+  - [x] Avatar optimizado con iniciales
+
+**Archivos creados**:
+- `lib/lazy-components.ts`
+- `hooks/usePrefetch.ts`
+- `components/OptimizedImage.tsx`
 
 ---
 
@@ -475,12 +531,11 @@
 | Mejora | Prioridad | Estado |
 |--------|-----------|--------|
 | Migrar a Server Actions donde aplique | Media | ⬜ Pendiente |
-| Implementar React Query para cache | Media | ⬜ Pendiente |
-| Error boundaries globales | Alta | ⬜ Pendiente |
 | Logging estructurado (Winston/Pino) | Media | ⬜ Pendiente |
 | Monitoreo con Sentry | Alta | ⬜ Pendiente |
 | Optimizar bundle size | Baja | ⬜ Pendiente |
-| Lazy loading de componentes pesados | Media | ⬜ Pendiente |
+| E2E tests con Playwright | Media | ⬜ Pendiente |
+| CI/CD pipeline (GitHub Actions) | Alta | ⬜ Pendiente |
 
 ---
 
