@@ -110,24 +110,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      // Fallback query
+      // Fallback query - get bookmarks first, then fetch thread details separately
       const { data: bookmarks, error: fbError } = await supabase
         .from('bookmarks')
         .select(`
           id,
           created_at,
-          thread:threads (
-            id,
-            title,
-            content,
-            created_at,
-            user_id,
-            forum_id,
-            upvotes,
-            downvotes,
-            forum:forums (name, slug),
-            author:profiles!threads_user_id_fkey (username)
-          )
+          thread_id
         `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
@@ -135,8 +124,58 @@ export async function GET(request: NextRequest) {
 
       if (fbError) throw fbError;
 
+      // Fetch thread details for each bookmark
+      const threadIds = (bookmarks || []).map(b => b.thread_id);
+      
+      if (threadIds.length === 0) {
+        return NextResponse.json({
+          bookmarks: [],
+          hasMore: false
+        });
+      }
+
+      const { data: threads } = await supabase
+        .from('threads')
+        .select(`
+          id,
+          title,
+          content,
+          created_at,
+          user_id,
+          forum_id,
+          upvote_count,
+          downvote_count,
+          forum:forums (name, slug)
+        `)
+        .in('id', threadIds);
+
+      // Get author profiles separately
+      const userIds = [...new Set((threads || []).map(t => t.user_id).filter(Boolean))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', userIds);
+
+      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+
+      // Combine data
+      const bookmarksWithThreads = (bookmarks || []).map(b => {
+        const thread = threads?.find(t => t.id === b.thread_id);
+        const author = thread?.user_id ? profileMap.get(thread.user_id) : null;
+        return {
+          id: b.id,
+          created_at: b.created_at,
+          thread: thread ? {
+            ...thread,
+            upvotes: thread.upvote_count,
+            downvotes: thread.downvote_count,
+            author: author ? { username: author.username } : null
+          } : null
+        };
+      }).filter(b => b.thread !== null);
+
       return NextResponse.json({
-        bookmarks: bookmarks || [],
+        bookmarks: bookmarksWithThreads,
         hasMore: (bookmarks?.length || 0) === limit
       });
     }
