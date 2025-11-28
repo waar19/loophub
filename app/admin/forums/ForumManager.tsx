@@ -18,41 +18,20 @@ interface Props {
   forums: Forum[];
 }
 
-const FORUM_ICONS = ['📁', '💬', '🎮', '💻', '📱', '🎨', '📚', '🎵', '🎬', '⚽', '🍔', '✈️', '🔧', '💡', '🎯', '🌟'];
-const FORUM_COLORS = [
-  '#8B5CF6', // purple
-  '#3B82F6', // blue
-  '#10B981', // green
-  '#F59E0B', // amber
-  '#EF4444', // red
-  '#EC4899', // pink
-  '#6366F1', // indigo
-  '#14B8A6', // teal
-];
-
 export default function ForumManager({ forums }: Props) {
   const [editingForum, setEditingForum] = useState<Forum | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { showToast } = useToast();
 
-  // Form state
+  // Form state - only name and slug (table doesn't have other columns)
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
-    description: '',
-    icon: '📁',
-    color: '#8B5CF6',
   });
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      slug: '',
-      description: '',
-      icon: '📁',
-      color: '#8B5CF6',
-    });
+    setFormData({ name: '', slug: '' });
     setEditingForum(null);
     setIsCreating(false);
   };
@@ -78,17 +57,13 @@ export default function ForumManager({ forums }: Props) {
     setFormData({
       name: forum.name,
       slug: forum.slug,
-      description: forum.description || '',
-      icon: forum.icon || '📁',
-      color: forum.color || '#8B5CF6',
     });
   };
 
   const handleCreate = () => {
     setIsCreating(true);
     setEditingForum(null);
-    resetForm();
-    setIsCreating(true);
+    setFormData({ name: '', slug: '' });
   };
 
   const handleSave = async () => {
@@ -199,56 +174,6 @@ export default function ForumManager({ forums }: Props) {
                 </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Descripción</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
-                  className="input w-full"
-                  rows={3}
-                  placeholder="Descripción del foro..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Icono</label>
-                <div className="flex flex-wrap gap-2">
-                  {FORUM_ICONS.map((icon) => (
-                    <button
-                      key={icon}
-                      type="button"
-                      onClick={() => setFormData((p) => ({ ...p, icon }))}
-                      className="w-10 h-10 rounded-lg flex items-center justify-center text-xl transition-all"
-                      style={{
-                        background: formData.icon === icon ? 'var(--brand)' : 'var(--card-bg)',
-                        border: `2px solid ${formData.icon === icon ? 'var(--brand)' : 'var(--border)'}`,
-                      }}
-                    >
-                      {icon}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Color</label>
-                <div className="flex flex-wrap gap-2">
-                  {FORUM_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setFormData((p) => ({ ...p, color }))}
-                      className="w-10 h-10 rounded-lg transition-all"
-                      style={{
-                        background: color,
-                        border: `3px solid ${formData.color === color ? 'white' : 'transparent'}`,
-                        boxShadow: formData.color === color ? '0 0 0 2px var(--brand)' : 'none',
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={handleSave}
@@ -315,11 +240,6 @@ export default function ForumManager({ forums }: Props) {
                   <p className="text-sm truncate" style={{ color: 'var(--muted)' }}>
                     /forum/{forum.slug}
                   </p>
-                  {forum.description && (
-                    <p className="text-xs mt-1 truncate" style={{ color: 'var(--muted)' }}>
-                      {forum.description}
-                    </p>
-                  )}
                 </div>
 
                 {/* Stats */}

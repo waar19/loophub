@@ -7,28 +7,33 @@ export default async function ForumsPage() {
   await requireAdmin();
   const supabase = await createClient();
 
-  // Fetch all forums with thread count
-  const { data: forums } = await supabase
+  // Fetch all forums (only existing columns: id, name, slug, created_at)
+  const { data: forums, error } = await supabase
     .from('forums')
-    .select(`
-      id,
-      name,
-      slug,
-      description,
-      icon,
-      color,
-      created_at,
-      threads:threads(count)
-    `)
+    .select('id, name, slug, created_at')
     .order('name');
 
-  // Transform data to include thread count
-  const forumsWithCount = (forums || []).map((forum) => ({
-    ...forum,
-    thread_count: Array.isArray(forum.threads) 
-      ? forum.threads[0]?.count || 0 
-      : 0,
-  }));
+  if (error) {
+    console.error('Error fetching forums:', error);
+  }
+
+  // Fetch thread counts separately
+  const forumsWithCount = await Promise.all(
+    (forums || []).map(async (forum) => {
+      const { count } = await supabase
+        .from('threads')
+        .select('*', { count: 'exact', head: true })
+        .eq('forum_id', forum.id);
+      
+      return {
+        ...forum,
+        description: null,
+        icon: '📁',
+        color: '#8B5CF6',
+        thread_count: count || 0,
+      };
+    })
+  );
 
   return (
     <div className="lg:ml-(--sidebar-width) min-h-screen">

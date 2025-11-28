@@ -5,9 +5,6 @@ import { z } from 'zod';
 const forumSchema = z.object({
   name: z.string().min(2).max(100),
   slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/),
-  description: z.string().max(500).optional(),
-  icon: z.string().max(10).optional(),
-  color: z.string().max(20).optional(),
 });
 
 // GET - Get single forum
@@ -71,7 +68,7 @@ export async function PUT(
       );
     }
 
-    const { name, slug, description, icon, color } = parseResult.data;
+    const { name, slug } = parseResult.data;
 
     // Check if slug already exists for different forum
     const { data: existingForum } = await supabase
@@ -90,9 +87,6 @@ export async function PUT(
       .update({
         name,
         slug,
-        description: description || null,
-        icon: icon || '📁',
-        color: color || '#8B5CF6',
       })
       .eq('id', id)
       .select()
