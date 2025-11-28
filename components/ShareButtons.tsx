@@ -153,11 +153,11 @@ export default function ShareButtons({
   };
 
   const buttonClass =
-    "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md";
+    "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md shrink-0";
 
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-      <span className="font-bold text-xs" style={{ color: "var(--muted)" }}>
+    <div className={`flex items-center gap-2 overflow-x-auto scrollbar-hide ${className}`}>
+      <span className="font-bold text-xs shrink-0" style={{ color: "var(--muted)" }}>
         Compartir:
       </span>
 
