@@ -16,6 +16,7 @@ interface NotificationSettings {
   sound_enabled: boolean;
   email_digest: boolean;
   email_mentions: boolean;
+  digest_frequency: 'daily' | 'weekly' | 'monthly' | 'never';
 }
 
 const defaultSettings: NotificationSettings = {
@@ -29,6 +30,7 @@ const defaultSettings: NotificationSettings = {
   sound_enabled: false,
   email_digest: false,
   email_mentions: false,
+  digest_frequency: 'weekly',
 };
 
 export default function NotificationSettings() {
@@ -67,6 +69,7 @@ export default function NotificationSettings() {
             sound_enabled: data.settings.sound_enabled ?? false,
             email_digest: data.settings.email_digest ?? false,
             email_mentions: data.settings.email_mentions ?? false,
+            digest_frequency: data.settings.digest_frequency ?? 'weekly',
           });
         }
       }
@@ -295,22 +298,16 @@ export default function NotificationSettings() {
         </div>
       </div>
 
-      {/* Email (Future) */}
+      {/* Email Notifications */}
       <div>
         <h3
           className="text-sm font-semibold uppercase tracking-wide mb-3"
           style={{ color: "var(--muted)" }}
         >
           {t("notifications.settings.email")}
-          <span
-            className="ml-2 text-xs px-2 py-0.5 rounded"
-            style={{ background: "var(--border)", color: "var(--muted)" }}
-          >
-            {t("common.comingSoon")}
-          </span>
         </h3>
         <div
-          className="space-y-1 rounded-lg border overflow-hidden opacity-50"
+          className="space-y-1 rounded-lg border overflow-hidden"
           style={{ borderColor: "var(--border)" }}
         >
           <SettingToggle
@@ -318,14 +315,69 @@ export default function NotificationSettings() {
             icon="📧"
             title={t("notifications.settings.emailDigest")}
             description={t("notifications.settings.emailDigestDesc")}
-            disabled={true}
           />
+          
+          {/* Frequency selector - only show when digest is enabled */}
+          {settings.email_digest && (
+            <div
+              className="flex items-center justify-between p-4 rounded-lg transition-colors"
+              style={{ background: "var(--card-background)" }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xl">📅</span>
+                <div>
+                  <h4
+                    className="font-medium text-sm"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {t("notifications.settings.digestFrequency")}
+                  </h4>
+                  <p className="text-xs" style={{ color: "var(--muted)" }}>
+                    {t("notifications.settings.digestFrequencyDesc")}
+                  </p>
+                </div>
+              </div>
+              <select
+                value={settings.digest_frequency}
+                onChange={async (e) => {
+                  const newValue = e.target.value as 'daily' | 'weekly' | 'monthly' | 'never';
+                  setSettings((prev) => ({ ...prev, digest_frequency: newValue }));
+                  setIsSaving(true);
+                  try {
+                    const res = await fetch("/api/notifications/settings", {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ digest_frequency: newValue }),
+                    });
+                    if (!res.ok) throw new Error("Failed to save");
+                    showSuccess(t("notifications.settings.saved"));
+                  } catch (error) {
+                    console.error("Error saving frequency:", error);
+                    showError(t("notifications.settings.errorSaving"));
+                  } finally {
+                    setIsSaving(false);
+                  }
+                }}
+                disabled={isSaving}
+                className="px-3 py-1.5 rounded-lg text-sm border"
+                style={{
+                  background: "var(--background)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
+              >
+                <option value="daily">{t("notifications.settings.frequencyDaily")}</option>
+                <option value="weekly">{t("notifications.settings.frequencyWeekly")}</option>
+                <option value="monthly">{t("notifications.settings.frequencyMonthly")}</option>
+              </select>
+            </div>
+          )}
+          
           <SettingToggle
             settingKey="email_mentions"
             icon="📩"
             title={t("notifications.settings.emailMentions")}
             description={t("notifications.settings.emailMentionsDesc")}
-            disabled={true}
           />
         </div>
       </div>
