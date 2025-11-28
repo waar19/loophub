@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase-browser';
 
 interface DailyMetric {
@@ -282,12 +283,6 @@ export default function AnalyticsContent() {
 
   const { currentMetrics, dailyMetrics, topThreads, topUsers, recentActivity } = data;
 
-  // Calculate growth percentages
-  const calculateGrowth = (current: number, previous: number) => {
-    if (previous === 0) return current > 0 ? 100 : 0;
-    return ((current - previous) / previous * 100).toFixed(1);
-  };
-
   const lastMetric = dailyMetrics[dailyMetrics.length - 1];
   const prevMetric = dailyMetrics[dailyMetrics.length - 8] || dailyMetrics[0];
 
@@ -490,10 +485,12 @@ export default function AnalyticsContent() {
                     <td className="py-2 px-2">
                       <div className="flex items-center gap-2">
                         {user.avatar_url ? (
-                          <img
+                          <Image
                             src={user.avatar_url}
                             alt={user.username}
-                            className="w-6 h-6 rounded-full"
+                            width={24}
+                            height={24}
+                            className="rounded-full"
                           />
                         ) : (
                           <div
