@@ -29,17 +29,29 @@ export function TranslationsProvider({ children }: { children: ReactNode }) {
     const detectedLocale = detectBrowserLocale();
     const savedLocale = localStorage.getItem("locale") as Locale;
     
+    // Also check cookie for SSR consistency
+    const cookieLocale = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('locale='))
+      ?.split('=')[1] as Locale;
+    
     const initialLocale = savedLocale && supportedLocales.includes(savedLocale)
       ? savedLocale
+      : cookieLocale && supportedLocales.includes(cookieLocale)
+      ? cookieLocale
       : detectedLocale;
 
     setLocaleState(initialLocale);
+    // Sync cookie with localStorage
+    document.cookie = `locale=${initialLocale}; path=/; max-age=31536000`;
     setMounted(true);
   }, []);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
     localStorage.setItem("locale", newLocale);
+    // Also set as cookie for server-side reading
+    document.cookie = `locale=${newLocale}; path=/; max-age=31536000`;
     // Update HTML lang attribute
     if (typeof document !== "undefined") {
       document.documentElement.lang = newLocale;

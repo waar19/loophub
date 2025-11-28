@@ -2,10 +2,17 @@ import { requireAdmin } from '@/lib/admin';
 import { createClient } from '@/lib/supabase-server';
 import Link from 'next/link';
 import ModeratorManager from './ModeratorManager';
+import { cookies } from 'next/headers';
+import { translations, defaultLocale, Locale } from '@/lib/i18n/translations';
 
 export default async function ModeratorsPage() {
   await requireAdmin();
   const supabase = await createClient();
+  
+  // Get locale from cookie
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get('locale')?.value || defaultLocale) as Locale;
+  const t = translations[locale];
 
   // Fetch all forums
   const { data: forums } = await supabase
@@ -49,32 +56,34 @@ export default async function ModeratorsPage() {
     .order('username');
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Gestión de Moderadores</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
-            Asigna moderadores a foros específicos
-          </p>
+    <div className="lg:ml-(--sidebar-width) min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">{t.admin.moderators}</h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
+              {t.admin.moderatorsDescription}
+            </p>
+          </div>
+          <Link
+            href="/admin"
+            className="btn"
+            style={{
+              background: 'var(--card-bg)',
+              color: 'var(--foreground)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            ← {t.admin.backToAdmin}
+          </Link>
         </div>
-        <Link
-          href="/admin"
-          className="btn"
-          style={{
-            background: 'var(--card-bg)',
-            color: 'var(--foreground)',
-            border: '1px solid var(--border)',
-          }}
-        >
-          ← Volver al Admin
-        </Link>
-      </div>
 
-      <ModeratorManager
-        forums={forums || []}
-        moderators={moderators}
-        users={users || []}
-      />
+        <ModeratorManager
+          forums={forums || []}
+          moderators={moderators}
+          users={users || []}
+        />
+      </div>
     </div>
   );
 }

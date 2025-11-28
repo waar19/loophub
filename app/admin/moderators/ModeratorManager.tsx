@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { addForumModerator, removeForumModerator } from '@/lib/actions/moderation';
 import { useToast } from '@/contexts/ToastContext';
+import { useTranslations } from '@/components/TranslationsProvider';
 
 interface Forum {
   id: string;
@@ -56,36 +57,37 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
   });
   const [isPending, startTransition] = useTransition();
   const { showToast } = useToast();
+  const { t } = useTranslations();
 
   const handleAdd = () => {
     if (!selectedForum || !selectedUser) {
-      showToast('Selecciona un foro y un usuario', 'error');
+      showToast(t('admin.selectForum') + ' / ' + t('admin.selectUser'), 'error');
       return;
     }
 
     startTransition(async () => {
       const result = await addForumModerator(selectedForum, selectedUser, permissions);
       if (result.success) {
-        showToast('Moderador añadido correctamente', 'success');
+        showToast(t('admin.moderatorAdded'), 'success');
         setSelectedUser('');
         // Force page refresh to show new moderator
         window.location.reload();
       } else {
-        showToast(result.error || 'Error al añadir moderador', 'error');
+        showToast(result.error || t('common.error'), 'error');
       }
     });
   };
 
   const handleRemove = (forumId: string, userId: string) => {
-    if (!confirm('¿Estás seguro de remover este moderador?')) return;
+    if (!confirm(t('admin.removeModerator') + '?')) return;
 
     startTransition(async () => {
       const result = await removeForumModerator(forumId, userId);
       if (result.success) {
-        showToast('Moderador removido', 'success');
+        showToast(t('admin.moderatorRemoved'), 'success');
         window.location.reload();
       } else {
-        showToast(result.error || 'Error al remover moderador', 'error');
+        showToast(result.error || t('common.error'), 'error');
       }
     });
   };
@@ -108,20 +110,20 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Add Moderator Form */}
       <div className="lg:col-span-1">
-        <div className="card sticky top-4">
+        <div className="card p-6 sticky top-4">
           <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
-            <span>➕</span> Añadir Moderador
+            <span>➕</span> {t('admin.addModerator')}
           </h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Foro</label>
+              <label className="block text-sm font-medium mb-1">{t('admin.selectForum')}</label>
               <select
                 value={selectedForum}
                 onChange={(e) => setSelectedForum(e.target.value)}
                 className="input w-full"
               >
-                <option value="">Seleccionar foro...</option>
+                <option value="">{t('admin.selectForum')}...</option>
                 {forums.map((forum) => (
                   <option key={forum.id} value={forum.id}>
                     {forum.name}
@@ -131,13 +133,13 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Usuario</label>
+              <label className="block text-sm font-medium mb-1">{t('admin.selectUser')}</label>
               <select
                 value={selectedUser}
                 onChange={(e) => setSelectedUser(e.target.value)}
                 className="input w-full"
               >
-                <option value="">Seleccionar usuario...</option>
+                <option value="">{t('admin.selectUser')}...</option>
                 {availableUsers.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.username} {user.is_admin && '(Admin)'}
@@ -173,7 +175,7 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
               disabled={isPending || !selectedForum || !selectedUser}
               className="btn btn-primary w-full"
             >
-              {isPending ? 'Añadiendo...' : 'Añadir Moderador'}
+              {isPending ? t('common.loading') : t('admin.addModerator')}
             </button>
           </div>
         </div>
@@ -182,11 +184,11 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
       {/* Moderators List */}
       <div className="lg:col-span-2 space-y-6">
         <h2 className="font-bold text-lg flex items-center gap-2">
-          <span>🛡️</span> Moderadores por Foro
+          <span>🛡️</span> {t('admin.moderators')}
         </h2>
 
         {moderatorsByForum.map(({ forum, mods }) => (
-          <div key={forum.id} className="card">
+          <div key={forum.id} className="card p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <span className="text-xl">📁</span>
@@ -196,13 +198,13 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
                 className="text-xs px-2 py-1 rounded-full"
                 style={{ background: 'var(--primary)', color: 'white' }}
               >
-                {mods.length} moderador{mods.length !== 1 ? 'es' : ''}
+                {mods.length} {mods.length !== 1 ? t('admin.moderators').toLowerCase() : t('admin.forumModerator').toLowerCase()}
               </span>
             </div>
 
             {mods.length === 0 ? (
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                No hay moderadores asignados a este foro
+                {t('admin.noModerators')}
               </p>
             ) : (
               <div className="space-y-3">
@@ -275,7 +277,7 @@ export default function ModeratorManager({ forums, moderators, users }: Props) {
 
         {forums.length === 0 && (
           <div className="card text-center py-8">
-            <p style={{ color: 'var(--muted)' }}>No hay foros disponibles</p>
+            <p style={{ color: 'var(--muted)' }}>{t('common.noForumsAvailable')}</p>
           </div>
         )}
       </div>
