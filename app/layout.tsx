@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AppLayout from "@/components/AppLayout";
@@ -7,6 +7,8 @@ import { ToastProvider } from "@/contexts/ToastContext";
 import { TranslationsProvider } from "@/components/TranslationsProvider";
 import { WebsiteStructuredData } from "@/components/StructuredData";
 import { getBaseUrl, getFullUrl } from "@/lib/url-helpers";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import { QueryProvider } from "@/lib/query-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -83,6 +85,22 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl,
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "LoopHub",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -94,6 +112,9 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <WebsiteStructuredData />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -113,13 +134,16 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <TranslationsProvider>
-          <ToastProvider>
-            <OnboardingGuard>
-              <AppLayout>{children}</AppLayout>
-            </OnboardingGuard>
-          </ToastProvider>
-        </TranslationsProvider>
+        <QueryProvider>
+          <TranslationsProvider>
+            <ToastProvider>
+              <OnboardingGuard>
+                <AppLayout>{children}</AppLayout>
+                <PWAInstallPrompt />
+              </OnboardingGuard>
+            </ToastProvider>
+          </TranslationsProvider>
+        </QueryProvider>
       </body>
     </html>
   );
