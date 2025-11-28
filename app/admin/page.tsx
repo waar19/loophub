@@ -51,16 +51,16 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <QuickStatCard label="Reports" count={reports?.length || 0} icon="🚨" />
         <QuickStatCard label="Recent Threads" count={threads?.length || 0} icon="📝" />
-        <Link href="/admin/analytics" className="contents">
+        <Link href="/admin/moderators" className="contents">
           <div className="card text-center hover:shadow-lg transition-shadow cursor-pointer">
-            <span className="text-2xl">📊</span>
-            <p className="text-sm font-medium mt-1">View Analytics</p>
+            <span className="text-2xl">🛡️</span>
+            <p className="text-sm font-medium mt-1">Moderators</p>
           </div>
         </Link>
         <Link href="/admin/analytics" className="contents">
           <div className="card text-center hover:shadow-lg transition-shadow cursor-pointer">
-            <span className="text-2xl">🏆</span>
-            <p className="text-sm font-medium mt-1">Manage Badges</p>
+            <span className="text-2xl">📊</span>
+            <p className="text-sm font-medium mt-1">View Analytics</p>
           </div>
         </Link>
       </div>

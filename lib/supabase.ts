@@ -24,6 +24,9 @@ export interface Thread {
   score?: number;
   created_at: string;
   user_id?: string;
+  is_hidden?: boolean;
+  is_pinned?: boolean;
+  is_locked?: boolean;
   profile?: {
     username: string;
   };

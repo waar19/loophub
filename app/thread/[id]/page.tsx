@@ -27,6 +27,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "@/components/TranslationsProvider";
 import MetaHead from "@/components/MetaHead";
 import { ThreadStructuredData } from "@/components/StructuredData";
+import ModeratorActions from "@/components/ModeratorActions";
+import { checkModeratorStatus } from "@/lib/actions/moderation";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -42,6 +44,12 @@ interface ThreadData {
   };
 }
 
+interface ModeratorStatus {
+  isModerator: boolean;
+  isAdmin: boolean;
+  permissions: Record<string, boolean>;
+}
+
 export default function ThreadPage({
   params,
 }: {
@@ -53,6 +61,7 @@ export default function ThreadPage({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [modStatus, setModStatus] = useState<ModeratorStatus | null>(null);
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const { t } = useTranslations();
@@ -91,6 +100,17 @@ export default function ThreadPage({
   useEffect(() => {
     fetchData();
   }, [id, fetchData]);
+
+  // Check moderator status when thread data loads
+  useEffect(() => {
+    if (data?.thread?.forum_id && user) {
+      checkModeratorStatus(data.thread.forum_id).then((result) => {
+        if (result.success && result.data) {
+          setModStatus(result.data);
+        }
+      });
+    }
+  }, [data?.thread?.forum_id, user]);
 
   const handleLoadMore = () => {
     if (!isLoadingMore && data?.pagination.hasMore) {
@@ -226,6 +246,28 @@ export default function ThreadPage({
                     </div>
                   )}
                 </div>
+
+                {/* Thread Status Badges */}
+                {(thread.is_pinned || thread.is_locked || thread.is_hidden) && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {thread.is_pinned && (
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
+                        📌 Anclado
+                      </span>
+                    )}
+                    {thread.is_locked && (
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400">
+                        🔒 Bloqueado - No se permiten nuevos comentarios
+                      </span>
+                    )}
+                    {thread.is_hidden && (
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">
+                        🙈 Oculto
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div className="leading-relaxed markdown-content text-base mb-8">
                   <MarkdownRenderer content={thread.content} />
                 </div>
@@ -250,6 +292,17 @@ export default function ThreadPage({
                   </div>
                 </div>
               </article>
+
+              {/* Moderator Actions */}
+              {modStatus?.isModerator && (
+                <ModeratorActions
+                  threadId={thread.id}
+                  isPinned={thread.is_pinned || false}
+                  isLocked={thread.is_locked || false}
+                  isHidden={thread.is_hidden || false}
+                  permissions={modStatus.permissions}
+                />
+              )}
 
               {/* Comments Section */}
               <section>
@@ -332,8 +385,21 @@ export default function ThreadPage({
                 )}
               </section>
 
-              {/* Comment Form */}
-              {!showCommentForm ? (
+              {/* Comment Form - Hidden if thread is locked */}
+              {thread.is_locked ? (
+                <div
+                  className="card p-5 text-center mb-6"
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                  }}
+                >
+                  <span className="text-lg mr-2">🔒</span>
+                  <span style={{ color: 'var(--muted)' }}>
+                    Este thread está bloqueado. No se permiten nuevos comentarios.
+                  </span>
+                </div>
+              ) : !showCommentForm ? (
                 <button
                   onClick={() => setShowCommentForm(true)}
                   className="card p-5 pl-6 w-full text-left hover:bg-[var(--card-hover)] transition-all mb-6 relative overflow-visible"

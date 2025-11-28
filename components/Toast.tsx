@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export type ToastType = "success" | "error" | "info" | "warning";
 
@@ -17,14 +18,24 @@ interface ToastProps {
 }
 
 export default function Toast({ toast, onClose }: ToastProps) {
-  useEffect(() => {
-    const duration = toast.duration || 4000;
-    const timer = setTimeout(() => {
-      onClose(toast.id);
-    }, duration);
+  const [progress, setProgress] = useState(100);
+  const duration = toast.duration || 4000;
 
-    return () => clearTimeout(timer);
-  }, [toast.id, toast.duration, onClose]);
+  useEffect(() => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
+      setProgress(remaining);
+      
+      if (remaining <= 0) {
+        clearInterval(interval);
+        onClose(toast.id);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [toast.id, duration, onClose]);
 
   const getIcon = () => {
     switch (toast.type) {
@@ -131,8 +142,12 @@ export default function Toast({ toast, onClose }: ToastProps) {
   const styles = getStyles();
 
   return (
-    <div
-      className="card flex items-center gap-3 p-4 min-w-[300px] max-w-[500px] shadow-lg animate-slide-in"
+    <motion.div
+      initial={{ opacity: 0, x: 100, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 100, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="card flex flex-col min-w-[300px] max-w-[500px] shadow-lg overflow-hidden"
       style={{
         borderLeft: `4px solid ${styles.borderColor}`,
         background: styles.background,
@@ -141,31 +156,53 @@ export default function Toast({ toast, onClose }: ToastProps) {
       role="alert"
       aria-live="polite"
     >
-      <div style={{ color: styles.iconColor }} className="shrink-0">
-        {getIcon()}
-      </div>
-      <p className="flex-1 text-sm font-medium">{toast.message}</p>
-      <button
-        onClick={() => onClose(toast.id)}
-        className="shrink-0 p-1 rounded hover:bg-card-hover transition-colors"
-        aria-label="Cerrar notificación"
-        style={{ color: "var(--muted)" }}
-      >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      <div className="flex items-center gap-3 p-4">
+        <motion.div
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
+          style={{ color: styles.iconColor }}
+          className="shrink-0"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
+          {getIcon()}
+        </motion.div>
+        <p className="flex-1 text-sm font-medium">{toast.message}</p>
+        <button
+          onClick={() => onClose(toast.id)}
+          className="shrink-0 p-1 rounded hover:bg-card-hover transition-colors"
+          aria-label="Cerrar notificación"
+          style={{ color: "var(--muted)" }}
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      {/* Progress bar */}
+      <div 
+        className="h-1 w-full"
+        style={{ background: 'rgba(0,0,0,0.1)' }}
+      >
+        <motion.div
+          className="h-full"
+          style={{ 
+            background: styles.borderColor,
+            width: `${progress}%`,
+          }}
+          transition={{ duration: 0.05 }}
+        />
+      </div>
+    </motion.div>
   );
 }
 

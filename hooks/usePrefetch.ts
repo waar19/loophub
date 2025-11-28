@@ -1,12 +1,15 @@
 /**
- * Hook para Prefetch de Rutas
- * Mejora la navegación precargando páginas probables
+ * Hook para Prefetch de Rutas y Datos
+ * Mejora la navegación precargando páginas y datos probables
  */
 
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
+import { createClient } from '@/lib/supabase-browser';
+import { queryKeys, cachePresets } from '@/lib/query-client';
 
 interface PrefetchOptions {
   /** Delay antes de hacer prefetch (ms) */
@@ -190,6 +193,94 @@ export function usePrefetchThreads(threadIds: string[]) {
 
     return () => clearTimeout(timer);
   }, [router, threadIds]);
+}
+
+/**
+ * Hook para prefetch de datos con React Query
+ */
+export function useDataPrefetch() {
+  const queryClient = useQueryClient();
+  const supabase = createClient();
+
+  // Prefetch thread details
+  const prefetchThreadData = useCallback(
+    (threadId: string) => {
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.threads.detail(threadId),
+        queryFn: async () => {
+          const { data } = await supabase
+            .from('threads')
+            .select(`
+              *,
+              profile:profiles(username, avatar_url),
+              forum:forums(name, slug)
+            `)
+            .eq('id', threadId)
+            .single();
+          return data;
+        },
+        ...cachePresets.dynamic,
+      });
+    },
+    [queryClient, supabase]
+  );
+
+  // Prefetch forum threads
+  const prefetchForumData = useCallback(
+    async (forumSlug: string) => {
+      const { data: forum } = await supabase
+        .from('forums')
+        .select('id')
+        .eq('slug', forumSlug)
+        .single();
+
+      if (!forum) return;
+
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.forums.threads(forumSlug),
+        queryFn: async () => {
+          const { data } = await supabase
+            .from('threads')
+            .select(`
+              *,
+              profile:profiles(username, avatar_url)
+            `)
+            .eq('forum_id', forum.id)
+            .eq('is_hidden', false)
+            .order('created_at', { ascending: false })
+            .limit(10);
+          return data;
+        },
+        ...cachePresets.dynamic,
+      });
+    },
+    [queryClient, supabase]
+  );
+
+  // Prefetch user profile
+  const prefetchProfileData = useCallback(
+    (username: string) => {
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.profiles.detail(username),
+        queryFn: async () => {
+          const { data } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('username', username)
+            .single();
+          return data;
+        },
+        ...cachePresets.user,
+      });
+    },
+    [queryClient, supabase]
+  );
+
+  return {
+    prefetchThreadData,
+    prefetchForumData,
+    prefetchProfileData,
+  };
 }
 
 export default usePrefetch;
