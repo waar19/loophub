@@ -52,12 +52,12 @@ export default function SearchFilters({ onClose, isMobile = false }: SearchFilte
 
       if (forumsRes.ok) {
         const forumsData = await forumsRes.json();
-        setForums(forumsData);
+        setForums(Array.isArray(forumsData) ? forumsData : forumsData.forums || []);
       }
 
       if (tagsRes.ok) {
         const tagsData = await tagsRes.json();
-        setTags(tagsData);
+        setTags(Array.isArray(tagsData) ? tagsData : tagsData.tags || []);
       }
     } catch (error) {
       console.error("Error fetching filter data:", error);
