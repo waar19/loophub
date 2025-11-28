@@ -2,10 +2,12 @@
 
 import { use } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useCallback } from "react";
 import SimpleForm from "@/components/SimpleForm";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import TagSelector from "@/components/TagSelector";
+import DraftIndicator, { DraftRestoreBanner } from "@/components/DraftIndicator";
+import { useDraft } from "@/hooks/useDraft";
 import { createClient } from "@/lib/supabase-browser";
 import { useToast } from "@/contexts/ToastContext";
 import { useTranslations } from "@/components/TranslationsProvider";
@@ -31,6 +33,58 @@ export default function NewThreadPage({
   const { showSuccess, showError } = useToast();
   const { t } = useTranslations();
 
+  // Draft system
+  const draftKey = `new-thread-${slug}`;
+  const {
+    content,
+    title: draftTitle,
+    setContent,
+    setTitle: setDraftTitle,
+    hasDraft,
+    lastSaved,
+    isSaving,
+    restore,
+    clear,
+    discard,
+  } = useDraft({ key: draftKey });
+
+  const [showRestoreBanner, setShowRestoreBanner] = useState(hasDraft);
+  
+  // Calculate draft age on initial render
+  const [draftAge] = useState<number | undefined>(() => {
+    if (hasDraft) {
+      const draft = restore();
+      if (draft?.updatedAt) {
+        return Date.now() - draft.updatedAt;
+      }
+    }
+    return undefined;
+  });
+
+  // Form data derived from draft state
+  const formData = { title: draftTitle, content };
+
+  // Auto-save draft when form changes
+  const handleFormChange = useCallback((field: string, value: string) => {
+    if (field === 'title') {
+      setDraftTitle(value);
+    } else if (field === 'content') {
+      setContent(value);
+    }
+  }, [setContent, setDraftTitle]);
+
+  // Restore draft
+  const handleRestoreDraft = useCallback(() => {
+    restore();
+    setShowRestoreBanner(false);
+  }, [restore]);
+
+  // Discard draft
+  const handleDiscardDraft = useCallback(() => {
+    discard();
+    setShowRestoreBanner(false);
+  }, [discard]);
+
   useEffect(() => {
     async function fetchForum() {
       const supabase = createClient();
@@ -54,6 +108,8 @@ export default function NewThreadPage({
       });
 
       if (result.success && result.data) {
+        // Clear draft on successful submit
+        clear();
         showSuccess(t("threads.threadCreated") || "¡Hilo creado exitosamente!");
         router.push(`/thread/${result.data.id}`);
       } else {
@@ -64,7 +120,7 @@ export default function NewThreadPage({
   };
 
   return (
-    <div className="lg:ml-[var(--sidebar-width)] xl:mr-80">
+    <div className="lg:ml-(--sidebar-width) xl:mr-80">
       <div className="max-w-4xl mx-auto px-4 py-4">
         <Breadcrumbs
           items={[
@@ -98,12 +154,29 @@ export default function NewThreadPage({
           </h1>
         </div>
 
+        {/* Draft Restore Banner */}
+        <DraftRestoreBanner
+          show={showRestoreBanner}
+          onRestore={handleRestoreDraft}
+          onDiscard={handleDiscardDraft}
+          draftAge={draftAge}
+        />
+
         <div
           className="card"
           style={{
             borderLeft: "4px solid var(--brand)",
           }}
         >
+          {/* Draft Indicator */}
+          <div className="flex justify-end mb-4">
+            <DraftIndicator
+              hasDraft={hasDraft}
+              lastSaved={lastSaved}
+              isSaving={isSaving}
+            />
+          </div>
+
           <SimpleForm
             fields={[
               {
@@ -123,6 +196,8 @@ export default function NewThreadPage({
                 maxLength: 10000,
               },
             ]}
+            values={formData}
+            onChange={handleFormChange}
             onSubmit={handleSubmit}
             submitText={t("threads.createThread")}
           >

@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import CommentThread from "@/components/CommentThread";
-import SimpleForm from "@/components/SimpleForm";
+import CommentFormWithDraft from "@/components/CommentFormWithDraft";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import { CommentSkeleton } from "@/components/LoadingSkeleton";
 // Lazy load MarkdownRenderer
@@ -366,49 +366,13 @@ export default function ThreadPage({
                     borderLeft: "3px solid var(--brand)",
                   }}
                 >
-                  <div className="flex items-center gap-3 mb-5 justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
-                        style={{
-                          background: "var(--brand)",
-                          color: "white",
-                        }}
-                      >
-                        ✍️
-                      </div>
-                      <h3
-                        className="font-bold text-lg"
-                        style={{ color: "var(--foreground)" }}
-                      >
-                        {t("threads.addComment")}
-                      </h3>
-                    </div>
-                    <button
-                      onClick={() => setShowCommentForm(false)}
-                      className="hover:opacity-70 transition-opacity text-xl"
-                      style={{ color: "var(--muted)" }}
-                      aria-label="Cancel"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <SimpleForm
-                    fields={[
-                      {
-                        name: "content",
-                        label: t("threads.yourComment"),
-                        type: "markdown",
-                        placeholder: t("threads.commentPlaceholder"),
-                        required: true,
-                        maxLength: 10000,
-                      },
-                    ]}
+                  <CommentFormWithDraft
+                    threadId={id}
                     onSubmit={async (values) => {
                       await handleCommentSubmit(values);
                       setShowCommentForm(false);
                     }}
-                    submitText={t("threads.postComment")}
+                    onCancel={() => setShowCommentForm(false)}
                   />
                 </div>
               )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, ReactNode } from "react";
+import { FormEvent, useState, ReactNode, useEffect, useCallback } from "react";
 import MarkdownEditor from "./MarkdownEditor";
 
 interface Field {
@@ -18,6 +18,10 @@ interface SimpleFormProps {
   onSubmit: (data: Record<string, string>) => Promise<void>;
   submitText?: string;
   children?: ReactNode;
+  /** Valores controlados externamente */
+  values?: Record<string, string>;
+  /** Callback cuando cambia cualquier campo */
+  onChange?: (name: string, value: string) => void;
 }
 
 export default function SimpleForm({
@@ -25,18 +29,38 @@ export default function SimpleForm({
   onSubmit,
   submitText = "Submit",
   children,
+  values: externalValues,
+  onChange,
 }: SimpleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
     fields.forEach((field) => {
-      if (field.defaultValue) {
+      if (externalValues?.[field.name]) {
+        initial[field.name] = externalValues[field.name];
+      } else if (field.defaultValue) {
         initial[field.name] = field.defaultValue;
       }
     });
     return initial;
   });
+
+  // Sync with external values when they change
+  useEffect(() => {
+    if (externalValues) {
+      setFieldValues(prev => ({
+        ...prev,
+        ...externalValues,
+      }));
+    }
+  }, [externalValues]);
+
+  // Handle field change with callback
+  const handleFieldChange = useCallback((name: string, value: string) => {
+    setFieldValues(prev => ({ ...prev, [name]: value }));
+    onChange?.(name, value);
+  }, [onChange]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,9 +136,7 @@ export default function SimpleForm({
           {field.type === "markdown" ? (
             <MarkdownEditor
               value={fieldValues[field.name] || ""}
-              onChange={(value) =>
-                setFieldValues((prev) => ({ ...prev, [field.name]: value }))
-              }
+              onChange={(value) => handleFieldChange(field.name, value)}
               placeholder={field.placeholder}
               required={field.required}
               maxLength={field.maxLength}
@@ -128,7 +150,8 @@ export default function SimpleForm({
               required={field.required}
               maxLength={field.maxLength}
               disabled={isSubmitting}
-              defaultValue={field.defaultValue}
+              value={fieldValues[field.name] || ""}
+              onChange={(e) => handleFieldChange(field.name, e.target.value)}
             />
           ) : (
             <input
@@ -140,7 +163,8 @@ export default function SimpleForm({
               required={field.required}
               maxLength={field.maxLength}
               disabled={isSubmitting}
-              defaultValue={field.defaultValue}
+              value={fieldValues[field.name] || ""}
+              onChange={(e) => handleFieldChange(field.name, e.target.value)}
             />
           )}
         </div>
