@@ -49,9 +49,15 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <QuickStatCard label="Reports" count={reports?.length || 0} icon="🚨" />
         <QuickStatCard label="Recent Threads" count={threads?.length || 0} icon="📝" />
+        <Link href="/admin/forums" className="contents">
+          <div className="card text-center p-4 hover:shadow-lg transition-shadow cursor-pointer">
+            <span className="text-2xl">📁</span>
+            <p className="text-sm font-medium mt-1">Forums</p>
+          </div>
+        </Link>
         <Link href="/admin/moderators" className="contents">
           <div className="card text-center p-4 hover:shadow-lg transition-shadow cursor-pointer">
             <span className="text-2xl">🛡️</span>
@@ -61,7 +67,7 @@ export default async function AdminDashboard() {
         <Link href="/admin/analytics" className="contents">
           <div className="card text-center p-4 hover:shadow-lg transition-shadow cursor-pointer">
             <span className="text-2xl">📊</span>
-            <p className="text-sm font-medium mt-1">View Analytics</p>
+            <p className="text-sm font-medium mt-1">Analytics</p>
           </div>
         </Link>
       </div>
