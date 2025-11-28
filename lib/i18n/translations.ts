@@ -210,6 +210,15 @@ export const translations = {
       startFresh: "Empezar de nuevo",
       saving: "Guardando...",
       saved: "Guardado",
+      // Access control
+      settings: "Configuración",
+      accessDenied: "Acceso Denegado",
+      noPermission: "No tienes permisos para ver esta página.",
+      goBack: "Volver",
+      // Settings tabs
+      general: "General",
+      dangerZone: "Zona de Peligro",
+      deleteWarning: "Una vez eliminado, no podrás recuperar esta comunidad.",
     },
     // Search
     search: {
@@ -308,6 +317,48 @@ export const translations = {
       noThreads: "No hay publicaciones aún",
       levelRequired: "Necesitas nivel 3 o superior para crear comunidades",
       currentLevel: "Tu nivel actual",
+      // Membership
+      role: {
+        owner: "Propietario",
+        moderator: "Moderador",
+        member: "Miembro",
+      },
+      promote: "Promover",
+      demote: "Degradar",
+      kick: "Expulsar",
+      confirmKick: "¿Estás seguro de que quieres expulsar a {username}?",
+      // Join requests
+      joinRequests: "Solicitudes de Unión",
+      noRequests: "No hay solicitudes pendientes",
+      approve: "Aprobar",
+      reject: "Rechazar",
+      requestMessage: "Mensaje",
+      // Invites
+      inviteLinks: "Enlaces de Invitación",
+      createInvite: "Crear Invitación",
+      noInvites: "No hay invitaciones activas",
+      maxUses: "Usos máximos",
+      unlimited: "Ilimitados",
+      expiresIn: "Expira en",
+      never: "Nunca",
+      hour: "hora",
+      hours: "horas",
+      days: "días",
+      uses: "usos",
+      expired: "Expirado",
+      expires: "Expira",
+      // Invite page
+      invalidInvite: "Invitación Inválida",
+      browseCommunities: "Explorar Comunidades",
+      youveBeenInvited: "Has sido invitado a unirte",
+      acceptInvite: "Aceptar Invitación",
+      loginToJoin: "Inicia sesión para unirte",
+      signedInAs: "Conectado como",
+      // Settings/Management
+      confirmDelete: "¿Estás seguro de que quieres eliminar esta comunidad? Esta acción no se puede deshacer.",
+      copy: "Copiar",
+      copied: "¡Copiado!",
+      revoke: "Revocar",
     },
     // Subscriptions
     subscriptions: {
@@ -815,6 +866,15 @@ export const translations = {
       startFresh: "Start fresh",
       saving: "Saving...",
       saved: "Saved",
+      // Access control
+      settings: "Settings",
+      accessDenied: "Access Denied",
+      noPermission: "You don't have permission to view this page.",
+      goBack: "Go Back",
+      // Settings tabs
+      general: "General",
+      dangerZone: "Danger Zone",
+      deleteWarning: "Once deleted, you won't be able to recover this community.",
     },
     // Search
     search: {
@@ -913,6 +973,48 @@ export const translations = {
       noThreads: "No posts yet",
       levelRequired: "You need level 3 or higher to create communities",
       currentLevel: "Your current level",
+      // Membership
+      role: {
+        owner: "Owner",
+        moderator: "Moderator",
+        member: "Member",
+      },
+      promote: "Promote",
+      demote: "Demote",
+      kick: "Kick",
+      confirmKick: "Are you sure you want to kick {username}?",
+      // Join requests
+      joinRequests: "Join Requests",
+      noRequests: "No pending requests",
+      approve: "Approve",
+      reject: "Reject",
+      requestMessage: "Message",
+      // Invites
+      inviteLinks: "Invite Links",
+      createInvite: "Create Invite",
+      noInvites: "No active invites",
+      maxUses: "Max uses",
+      unlimited: "Unlimited",
+      expiresIn: "Expires in",
+      never: "Never",
+      hour: "hour",
+      hours: "hours",
+      days: "days",
+      uses: "uses",
+      expired: "Expired",
+      expires: "Expires",
+      // Invite page
+      invalidInvite: "Invalid Invite",
+      browseCommunities: "Browse Communities",
+      youveBeenInvited: "You've been invited to join",
+      acceptInvite: "Accept Invite",
+      loginToJoin: "Log in to join",
+      signedInAs: "Signed in as",
+      // Settings/Management
+      confirmDelete: "Are you sure you want to delete this community? This action cannot be undone.",
+      copy: "Copy",
+      copied: "Copied!",
+      revoke: "Revoke",
     },
     // Subscriptions
     subscriptions: {
@@ -1420,6 +1522,15 @@ export const translations = {
       startFresh: "Começar do zero",
       saving: "Salvando...",
       saved: "Salvo",
+      // Access control
+      settings: "Configurações",
+      accessDenied: "Acesso Negado",
+      noPermission: "Você não tem permissão para ver esta página.",
+      goBack: "Voltar",
+      // Settings tabs
+      general: "Geral",
+      dangerZone: "Zona de Perigo",
+      deleteWarning: "Uma vez excluída, você não poderá recuperar esta comunidade.",
     },
     // Search
     search: {
@@ -1518,6 +1629,48 @@ export const translations = {
       noThreads: "Ainda não há publicações",
       levelRequired: "Você precisa de nível 3 ou superior para criar comunidades",
       currentLevel: "Seu nível atual",
+      // Membership
+      role: {
+        owner: "Proprietário",
+        moderator: "Moderador",
+        member: "Membro",
+      },
+      promote: "Promover",
+      demote: "Rebaixar",
+      kick: "Expulsar",
+      confirmKick: "Tem certeza que deseja expulsar {username}?",
+      // Join requests
+      joinRequests: "Solicitações de Entrada",
+      noRequests: "Nenhuma solicitação pendente",
+      approve: "Aprovar",
+      reject: "Rejeitar",
+      requestMessage: "Mensagem",
+      // Invites
+      inviteLinks: "Links de Convite",
+      createInvite: "Criar Convite",
+      noInvites: "Nenhum convite ativo",
+      maxUses: "Usos máximos",
+      unlimited: "Ilimitado",
+      expiresIn: "Expira em",
+      never: "Nunca",
+      hour: "hora",
+      hours: "horas",
+      days: "dias",
+      uses: "usos",
+      expired: "Expirado",
+      expires: "Expira",
+      // Invite page
+      invalidInvite: "Convite Inválido",
+      browseCommunities: "Explorar Comunidades",
+      youveBeenInvited: "Você foi convidado para participar",
+      acceptInvite: "Aceitar Convite",
+      loginToJoin: "Faça login para participar",
+      signedInAs: "Conectado como",
+      // Settings/Management
+      confirmDelete: "Tem certeza que deseja excluir esta comunidade? Esta ação não pode ser desfeita.",
+      copy: "Copiar",
+      copied: "Copiado!",
+      revoke: "Revogar",
     },
     // Subscriptions
     subscriptions: {
