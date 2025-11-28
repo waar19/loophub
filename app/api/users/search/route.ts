@@ -42,34 +42,56 @@ export async function GET(request: NextRequest) {
 
     const { q, limit } = parseResult.data;
 
-    // Search users using the database function
-    const { data: users, error } = await supabase
+    // Try RPC function first, then fallback to direct query
+    let users = null;
+    
+    // Try the RPC function
+    const { data: rpcUsers, error: rpcError } = await supabase
       .rpc('search_users_for_mention', {
         p_query: q,
         p_limit: limit,
       });
 
-    if (error) {
-      console.error('Error searching users:', error);
+    if (!rpcError && rpcUsers) {
+      users = rpcUsers;
+    } else {
+      // Log RPC error for debugging
+      if (rpcError) {
+        console.error('RPC search_users_for_mention error:', rpcError.message);
+      }
       
-      // Fallback to direct query if function doesn't exist yet
+      // Fallback to direct query
       const { data: fallbackUsers, error: fallbackError } = await supabase
         .from('profiles')
         .select('id, username, avatar_url, level')
-        .ilike('username', `${q}%`)
         .not('username', 'is', null)
+        .ilike('username', `${q}%`)
         .order('level', { ascending: false })
-        .order('karma', { ascending: false })
         .limit(limit);
       
       if (fallbackError) {
-        return NextResponse.json(
-          { error: 'Failed to search users' },
-          { status: 500 }
-        );
+        console.error('Fallback query error:', fallbackError.message);
+        
+        // Last resort: simple query without ordering by karma
+        const { data: simpleUsers, error: simpleError } = await supabase
+          .from('profiles')
+          .select('id, username, avatar_url, level')
+          .not('username', 'is', null)
+          .ilike('username', `${q}%`)
+          .limit(limit);
+        
+        if (simpleError) {
+          console.error('Simple query error:', simpleError.message);
+          return NextResponse.json(
+            { error: 'Failed to search users', details: simpleError.message },
+            { status: 500 }
+          );
+        }
+        
+        users = simpleUsers;
+      } else {
+        users = fallbackUsers;
       }
-      
-      return NextResponse.json(fallbackUsers || []);
     }
 
     return NextResponse.json(users || []);
