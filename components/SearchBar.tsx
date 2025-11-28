@@ -38,9 +38,16 @@ export default function SearchBar() {
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && query.trim()) {
+            e.preventDefault();
+            router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+          }
+        }}
         placeholder={t("common.searchPlaceholder")}
         className="search-input w-full"
         aria-label={t("common.search")}
+        data-search-input
         style={{
           background: "var(--card-bg)",
           borderColor: "var(--border)",
