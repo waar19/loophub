@@ -8,6 +8,8 @@ import { useTranslations } from '@/components/TranslationsProvider';
 import MemberList from '@/components/MemberList';
 import JoinRequests from '@/components/JoinRequests';
 import InviteManager from '@/components/InviteManager';
+import DesignEditor from '@/components/DesignEditor';
+import RulesEditor from '@/components/RulesEditor';
 
 interface Community {
   id: string;
@@ -20,13 +22,18 @@ interface Community {
   rules: string | null;
   max_members: number | null;
   category: string | null;
+  theme_color?: string | null;
+  accent_color?: string | null;
+  text_color?: string | null;
+  custom_css?: string | null;
+  image_url?: string | null;
 }
 
 interface CommunitySettingsPageProps {
   params: Promise<{ slug: string }>;
 }
 
-type Tab = 'general' | 'members' | 'requests' | 'invites';
+type Tab = 'general' | 'design' | 'rules' | 'members' | 'requests' | 'invites';
 
 export default function CommunitySettingsPage({ params }: CommunitySettingsPageProps) {
   const { slug } = use(params);
@@ -186,6 +193,18 @@ export default function CommunitySettingsPage({ params }: CommunitySettingsPageP
           {t('common.general')}
         </button>
         <button
+          className={`tab ${activeTab === 'design' ? 'active' : ''}`}
+          onClick={() => setActiveTab('design')}
+        >
+          🎨 {t('communities.designSettings')}
+        </button>
+        <button
+          className={`tab ${activeTab === 'rules' ? 'active' : ''}`}
+          onClick={() => setActiveTab('rules')}
+        >
+          📜 {t('communities.communityRules')}
+        </button>
+        <button
           className={`tab ${activeTab === 'members' ? 'active' : ''}`}
           onClick={() => setActiveTab('members')}
         >
@@ -296,6 +315,28 @@ export default function CommunitySettingsPage({ params }: CommunitySettingsPageP
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'design' && (
+          <div className="card">
+            <DesignEditor 
+              communitySlug={slug}
+              initialDesign={{
+                theme_color: community.theme_color || null,
+                accent_color: community.accent_color || null,
+                text_color: community.text_color || null,
+                custom_css: community.custom_css || null,
+                banner_url: community.banner_url || null,
+                image_url: community.image_url || null,
+              }}
+            />
+          </div>
+        )}
+
+        {activeTab === 'rules' && (
+          <div className="card">
+            <RulesEditor communitySlug={slug} />
           </div>
         )}
 

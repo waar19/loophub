@@ -35,6 +35,11 @@ interface Community {
     role: string;
     user: { id: string; username: string; avatar_url: string | null };
   }>;
+  // Theme customization
+  theme_color?: string | null;
+  accent_color?: string | null;
+  text_color?: string | null;
+  custom_css?: string | null;
 }
 
 interface CommunityThread {
@@ -180,8 +185,23 @@ export default function CommunityPage({ params }: { params: Promise<{ slug: stri
   const isMod = community.membership?.role === "moderator";
   const isMember = !!community.membership;
 
+  // Custom theme styles
+  const themeStyles = {
+    '--community-theme': community.theme_color || 'var(--brand)',
+    '--community-accent': community.accent_color || 'var(--accent)',
+    '--community-text': community.text_color || 'var(--foreground)',
+  } as React.CSSProperties;
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div 
+      className="community-page max-w-6xl mx-auto px-4 py-8"
+      style={themeStyles}
+    >
+      {/* Custom CSS */}
+      {community.custom_css && (
+        <style dangerouslySetInnerHTML={{ __html: community.custom_css }} />
+      )}
+
       <Breadcrumbs
         items={[
           { label: t("common.home"), href: "/" },
@@ -191,27 +211,34 @@ export default function CommunityPage({ params }: { params: Promise<{ slug: stri
       />
 
       {/* Banner */}
-      {community.banner_url && (
-        <div className="relative h-48 rounded-xl overflow-hidden mb-6">
+      <div 
+        className="relative h-48 rounded-xl overflow-hidden mb-6"
+        style={{ 
+          background: community.banner_url 
+            ? 'transparent' 
+            : `linear-gradient(135deg, ${community.theme_color || 'var(--brand)'}, ${community.accent_color || 'var(--accent)'})`
+        }}
+      >
+        {community.banner_url && (
           <Image
             src={community.banner_url}
             alt={community.name}
             fill
             className="object-cover"
           />
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Header */}
       <div className="card mb-6">
         <div className="flex items-start gap-4">
           {/* Avatar */}
           <div
-            className="w-20 h-20 rounded-xl flex-shrink-0 flex items-center justify-center text-3xl font-bold overflow-hidden"
+            className="w-20 h-20 rounded-xl shrink-0 flex items-center justify-center text-3xl font-bold overflow-hidden"
             style={{
               background: community.image_url
                 ? "transparent"
-                : "linear-gradient(135deg, var(--accent), var(--accent-hover))",
+                : `linear-gradient(135deg, ${community.theme_color || 'var(--brand)'}, ${community.accent_color || 'var(--accent)'})`,
               color: "white",
             }}
           >
@@ -231,7 +258,7 @@ export default function CommunityPage({ params }: { params: Promise<{ slug: stri
           {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
+              <h1 className="text-2xl font-bold" style={{ color: community.text_color || "var(--foreground)" }}>
                 {community.name}
               </h1>
               {community.visibility !== "public" && (
@@ -297,7 +324,8 @@ export default function CommunityPage({ params }: { params: Promise<{ slug: stri
               <button
                 onClick={handleJoin}
                 disabled={isJoining}
-                className="btn-primary"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-white"
+                style={{ background: community.theme_color || 'var(--brand)' }}
               >
                 {isJoining ? "..." : t("communities.join")}
               </button>
