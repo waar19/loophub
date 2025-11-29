@@ -105,7 +105,21 @@ export function TranslationsProvider({ children }: { children: ReactNode }) {
 export function useTranslations() {
   const context = useContext(TranslationsContext);
   if (!context) {
-    throw new Error("useTranslations must be used within TranslationsProvider");
+    // Fallback for SSR edge cases - return default translations
+    const getNestedValue = (obj: any, path: string): string => {
+      return path.split(".").reduce((current, key) => current?.[key], obj) || path;
+    };
+    return {
+      locale: defaultLocale,
+      setLocale: () => {},
+      t: (key: TranslationPath, params?: Record<string, string | number>) => {
+        const translation = getNestedValue(translations[defaultLocale], key) || key;
+        if (!params) return translation;
+        return translation.replace(/\{(\w+)\}/g, (match, paramKey) => {
+          return params[paramKey]?.toString() || match;
+        });
+      },
+    };
   }
   return context;
 }

@@ -11,6 +11,7 @@ interface User {
 interface Profile {
   username: string;
   is_admin?: boolean;
+  level?: number;
 }
 
 export function useAuth() {
@@ -29,7 +30,7 @@ export function useAuth() {
         setUser(currentUser);
         const { data: profileData } = await supabase
           .from("profiles")
-          .select("username, is_admin")
+          .select("username, is_admin, level")
           .eq("id", currentUser.id)
           .single();
         setProfile(profileData || null);
