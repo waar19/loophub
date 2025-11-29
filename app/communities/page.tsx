@@ -22,8 +22,11 @@ interface Community {
   slug: string;
   description: string | null;
   image_url: string | null;
+  theme_color?: string | null;
   visibility: "public" | "private" | "invite_only";
   member_count: number;
+  new_members?: number;
+  trending_score?: number;
   category?: Category;
   creator?: {
     id: string;
@@ -39,20 +42,32 @@ export default function CommunitiesPage() {
   const { t } = useTranslations();
 
   const [communities, setCommunities] = useState<Community[]>([]);
+  const [trendingCommunities, setTrendingCommunities] = useState<Community[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isTrendingLoading, setIsTrendingLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const currentCategory = searchParams.get("category") || "";
   const currentSort = searchParams.get("sort") || "popular";
   const showMy = searchParams.get("my") === "true";
+  const currentSearch = searchParams.get("q") || "";
 
   const canCreateCommunity = profile?.is_admin || (profile?.level || 0) >= 3;
 
   useEffect(() => {
     fetchCategories();
+    fetchTrendingCommunities();
+  }, []);
+
+  useEffect(() => {
     fetchCommunities();
-  }, [currentCategory, currentSort, showMy]);
+  }, [currentCategory, currentSort, showMy, currentSearch]);
+
+  useEffect(() => {
+    setSearchQuery(currentSearch);
+  }, [currentSearch]);
 
   const fetchCategories = async () => {
     try {
@@ -66,6 +81,21 @@ export default function CommunitiesPage() {
     }
   };
 
+  const fetchTrendingCommunities = async () => {
+    setIsTrendingLoading(true);
+    try {
+      const res = await fetch("/api/communities/trending?limit=6&period=week");
+      if (res.ok) {
+        const data = await res.json();
+        setTrendingCommunities(data.communities || []);
+      }
+    } catch (error) {
+      console.error("Error fetching trending:", error);
+    } finally {
+      setIsTrendingLoading(false);
+    }
+  };
+
   const fetchCommunities = async () => {
     setIsLoading(true);
     try {
@@ -73,6 +103,7 @@ export default function CommunitiesPage() {
       if (currentCategory) params.set("category", currentCategory);
       if (currentSort) params.set("sort", currentSort);
       if (showMy) params.set("my", "true");
+      if (currentSearch) params.set("q", currentSearch);
 
       const res = await fetch(`/api/communities?${params}`);
       if (res.ok) {
@@ -96,6 +127,19 @@ export default function CommunitiesPage() {
     }
     router.push(`/communities?${params}`);
   };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateFilter("q", searchQuery);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    updateFilter("q", "");
+  };
+
+  // Show trending section when no filters applied
+  const showTrendingSection = !currentCategory && !showMy && !currentSearch;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -129,6 +173,125 @@ export default function CommunitiesPage() {
           </Link>
         )}
       </div>
+
+      {/* Search Bar */}
+      <form onSubmit={handleSearch} className="relative mb-6">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t("communities.searchPlaceholder")}
+          className="w-full px-4 py-3 pl-12 rounded-xl border text-base"
+          style={{
+            background: "var(--card-bg)",
+            borderColor: "var(--border)",
+            color: "var(--foreground)",
+          }}
+        />
+        <svg
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          style={{ color: "var(--muted)" }}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            style={{ color: "var(--muted)" }}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </form>
+
+      {/* Trending Section */}
+      {showTrendingSection && !isTrendingLoading && trendingCommunities.length > 0 && (
+        <section className="mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-2xl">🔥</span>
+            <h2 className="text-xl font-bold" style={{ color: "var(--foreground)" }}>
+              {t("communities.trending")}
+            </h2>
+            <span className="text-sm px-2 py-0.5 rounded-full" style={{ background: "var(--accent)", color: "white" }}>
+              {t("communities.trendingSubtitle")}
+            </span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {trendingCommunities.slice(0, 6).map((community) => (
+              <Link
+                key={community.id}
+                href={`/c/${community.slug}`}
+                className="card flex items-center gap-4 p-4 hover:shadow-lg transition-all hover:-translate-y-0.5"
+              >
+                {community.image_url ? (
+                  <img
+                    src={community.image_url}
+                    alt={community.name}
+                    className="w-14 h-14 rounded-xl object-cover shrink-0"
+                  />
+                ) : (
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-xl shrink-0"
+                    style={{ background: community.theme_color || "var(--accent)" }}
+                  >
+                    {community.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate" style={{ color: "var(--foreground)" }}>
+                    {community.name}
+                  </h3>
+                  <p className="text-sm truncate" style={{ color: "var(--muted)" }}>
+                    {community.member_count} {t("communities.members")}
+                    {community.new_members && community.new_members > 0 && (
+                      <span className="ml-2 text-green-500">
+                        +{community.new_members} nuevo{community.new_members > 1 ? "s" : ""}
+                      </span>
+                    )}
+                  </p>
+                  {community.category && (
+                    <span className="text-xs" style={{ color: "var(--muted)" }}>
+                      {community.category.icon} {community.category.name}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Categories Quick Access */}
+      {showTrendingSection && categories.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--foreground)" }}>
+            {t("communities.exploreByCategory")}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => updateFilter("category", cat.slug)}
+                className="px-4 py-2 rounded-full text-sm font-medium border hover:border-[var(--accent)] transition-colors"
+                style={{
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                  background: "var(--card-bg)",
+                }}
+              >
+                {cat.icon} {cat.name}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
@@ -181,11 +344,33 @@ export default function CommunitiesPage() {
           <option value="newest">{t("communities.sortNewest")}</option>
           <option value="alphabetical">{t("communities.sortAlphabetical")}</option>
         </select>
+
+        {/* Active filters */}
+        {(currentCategory || currentSearch) && (
+          <button
+            onClick={() => {
+              router.push("/communities");
+              setSearchQuery("");
+            }}
+            className="text-sm flex items-center gap-1 px-3 py-1 rounded-full"
+            style={{ color: "var(--accent)", background: "rgba(99, 102, 241, 0.1)" }}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Limpiar filtros
+          </button>
+        )}
       </div>
 
       {/* Results count */}
       {!isLoading && (
         <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
+          {currentSearch && (
+            <span>
+              Buscando &quot;{currentSearch}&quot; — {" "}
+            </span>
+          )}
           {total} {total === 1 ? t("communities.communityFound") : t("communities.communitiesFound")}
         </p>
       )}
@@ -200,10 +385,15 @@ export default function CommunitiesPage() {
       ) : communities.length === 0 ? (
         <div className="card text-center py-12">
           <div className="text-4xl mb-4">🏘️</div>
-          <p style={{ color: "var(--muted)" }}>
-            {showMy ? t("communities.noMyCommunities") : t("communities.noCommunities")}
+          <p className="font-medium mb-2" style={{ color: "var(--foreground)" }}>
+            {currentSearch ? t("communities.noResults") : showMy ? t("communities.noMyCommunities") : t("communities.noCommunities")}
           </p>
-          {canCreateCommunity && !showMy && (
+          {currentSearch && (
+            <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
+              {t("communities.tryDifferentSearch")}
+            </p>
+          )}
+          {canCreateCommunity && !showMy && !currentSearch && (
             <Link
               href="/communities/new"
               className="btn-primary inline-block mt-4"

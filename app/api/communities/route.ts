@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 
-// GET - List communities
+// GET - List communities with advanced filters
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -9,10 +9,15 @@ export async function GET(request: NextRequest) {
     
     const category = searchParams.get('category');
     const search = searchParams.get('q');
-    const sort = searchParams.get('sort') || 'popular'; // popular, newest, alphabetical
+    const sort = searchParams.get('sort') || 'popular'; // popular, newest, alphabetical, active
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50);
     const offset = parseInt(searchParams.get('offset') || '0');
     const my = searchParams.get('my') === 'true'; // Get user's communities
+    const visibility = searchParams.get('visibility'); // public, private, invite_only
+    const minMembers = parseInt(searchParams.get('minMembers') || '0');
+    const maxMembers = searchParams.get('maxMembers') ? parseInt(searchParams.get('maxMembers')!) : null;
+    const exclude = searchParams.get('exclude')?.split(',') || []; // Exclude community IDs
+    const suggested = searchParams.get('suggested') === 'true'; // Get suggested for user
 
     let query = supabase
       .from('communities')
@@ -46,9 +51,37 @@ export async function GET(request: NextRequest) {
       }
       
       query = query.in('id', communityIds);
+    } else if (suggested) {
+      // Get suggested communities (ones user isn't a member of)
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        const { data: memberCommunities } = await supabase
+          .from('community_members')
+          .select('community_id')
+          .eq('user_id', user.id);
+        
+        const userCommunityIds = memberCommunities?.map(m => m.community_id) || [];
+        
+        if (userCommunityIds.length > 0) {
+          query = query.not('id', 'in', `(${userCommunityIds.join(',')})`);
+        }
+      }
+      
+      // Only public for suggestions
+      query = query.eq('visibility', 'public');
     } else {
       // Only public communities for non-my queries
-      query = query.eq('visibility', 'public');
+      if (visibility) {
+        query = query.eq('visibility', visibility);
+      } else {
+        query = query.eq('visibility', 'public');
+      }
+    }
+
+    // Exclude specific communities
+    if (exclude.length > 0) {
+      query = query.not('id', 'in', `(${exclude.join(',')})`);
     }
 
     // Filter by category
