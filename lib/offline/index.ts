@@ -69,3 +69,26 @@ export {
   clearOfflineQueue,
   removeExpiredItems,
 } from './management';
+
+// Cache strategy selection
+export {
+  getCacheStrategy,
+  isStaticAssetPath,
+  isStaticAssetDestination,
+  isApiSingleItem,
+  isApiList,
+  API_SINGLE_ITEM_PATTERNS,
+  API_LIST_PATTERNS,
+  type CacheStrategy,
+  type RequestDestination,
+  type RequestInfo,
+} from './cache-strategy';
+
+// Notification URL extraction
+export {
+  extractNotificationUrl,
+  buildReplyUrl,
+  DEFAULT_NOTIFICATION_URL,
+  type NotificationData,
+  type NotificationLike,
+} from './notification';

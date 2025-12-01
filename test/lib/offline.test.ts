@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import * as fc from 'fast-check';
 import {
   OfflineQueueItem,
@@ -1081,6 +1081,585 @@ describe('Cache Pruning', () => {
         }),
         { numRuns: 100 }
       );
+    });
+  });
+});
+
+
+/**
+ * Property-Based Tests for Cache Strategy Selection
+ *
+ * **Feature: pwa-offline, Property 8: Cache strategy selection**
+ * **Validates: Requirements 4.2, 4.3**
+ */
+describe('Cache Strategy Selection', () => {
+  // Import the cache strategy module
+  // Note: We need to import dynamically since we're appending to the test file
+  let getCacheStrategy: typeof import('@/lib/offline/cache-strategy').getCacheStrategy;
+  let isStaticAssetPath: typeof import('@/lib/offline/cache-strategy').isStaticAssetPath;
+  let isStaticAssetDestination: typeof import('@/lib/offline/cache-strategy').isStaticAssetDestination;
+  let isApiSingleItem: typeof import('@/lib/offline/cache-strategy').isApiSingleItem;
+  let isApiList: typeof import('@/lib/offline/cache-strategy').isApiList;
+  type RequestInfo = import('@/lib/offline/cache-strategy').RequestInfo;
+  type RequestDestination = import('@/lib/offline/cache-strategy').RequestDestination;
+  type CacheStrategy = import('@/lib/offline/cache-strategy').CacheStrategy;
+
+  beforeAll(async () => {
+    const cacheStrategyModule = await import('@/lib/offline/cache-strategy');
+    getCacheStrategy = cacheStrategyModule.getCacheStrategy;
+    isStaticAssetPath = cacheStrategyModule.isStaticAssetPath;
+    isStaticAssetDestination = cacheStrategyModule.isStaticAssetDestination;
+    isApiSingleItem = cacheStrategyModule.isApiSingleItem;
+    isApiList = cacheStrategyModule.isApiList;
+  });
+
+  // Arbitrary for request destinations
+  const requestDestinationArb: fc.Arbitrary<RequestDestination> = fc.constantFrom(
+    'document',
+    'image',
+    'font',
+    'style',
+    'script',
+    'audio',
+    'video',
+    'worker',
+    'manifest',
+    'object',
+    'embed',
+    'report',
+    ''
+  );
+
+  // Arbitrary for static asset paths (should return cache-first)
+  const staticAssetPathArb: fc.Arbitrary<string> = fc.oneof(
+    // /icons/* paths
+    fc.string({ minLength: 1, maxLength: 50 }).map((s) => `/icons/${s.replace(/\//g, '-')}`),
+    // /_next/static/* paths
+    fc.string({ minLength: 1, maxLength: 50 }).map((s) => `/_next/static/${s.replace(/\//g, '-')}`),
+    // /fonts/* paths
+    fc.string({ minLength: 1, maxLength: 50 }).map((s) => `/fonts/${s.replace(/\//g, '-')}`),
+    // *.ico paths
+    fc.string({ minLength: 1, maxLength: 20 }).map((s) => `/${s.replace(/[\/\.]/g, '-')}.ico`)
+  );
+
+  // Arbitrary for static asset destinations
+  const staticAssetDestinationArb: fc.Arbitrary<RequestDestination> = fc.constantFrom(
+    'image',
+    'font',
+    'style',
+    'script'
+  );
+
+  // Arbitrary for API single item paths (should return network-first)
+  const apiSingleItemPathArb: fc.Arbitrary<string> = fc.oneof(
+    fc.uuid().map((id) => `/api/threads/${id}`),
+    fc.uuid().map((id) => `/api/threads/${id}/comments`),
+    fc.uuid().map((id) => `/api/comments/${id}`),
+    fc.string({ minLength: 1, maxLength: 20 }).map((slug) => `/api/forums/${slug.replace(/\//g, '-')}`),
+    fc.string({ minLength: 1, maxLength: 20 }).map((slug) => `/api/forums/${slug.replace(/\//g, '-')}/threads`),
+    fc.string({ minLength: 1, maxLength: 20 }).map((slug) => `/api/communities/${slug.replace(/\//g, '-')}`),
+    fc.uuid().map((id) => `/api/profile/${id}`),
+    fc.uuid().map((id) => `/api/users/${id}`),
+    fc.uuid().map((id) => `/api/polls/${id}`),
+    fc.uuid().map((id) => `/api/polls/by-thread/${id}`)
+  );
+
+  // Arbitrary for API list paths (should return stale-while-revalidate)
+  const apiListPathArb: fc.Arbitrary<string> = fc.constantFrom(
+    '/api/threads',
+    '/api/threads/',
+    '/api/comments',
+    '/api/comments/',
+    '/api/forums',
+    '/api/forums/',
+    '/api/communities',
+    '/api/communities/',
+    '/api/notifications',
+    '/api/notifications/',
+    '/api/bookmarks',
+    '/api/bookmarks/',
+    '/api/tags',
+    '/api/tags/',
+    '/api/search',
+    '/api/search/',
+    '/api/feed/following',
+    '/api/feed/trending'
+  );
+
+  // Arbitrary for document paths (should return network-first)
+  const documentPathArb: fc.Arbitrary<string> = fc.oneof(
+    fc.constant('/'),
+    fc.constant('/offline'),
+    fc.string({ minLength: 1, maxLength: 30 }).map((s) => `/${s.replace(/[\/\.]/g, '-')}`),
+    fc.string({ minLength: 1, maxLength: 20 }).map((s) => `/thread/${s.replace(/\//g, '-')}`),
+    fc.string({ minLength: 1, maxLength: 20 }).map((s) => `/forum/${s.replace(/\//g, '-')}`)
+  );
+
+  describe('Property 8: Cache strategy selection', () => {
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.2**
+     *
+     * For any static asset path (/icons/*, /_next/static/*, /fonts/*, *.ico),
+     * the cache strategy should be 'cache-first'.
+     */
+    it('should return cache-first for static asset paths', () => {
+      fc.assert(
+        fc.property(staticAssetPathArb, (pathname: string) => {
+          const requestInfo: RequestInfo = { pathname, destination: '' };
+          const strategy = getCacheStrategy(requestInfo);
+          expect(strategy).toBe('cache-first');
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.2**
+     *
+     * For any request with static asset destination (image, font, style, script),
+     * the cache strategy should be 'cache-first'.
+     */
+    it('should return cache-first for static asset destinations', () => {
+      fc.assert(
+        fc.property(
+          fc.string({ minLength: 1, maxLength: 50 }).map((s) => `/${s.replace(/\//g, '-')}`),
+          staticAssetDestinationArb,
+          (pathname: string, destination: RequestDestination) => {
+            const requestInfo: RequestInfo = { pathname, destination };
+            const strategy = getCacheStrategy(requestInfo);
+            expect(strategy).toBe('cache-first');
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.3**
+     *
+     * For any API single item path (/api/threads/[id], /api/comments/[id], etc.),
+     * the cache strategy should be 'network-first'.
+     */
+    it('should return network-first for API single item paths', () => {
+      fc.assert(
+        fc.property(apiSingleItemPathArb, (pathname: string) => {
+          const requestInfo: RequestInfo = { pathname, destination: '' };
+          const strategy = getCacheStrategy(requestInfo);
+          expect(strategy).toBe('network-first');
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.3**
+     *
+     * For any API list path (/api/threads, /api/comments, etc.),
+     * the cache strategy should be 'stale-while-revalidate'.
+     */
+    it('should return stale-while-revalidate for API list paths', () => {
+      fc.assert(
+        fc.property(apiListPathArb, (pathname: string) => {
+          const requestInfo: RequestInfo = { pathname, destination: '' };
+          const strategy = getCacheStrategy(requestInfo);
+          expect(strategy).toBe('stale-while-revalidate');
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.3**
+     *
+     * For any document request (destination === 'document'),
+     * the cache strategy should be 'network-first'.
+     */
+    it('should return network-first for document requests', () => {
+      fc.assert(
+        fc.property(documentPathArb, (pathname: string) => {
+          // Skip paths that match static asset patterns
+          if (isStaticAssetPath(pathname)) return;
+          
+          const requestInfo: RequestInfo = { pathname, destination: 'document' };
+          const strategy = getCacheStrategy(requestInfo);
+          expect(strategy).toBe('network-first');
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.2, 4.3**
+     *
+     * Static asset paths should always be identified correctly by isStaticAssetPath.
+     */
+    it('should correctly identify static asset paths', () => {
+      fc.assert(
+        fc.property(staticAssetPathArb, (pathname: string) => {
+          expect(isStaticAssetPath(pathname)).toBe(true);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.2, 4.3**
+     *
+     * Static asset destinations should always be identified correctly.
+     */
+    it('should correctly identify static asset destinations', () => {
+      fc.assert(
+        fc.property(staticAssetDestinationArb, (destination: RequestDestination) => {
+          expect(isStaticAssetDestination(destination)).toBe(true);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.3**
+     *
+     * API single item paths should always be identified correctly.
+     */
+    it('should correctly identify API single item paths', () => {
+      fc.assert(
+        fc.property(apiSingleItemPathArb, (pathname: string) => {
+          expect(isApiSingleItem(pathname)).toBe(true);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.3**
+     *
+     * API list paths should always be identified correctly.
+     */
+    it('should correctly identify API list paths', () => {
+      fc.assert(
+        fc.property(apiListPathArb, (pathname: string) => {
+          expect(isApiList(pathname)).toBe(true);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.2, 4.3**
+     *
+     * The cache strategy should always return one of the valid strategies.
+     */
+    it('should always return a valid cache strategy', () => {
+      const validStrategies: CacheStrategy[] = [
+        'cache-first',
+        'network-first',
+        'stale-while-revalidate',
+        'network-only',
+      ];
+
+      fc.assert(
+        fc.property(
+          fc.string({ minLength: 0, maxLength: 100 }).map((s) => `/${s}`),
+          requestDestinationArb,
+          (pathname: string, destination: RequestDestination) => {
+            const requestInfo: RequestInfo = { pathname, destination };
+            const strategy = getCacheStrategy(requestInfo);
+            expect(validStrategies).toContain(strategy);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 8: Cache strategy selection**
+     * **Validates: Requirements 4.2, 4.3**
+     *
+     * Static asset path detection should take precedence over destination.
+     */
+    it('should prioritize static asset path over destination', () => {
+      fc.assert(
+        fc.property(
+          staticAssetPathArb,
+          fc.constantFrom('document', '' as RequestDestination),
+          (pathname: string, destination: RequestDestination) => {
+            const requestInfo: RequestInfo = { pathname, destination };
+            const strategy = getCacheStrategy(requestInfo);
+            // Even with document destination, static asset paths should be cache-first
+            expect(strategy).toBe('cache-first');
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+});
+
+
+/**
+ * Property-Based Tests for Notification URL Extraction
+ *
+ * **Feature: pwa-offline, Property 7: Notification URL extraction**
+ * **Validates: Requirements 3.5**
+ */
+describe('Notification URL Extraction', () => {
+  // Import the notification module
+  let extractNotificationUrl: typeof import('@/lib/offline/notification').extractNotificationUrl;
+  let buildReplyUrl: typeof import('@/lib/offline/notification').buildReplyUrl;
+  let DEFAULT_NOTIFICATION_URL: string;
+  type NotificationLike = import('@/lib/offline/notification').NotificationLike;
+  type NotificationData = import('@/lib/offline/notification').NotificationData;
+
+  beforeAll(async () => {
+    const notificationModule = await import('@/lib/offline/notification');
+    extractNotificationUrl = notificationModule.extractNotificationUrl;
+    buildReplyUrl = notificationModule.buildReplyUrl;
+    DEFAULT_NOTIFICATION_URL = notificationModule.DEFAULT_NOTIFICATION_URL;
+  });
+
+  // Arbitrary for valid URL paths
+  const urlPathArb: fc.Arbitrary<string> = fc.oneof(
+    // Thread URLs
+    fc.uuid().map((id) => `/thread/${id}`),
+    // Forum URLs
+    fc.string({ minLength: 1, maxLength: 20 }).map((slug) => `/forum/${slug.replace(/[\/\s]/g, '-')}`),
+    // User profile URLs
+    fc.string({ minLength: 1, maxLength: 20 }).map((username) => `/u/${username.replace(/[\/\s]/g, '-')}`),
+    // Community URLs
+    fc.string({ minLength: 1, maxLength: 20 }).map((slug) => `/c/${slug.replace(/[\/\s]/g, '-')}`),
+    // Notification URLs
+    fc.constant('/notifications'),
+    // Settings URLs
+    fc.constant('/settings'),
+    // Root URL
+    fc.constant('/'),
+    // Generic paths
+    fc.string({ minLength: 1, maxLength: 50 }).map((s) => `/${s.replace(/[\/\s]/g, '-')}`)
+  );
+
+  // Arbitrary for notification types
+  const notificationTypeArb: fc.Arbitrary<NotificationData['type']> = fc.constantFrom(
+    'comment',
+    'mention',
+    'reaction',
+    'follow',
+    'reply'
+  );
+
+  // Arbitrary for notification data with URL
+  const notificationDataWithUrlArb: fc.Arbitrary<NotificationData> = fc.record({
+    url: urlPathArb,
+    dateOfArrival: fc.option(fc.nat({ max: Date.now() + 1000000000 }), { nil: undefined }),
+    notificationId: fc.option(fc.uuid(), { nil: undefined }),
+    type: fc.option(notificationTypeArb, { nil: undefined }),
+  });
+
+  // Arbitrary for notification data without URL
+  const notificationDataWithoutUrlArb: fc.Arbitrary<NotificationData> = fc.record({
+    dateOfArrival: fc.option(fc.nat({ max: Date.now() + 1000000000 }), { nil: undefined }),
+    notificationId: fc.option(fc.uuid(), { nil: undefined }),
+    type: fc.option(notificationTypeArb, { nil: undefined }),
+  });
+
+  // Arbitrary for notification-like objects with URL
+  const notificationWithUrlArb: fc.Arbitrary<NotificationLike> = notificationDataWithUrlArb.map(
+    (data) => ({ data })
+  );
+
+  // Arbitrary for notification-like objects without URL
+  const notificationWithoutUrlArb: fc.Arbitrary<NotificationLike> = fc.oneof(
+    notificationDataWithoutUrlArb.map((data) => ({ data })),
+    fc.constant({ data: null }),
+    fc.constant({ data: undefined }),
+    fc.constant({})
+  );
+
+  describe('Property 7: Notification URL extraction', () => {
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * For any push notification with a url field, clicking the notification
+     * should navigate to that exact URL.
+     */
+    it('should return the exact URL from notification data', () => {
+      fc.assert(
+        fc.property(notificationWithUrlArb, (notification: NotificationLike) => {
+          const result = extractNotificationUrl(notification);
+          
+          // The extracted URL should be exactly the URL in the notification data
+          expect(result).toBe(notification.data!.url);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * For any push notification without a url field, the function should
+     * return the default URL (/).
+     */
+    it('should return default URL when notification has no URL', () => {
+      fc.assert(
+        fc.property(notificationWithoutUrlArb, (notification: NotificationLike) => {
+          const result = extractNotificationUrl(notification);
+          
+          // Should return the default URL
+          expect(result).toBe(DEFAULT_NOTIFICATION_URL);
+          expect(result).toBe('/');
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * The extracted URL should always be a string.
+     */
+    it('should always return a string', () => {
+      fc.assert(
+        fc.property(
+          fc.oneof(notificationWithUrlArb, notificationWithoutUrlArb),
+          (notification: NotificationLike) => {
+            const result = extractNotificationUrl(notification);
+            
+            expect(typeof result).toBe('string');
+            expect(result.length).toBeGreaterThan(0);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * The URL extraction should be idempotent - calling it multiple times
+     * with the same notification should return the same URL.
+     */
+    it('should be idempotent', () => {
+      fc.assert(
+        fc.property(
+          fc.oneof(notificationWithUrlArb, notificationWithoutUrlArb),
+          (notification: NotificationLike) => {
+            const result1 = extractNotificationUrl(notification);
+            const result2 = extractNotificationUrl(notification);
+            const result3 = extractNotificationUrl(notification);
+            
+            expect(result1).toBe(result2);
+            expect(result2).toBe(result3);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * The URL should preserve all path segments and query parameters.
+     */
+    it('should preserve URL path segments', () => {
+      fc.assert(
+        fc.property(urlPathArb, (url: string) => {
+          const notification: NotificationLike = { data: { url } };
+          const result = extractNotificationUrl(notification);
+          
+          // The result should exactly match the input URL
+          expect(result).toBe(url);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * URLs with query parameters should be preserved exactly.
+     */
+    it('should preserve URLs with query parameters', () => {
+      // Arbitrary for URLs with query parameters
+      const urlWithQueryArb = fc.tuple(
+        urlPathArb,
+        fc.dictionary(
+          fc.string({ minLength: 1, maxLength: 10 }).filter((s) => /^[a-zA-Z][a-zA-Z0-9]*$/.test(s)),
+          fc.string({ minLength: 1, maxLength: 20 }).filter((s) => !s.includes('&') && !s.includes('='))
+        )
+      ).map(([path, params]) => {
+        const queryString = Object.entries(params)
+          .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+          .join('&');
+        return queryString ? `${path}?${queryString}` : path;
+      });
+
+      fc.assert(
+        fc.property(urlWithQueryArb, (url: string) => {
+          const notification: NotificationLike = { data: { url } };
+          const result = extractNotificationUrl(notification);
+          
+          expect(result).toBe(url);
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * The buildReplyUrl function should correctly append reply=true parameter.
+     */
+    it('should correctly build reply URLs', () => {
+      fc.assert(
+        fc.property(urlPathArb, (baseUrl: string) => {
+          const replyUrl = buildReplyUrl(baseUrl);
+          
+          // Should contain reply=true
+          expect(replyUrl).toContain('reply=true');
+          
+          // Should start with the base URL
+          expect(replyUrl.startsWith(baseUrl)).toBe(true);
+          
+          // Should have correct separator
+          if (baseUrl.includes('?')) {
+            expect(replyUrl).toBe(`${baseUrl}&reply=true`);
+          } else {
+            expect(replyUrl).toBe(`${baseUrl}?reply=true`);
+          }
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 7: Notification URL extraction**
+     * **Validates: Requirements 3.5**
+     *
+     * Empty string URL in notification data should be treated as no URL.
+     */
+    it('should treat empty string URL as no URL', () => {
+      const notification: NotificationLike = { data: { url: '' } };
+      const result = extractNotificationUrl(notification);
+      
+      // Empty string is falsy, so should return default
+      expect(result).toBe(DEFAULT_NOTIFICATION_URL);
     });
   });
 });

@@ -85,34 +85,34 @@
     - **Property 9: Cache pruning preserves app shell**
     - **Validates: Requirements 5.2**
 
-- [-] 6. Service Worker enhancements
-  - [ ] 6.1 Update cache strategies in sw.js
+- [x] 6. Service Worker enhancements
+  - [x] 6.1 Update cache strategies in sw.js
     - Implement cache-first for static assets
     - Implement network-first for single API items
     - Implement stale-while-revalidate for API lists
     - _Requirements: 4.2, 4.3_
 
-  - [ ] 6.2 Implement Background Sync handlers
+  - [x] 6.2 Implement Background Sync handlers
     - sync-comments handler
     - sync-votes handler
     - sync-reactions handler
     - Integration with offline queue
     - _Requirements: 2.4, 2.6_
 
-  - [ ] 6.3 Enhance push notification handling
+  - [x] 6.3 Enhance push notification handling
     - Improve notification display with actions
     - Handle notification click with URL navigation
     - _Requirements: 3.4, 3.5_
 
-  - [ ]* 6.4 Write property test for cache strategy selection
+  - [x] 6.4 Write property test for cache strategy selection
     - **Property 8: Cache strategy selection**
     - **Validates: Requirements 4.2, 4.3**
 
-  - [ ]* 6.5 Write property test for notification URL
+  - [x] 6.5 Write property test for notification URL
     - **Property 7: Notification URL extraction**
     - **Validates: Requirements 3.5**
 
-- [ ] 7. React hooks
+- [-] 7. React hooks
   - [ ] 7.1 Create useOfflineStore hook
     - Create `hooks/useOfflineStore.ts`
     - Expose cache and queue operations
