@@ -55,3 +55,17 @@ export {
   getItemsReadyForSync,
   markAsSyncing,
 } from './queue';
+
+// Cache management operations
+export {
+  APP_SHELL_ITEMS,
+  getCacheSize,
+  getCacheStats,
+  isCacheOverLimit,
+  pruneCache,
+  autoPruneIfNeeded,
+  clearCache,
+  clearContentCache,
+  clearOfflineQueue,
+  removeExpiredItems,
+} from './management';

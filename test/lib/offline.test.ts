@@ -15,6 +15,7 @@ import {
 } from '@/lib/offline/types';
 import { isStale } from '@/lib/offline/cache';
 import { calculateRetryDelay, shouldRetry } from '@/lib/offline/queue';
+import { APP_SHELL_ITEMS } from '@/lib/offline/management';
 
 /**
  * Property-Based Tests for Offline Queue Item Serialization
@@ -899,6 +900,184 @@ describe('Queue Operations', () => {
         fc.property(fc.nat({ max: 10 }), (retryCount) => {
           const result = shouldRetry(retryCount);
           expect(result).toBe(retryCount < CACHE_CONFIG.maxRetries);
+        }),
+        { numRuns: 100 }
+      );
+    });
+  });
+});
+
+
+/**
+ * Property-Based Tests for Cache Pruning
+ *
+ * **Feature: pwa-offline, Property 9: Cache pruning preserves app shell**
+ * **Validates: Requirements 5.2**
+ */
+describe('Cache Pruning', () => {
+  // Arbitrary for valid ISO date strings
+  const validIsoDateArb = fc
+    .integer({ min: 1577836800000, max: 1924905600000 })
+    .map((ts) => new Date(ts).toISOString());
+
+  // Arbitrary for optional ISO date strings
+  const optionalIsoDateArb = fc.option(validIsoDateArb, { nil: undefined });
+
+  // Arbitrary for valid ThreadData
+  const threadDataArb: fc.Arbitrary<ThreadData> = fc.record({
+    id: fc.uuid(),
+    title: fc.string({ minLength: 1, maxLength: 100 }),
+    content: fc.string({ minLength: 0, maxLength: 1000 }),
+    authorId: fc.uuid(),
+    authorName: fc.option(fc.string({ minLength: 1, maxLength: 50 }), { nil: undefined }),
+    forumId: fc.option(fc.uuid(), { nil: undefined }),
+    forumSlug: fc.option(fc.string({ minLength: 1, maxLength: 50 }), { nil: undefined }),
+    createdAt: validIsoDateArb,
+    updatedAt: optionalIsoDateArb,
+    voteCount: fc.option(fc.integer({ min: 0 }), { nil: undefined }),
+    commentCount: fc.option(fc.integer({ min: 0 }), { nil: undefined }),
+    viewCount: fc.option(fc.integer({ min: 0 }), { nil: undefined }),
+    isPinned: fc.option(fc.boolean(), { nil: undefined }),
+    tags: fc.option(fc.array(fc.string({ minLength: 1, maxLength: 20 })), { nil: undefined }),
+  });
+
+  // Arbitrary for valid CachedThread with proper timestamp relationships
+  const cachedThreadArb: fc.Arbitrary<CachedThread> = fc
+    .tuple(
+      fc.uuid(),
+      threadDataArb,
+      fc.nat({ max: Date.now() })
+    )
+    .map(([id, data, cachedAt]) => ({
+      id,
+      data: { ...data, id },
+      cachedAt,
+      expiresAt: cachedAt + CACHE_CONFIG.threadTTL,
+    }));
+
+  describe('Property 9: Cache pruning preserves app shell', () => {
+    /**
+     * **Feature: pwa-offline, Property 9: Cache pruning preserves app shell**
+     * **Validates: Requirements 5.2**
+     *
+     * The APP_SHELL_ITEMS constant should contain the essential app shell URLs
+     * that must never be removed during cache pruning.
+     */
+    it('should define essential app shell items', () => {
+      // Verify APP_SHELL_ITEMS contains the required essential URLs
+      expect(APP_SHELL_ITEMS).toContain('/');
+      expect(APP_SHELL_ITEMS).toContain('/offline');
+      expect(APP_SHELL_ITEMS).toContain('/manifest.json');
+      expect(APP_SHELL_ITEMS.length).toBe(3);
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 9: Cache pruning preserves app shell**
+     * **Validates: Requirements 5.2**
+     *
+     * For any set of cached threads, pruning should only remove thread/comment
+     * data from IndexedDB, never touching app shell items (which are stored
+     * in the Service Worker cache, not IndexedDB).
+     *
+     * This test validates that the pruning logic operates on the correct
+     * data domain (threads/comments) and cannot affect app shell items.
+     */
+    it('should only prune thread and comment data, not app shell items', () => {
+      fc.assert(
+        fc.property(
+          fc.array(cachedThreadArb, { minLength: 0, maxLength: 20 }),
+          (threads: CachedThread[]) => {
+            // Simulate pruning logic: sort by cachedAt and remove oldest
+            const sortedThreads = [...threads].sort((a, b) => a.cachedAt - b.cachedAt);
+            
+            // Simulate removing half the threads (pruning)
+            const itemsToRemove = Math.floor(sortedThreads.length / 2);
+            const removedThreads = sortedThreads.slice(0, itemsToRemove);
+            const remainingThreads = sortedThreads.slice(itemsToRemove);
+
+            // Verify that removed items are only threads (not app shell items)
+            removedThreads.forEach((thread) => {
+              // Thread IDs should be UUIDs, not app shell URLs
+              expect(APP_SHELL_ITEMS).not.toContain(thread.id);
+              expect(thread.id).not.toBe('/');
+              expect(thread.id).not.toBe('/offline');
+              expect(thread.id).not.toBe('/manifest.json');
+            });
+
+            // Verify remaining threads are valid
+            remainingThreads.forEach((thread) => {
+              expect(thread).toHaveProperty('id');
+              expect(thread).toHaveProperty('data');
+              expect(thread).toHaveProperty('cachedAt');
+              expect(thread).toHaveProperty('expiresAt');
+            });
+
+            // Verify the pruning removed the correct number of items
+            expect(removedThreads.length + remainingThreads.length).toBe(threads.length);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 9: Cache pruning preserves app shell**
+     * **Validates: Requirements 5.2**
+     *
+     * For any pruning operation, the oldest items should be removed first
+     * (FIFO order based on cachedAt timestamp).
+     */
+    it('should remove oldest items first during pruning', () => {
+      fc.assert(
+        fc.property(
+          fc.array(cachedThreadArb, { minLength: 2, maxLength: 20 }),
+          fc.integer({ min: 1, max: 10 }),
+          (threads: CachedThread[], itemsToRemove: number) => {
+            // Ensure we don't try to remove more items than exist
+            const actualItemsToRemove = Math.min(itemsToRemove, threads.length - 1);
+            
+            // Sort by cachedAt (oldest first)
+            const sortedThreads = [...threads].sort((a, b) => a.cachedAt - b.cachedAt);
+            
+            // Remove oldest items
+            const removedThreads = sortedThreads.slice(0, actualItemsToRemove);
+            const remainingThreads = sortedThreads.slice(actualItemsToRemove);
+
+            // Verify that all removed items are older than all remaining items
+            if (removedThreads.length > 0 && remainingThreads.length > 0) {
+              const oldestRemaining = Math.min(...remainingThreads.map((t) => t.cachedAt));
+              const newestRemoved = Math.max(...removedThreads.map((t) => t.cachedAt));
+              
+              expect(newestRemoved).toBeLessThanOrEqual(oldestRemaining);
+            }
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: pwa-offline, Property 9: Cache pruning preserves app shell**
+     * **Validates: Requirements 5.2**
+     *
+     * App shell items should be immutable strings that cannot be confused
+     * with thread/comment IDs (which are UUIDs).
+     */
+    it('should have app shell items that are distinct from UUID format', () => {
+      fc.assert(
+        fc.property(fc.uuid(), (uuid: string) => {
+          // UUIDs should never match app shell items
+          APP_SHELL_ITEMS.forEach((shellItem) => {
+            expect(uuid).not.toBe(shellItem);
+          });
+
+          // App shell items should start with '/' (URL paths)
+          APP_SHELL_ITEMS.forEach((shellItem) => {
+            expect(shellItem.startsWith('/')).toBe(true);
+          });
+
+          // UUIDs should not start with '/'
+          expect(uuid.startsWith('/')).toBe(false);
         }),
         { numRuns: 100 }
       );

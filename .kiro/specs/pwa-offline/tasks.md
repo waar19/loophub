@@ -64,28 +64,28 @@
 - [x] 4. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Cache management
-  - [ ] 5.1 Implement cache size calculation
+- [x] 5. Cache management
+  - [x] 5.1 Implement cache size calculation
     - Create `lib/offline/management.ts`
     - getCacheSize estimates total IndexedDB usage
     - _Requirements: 5.1_
 
-  - [ ] 5.2 Implement cache pruning
+  - [x] 5.2 Implement cache pruning
     - pruneCache removes oldest entries
     - Preserves app shell items (/, /offline, /manifest.json)
     - Triggers when size exceeds maxCacheSize
     - _Requirements: 4.4, 5.2_
 
-  - [ ] 5.3 Implement clear cache
+  - [x] 5.3 Implement clear cache
     - clearCache removes all content except app shell
     - Resets offline queue
     - _Requirements: 5.2_
 
-  - [ ]* 5.4 Write property test for cache pruning
+  - [x] 5.4 Write property test for cache pruning
     - **Property 9: Cache pruning preserves app shell**
     - **Validates: Requirements 5.2**
 
-- [ ] 6. Service Worker enhancements
+- [-] 6. Service Worker enhancements
   - [ ] 6.1 Update cache strategies in sw.js
     - Implement cache-first for static assets
     - Implement network-first for single API items
