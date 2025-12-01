@@ -1,14 +1,14 @@
 # Implementation Plan
 
-- [ ] 1. IndexedDB infrastructure and types
-  - [ ] 1.1 Create IndexedDB utility library
+- [x] 1. IndexedDB infrastructure and types
+  - [x] 1.1 Create IndexedDB utility library
     - Create `lib/offline/db.ts` with idb wrapper
     - Define database schema with version 1
     - Implement open, upgrade, and migration logic
     - Export typed store accessors
     - _Requirements: 6.1, 6.4_
 
-  - [ ] 1.2 Create TypeScript types for offline system
+  - [x] 1.2 Create TypeScript types for offline system
     - Create `lib/offline/types.ts`
     - CachedThread, CachedComment, OfflineQueueItem interfaces
     - PushSubscriptionRecord, AppMetadata interfaces
