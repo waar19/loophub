@@ -16,7 +16,7 @@
     - ReactionSummary, ReactorInfo, ReactionRequest, ReactionResponse interfaces
     - _Requirements: 6.1, 6.2_
 
-  - [ ]* 1.3 Write property test for serialization round-trip
+  - [x] 1.3 Write property test for serialization round-trip
     - **Property 6: Serialization round-trip**
     - **Validates: Requirements 6.3, 6.4**
 
