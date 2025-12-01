@@ -57,6 +57,8 @@ export default function NotificationBell() {
         return '@';
       case 'thread_update':
         return '📝';
+      case 'reaction':
+        return '😊';
       default:
         return '🔔';
     }

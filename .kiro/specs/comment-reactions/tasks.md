@@ -98,8 +98,8 @@
     - ES, EN, PT translations for reaction names and UI text
     - _Requirements: 6.2_
 
-- [ ] 6. Notifications integration
-  - [ ] 6.1 Update notification types
+- [x] 6. Notifications integration
+  - [x] 6.1 Update notification types
     - Add 'reaction' type to notification system
     - Create notification on first reaction (via DB trigger)
     - _Requirements: 5.1, 5.2_

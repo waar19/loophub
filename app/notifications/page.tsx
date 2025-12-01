@@ -10,7 +10,7 @@ import { useTranslations } from "@/components/TranslationsProvider";
 
 interface Notification {
   id: string;
-  type: "comment" | "reply" | "mention" | "thread_update" | "upvote" | "downvote" | "vote_milestone";
+  type: "comment" | "reply" | "mention" | "thread_update" | "upvote" | "downvote" | "vote_milestone" | "reaction";
   title: string;
   message: string;
   link?: string;
@@ -139,6 +139,8 @@ export default function NotificationsPage() {
         return "@";
       case "thread_update":
         return "📝";
+      case "reaction":
+        return "😊";
       default:
         return "🔔";
     }

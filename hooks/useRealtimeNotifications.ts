@@ -7,7 +7,7 @@ import { useAuth } from './useAuth';
 interface Notification {
   id: string;
   user_id: string;
-  type: 'comment' | 'reply' | 'mention' | 'thread_update' | 'upvote' | 'downvote' | 'vote_milestone';
+  type: 'comment' | 'reply' | 'mention' | 'thread_update' | 'upvote' | 'downvote' | 'vote_milestone' | 'reaction';
   title: string;
   message: string;
   link: string | null;
@@ -33,6 +33,7 @@ interface NotificationSettings {
   downvotes_enabled: boolean;
   thread_updates_enabled: boolean;
   milestones_enabled: boolean;
+  reactions_enabled: boolean;
 }
 
 // Map notification types to settings keys
@@ -44,6 +45,7 @@ const typeToSettingsKey: Record<string, keyof NotificationSettings> = {
   downvote: 'downvotes_enabled',
   thread_update: 'thread_updates_enabled',
   vote_milestone: 'milestones_enabled',
+  reaction: 'reactions_enabled',
 };
 
 export function useRealtimeNotifications() {

@@ -12,6 +12,7 @@ interface NotificationSettings {
   notify_upvotes: boolean;
   notify_downvotes: boolean;
   notify_milestones: boolean;
+  notify_reactions: boolean;
   browser_notifications: boolean;
   sound_enabled: boolean;
   email_digest: boolean;
@@ -26,6 +27,7 @@ const defaultSettings: NotificationSettings = {
   notify_upvotes: true,
   notify_downvotes: false,
   notify_milestones: true,
+  notify_reactions: true,
   browser_notifications: false,
   sound_enabled: false,
   email_digest: false,
@@ -65,6 +67,7 @@ export default function NotificationSettings() {
             notify_upvotes: data.settings.notify_upvotes ?? true,
             notify_downvotes: data.settings.notify_downvotes ?? false,
             notify_milestones: data.settings.notify_milestones ?? true,
+            notify_reactions: data.settings.notify_reactions ?? true,
             browser_notifications: data.settings.browser_notifications ?? false,
             sound_enabled: data.settings.sound_enabled ?? false,
             email_digest: data.settings.email_digest ?? false,
@@ -262,6 +265,12 @@ export default function NotificationSettings() {
             icon="🏆"
             title={t("notifications.settings.milestones")}
             description={t("notifications.settings.milestonesDesc")}
+          />
+          <SettingToggle
+            settingKey="notify_reactions"
+            icon="😊"
+            title={t("notifications.settings.reactions")}
+            description={t("notifications.settings.reactionsDesc")}
           />
         </div>
       </div>
