@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import {
   OfflineQueueItem,
@@ -45,12 +45,14 @@ describe('Offline Queue Item Serialization', () => {
   );
 
   // Arbitrary for JSON-serializable payload (Record<string, unknown>)
+  // Note: We filter out -0 because JSON.stringify(-0) === "0", so -0 doesn't round-trip through JSON
+  const jsonSafeDouble = fc.double({ noNaN: true, noDefaultInfinity: true }).filter((n) => !Object.is(n, -0));
   const payloadArb: fc.Arbitrary<Record<string, unknown>> = fc.dictionary(
     fc.string({ minLength: 1, maxLength: 20 }).filter((s) => s.trim().length > 0),
     fc.oneof(
       fc.string(),
       fc.integer(),
-      fc.double({ noNaN: true, noDefaultInfinity: true }),
+      jsonSafeDouble,
       fc.boolean(),
       fc.constant(null),
       fc.array(fc.oneof(fc.string(), fc.integer(), fc.boolean()))

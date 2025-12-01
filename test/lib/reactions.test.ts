@@ -46,7 +46,8 @@ describe('Reactions Serialization', () => {
     userId: fc.uuid(),
     username: fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
     avatarUrl: fc.option(fc.webUrl(), { nil: null }),
-    reactedAt: fc.date().map(d => d.toISOString()),
+    // Use a constrained date range to avoid invalid dates
+    reactedAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
   });
 
   describe('ReactionSummary serialization round-trip', () => {
