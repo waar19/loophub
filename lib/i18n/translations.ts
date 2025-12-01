@@ -202,6 +202,10 @@ export const translations = {
       loginRequired: "Debes iniciar sesión",
       loadMore: "Cargar más",
       creating: "Creando...",
+      on: "el",
+      less: "Menos",
+      more: "Más",
+      re: "Re:",
       // Drafts
       draftFound: "Borrador encontrado",
       draftFoundMessage: "Tienes un borrador sin publicar",
@@ -356,7 +360,8 @@ export const translations = {
       loginToJoin: "Inicia sesión para unirte",
       signedInAs: "Conectado como",
       // Settings/Management
-      confirmDelete: "¿Estás seguro de que quieres eliminar esta comunidad? Esta acción no se puede deshacer.",
+      confirmDelete:
+        "¿Estás seguro de que quieres eliminar esta comunidad? Esta acción no se puede deshacer.",
       copy: "Copiar",
       copied: "¡Copiado!",
       revoke: "Revocar",
@@ -372,10 +377,12 @@ export const translations = {
       advancedOptions: "Opciones avanzadas",
       autoDetect: "Automático",
       customCss: "CSS personalizado",
-      customCssHint: "Máximo 5000 caracteres. Algunos estilos pueden estar restringidos.",
+      customCssHint:
+        "Máximo 5000 caracteres. Algunos estilos pueden estar restringidos.",
       // Rules
       communityRules: "Reglas de la Comunidad",
-      rulesDescription: "Define las reglas para los miembros. Arrastra para reordenar.",
+      rulesDescription:
+        "Define las reglas para los miembros. Arrastra para reordenar.",
       ruleTitle: "Título de la regla",
       ruleDescription: "Descripción",
       ruleDescriptionOptional: "Descripción (opcional)",
@@ -556,7 +563,8 @@ export const translations = {
       errorCreatingForum: "Error al crear el foro",
       errorUpdatingForum: "Error al actualizar el foro",
       errorDeletingForum: "Error al eliminar el foro",
-      cannotDeleteForumWithThreads: "No se puede eliminar un foro que tiene hilos",
+      cannotDeleteForumWithThreads:
+        "No se puede eliminar un foro que tiene hilos",
       // Moderators
       moderators: "Moderadores",
       moderatorsDescription: "Gestiona los moderadores de los foros",
@@ -588,6 +596,20 @@ export const translations = {
       joined: "Se unió",
       admin: "Administrador",
       author: "Autor",
+      activity: "Actividad",
+      contributionsLastYear: "contribuciones en el último año",
+      contribution: "contribución",
+      contributions: "contribuciones",
+      achievements: "Logros",
+      saved: "Guardados",
+      memberSince: "Miembro desde",
+    },
+    user: {
+      follow: "Seguir",
+      following: "Siguiendo",
+      unfollow: "Dejar de seguir",
+      followers: "Seguidores",
+      following_count: "Siguiendo",
     },
     // Settings
     settings: {
@@ -854,6 +876,10 @@ export const translations = {
     // Common
     common: {
       loading: "Loading...",
+      on: "on",
+      less: "Less",
+      more: "More",
+      re: "Re:",
       error: "Error",
       success: "Success",
       save: "Save",
@@ -916,7 +942,8 @@ export const translations = {
       // Settings tabs
       general: "General",
       dangerZone: "Danger Zone",
-      deleteWarning: "Once deleted, you won't be able to recover this community.",
+      deleteWarning:
+        "Once deleted, you won't be able to recover this community.",
     },
     // Search
     search: {
@@ -1053,7 +1080,8 @@ export const translations = {
       loginToJoin: "Log in to join",
       signedInAs: "Signed in as",
       // Settings/Management
-      confirmDelete: "Are you sure you want to delete this community? This action cannot be undone.",
+      confirmDelete:
+        "Are you sure you want to delete this community? This action cannot be undone.",
       copy: "Copy",
       copied: "Copied!",
       revoke: "Revoke",
@@ -1286,7 +1314,22 @@ export const translations = {
       joined: "Joined",
       admin: "Admin",
       author: "Author",
+      activity: "Activity",
+      contributionsLastYear: "contributions in the last year",
+      contribution: "contribution",
+      contributions: "contributions",
+      achievements: "Achievements",
+      saved: "Saved",
+      memberSince: "Member since",
     },
+    user: {
+      follow: "Follow",
+      following: "Following",
+      unfollow: "Unfollow",
+      followers: "Followers",
+      following_count: "Following",
+    },
+
     // Settings
     settings: {
       title: "Profile Settings",
@@ -1613,7 +1656,8 @@ export const translations = {
       // Settings tabs
       general: "Geral",
       dangerZone: "Zona de Perigo",
-      deleteWarning: "Uma vez excluída, você não poderá recuperar esta comunidade.",
+      deleteWarning:
+        "Uma vez excluída, você não poderá recuperar esta comunidade.",
     },
     // Search
     search: {
@@ -1710,7 +1754,8 @@ export const translations = {
       about: "Sobre",
       createdOn: "Criada em",
       noThreads: "Ainda não há publicações",
-      levelRequired: "Você precisa de nível 3 ou superior para criar comunidades",
+      levelRequired:
+        "Você precisa de nível 3 ou superior para criar comunidades",
       currentLevel: "Seu nível atual",
       // Membership
       role: {
@@ -1750,7 +1795,8 @@ export const translations = {
       loginToJoin: "Faça login para participar",
       signedInAs: "Conectado como",
       // Settings/Management
-      confirmDelete: "Tem certeza que deseja excluir esta comunidade? Esta ação não pode ser desfeita.",
+      confirmDelete:
+        "Tem certeza que deseja excluir esta comunidade? Esta ação não pode ser desfeita.",
       copy: "Copiar",
       copied: "Copiado!",
       revoke: "Revogar",
@@ -1766,10 +1812,12 @@ export const translations = {
       advancedOptions: "Opções avançadas",
       autoDetect: "Automático",
       customCss: "CSS personalizado",
-      customCssHint: "Máximo 5000 caracteres. Alguns estilos podem ser restritos.",
+      customCssHint:
+        "Máximo 5000 caracteres. Alguns estilos podem ser restritos.",
       // Rules
       communityRules: "Regras da Comunidade",
-      rulesDescription: "Defina regras para os membros. Arraste para reordenar.",
+      rulesDescription:
+        "Defina regras para os membros. Arraste para reordenar.",
       ruleTitle: "Título da regra",
       ruleDescription: "Descrição",
       ruleDescriptionOptional: "Descrição (opcional)",
@@ -1950,7 +1998,8 @@ export const translations = {
       errorCreatingForum: "Erro ao criar fórum",
       errorUpdatingForum: "Erro ao atualizar fórum",
       errorDeletingForum: "Erro ao excluir fórum",
-      cannotDeleteForumWithThreads: "Não é possível excluir um fórum que possui tópicos",
+      cannotDeleteForumWithThreads:
+        "Não é possível excluir um fórum que possui tópicos",
       // Moderators
       moderators: "Moderadores",
       moderatorsDescription: "Gerencie os moderadores dos fóruns",

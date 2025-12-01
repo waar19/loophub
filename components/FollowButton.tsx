@@ -128,12 +128,12 @@ export default function FollowButton({
             {isFollowing ? (
               <>
                 <span>✓</span>
-                Siguiendo
+                {t("user.following")}
               </>
             ) : (
               <>
                 <span>+</span>
-                Seguir
+                {t("user.follow")}
               </>
             )}
           </>

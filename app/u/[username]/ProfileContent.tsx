@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Tooltip from "@/components/Tooltip";
 import FollowButton from "@/components/FollowButton";
+import { useTranslations } from "@/components/TranslationsProvider";
 
 // Types
 interface Profile {
@@ -101,6 +102,7 @@ function ActivityGraph({
 }: {
   activityMap: Record<string, number>;
 }) {
+  const { t } = useTranslations();
   // Generate last 52 weeks of data
   const weeks = useMemo(() => {
     const result: { date: string; count: number }[][] = [];
@@ -162,10 +164,10 @@ function ActivityGraph({
           className="text-sm font-semibold"
           style={{ color: "var(--foreground)" }}
         >
-          Actividad
+          {t("profile.activity")}
         </h3>
         <span className="text-xs" style={{ color: "var(--muted)" }}>
-          {totalContributions} contribuciones en el último año
+          {totalContributions} {t("profile.contributionsLastYear")}
         </span>
       </div>
 
@@ -204,11 +206,16 @@ function ActivityGraph({
               <Tooltip
                 key={day.date}
                 content={`${day.count} ${
-                  day.count === 1 ? "contribución" : "contribuciones"
-                } el ${new Date(day.date).toLocaleDateString("es-ES", {
-                  month: "short",
-                  day: "numeric",
-                })}`}
+                  day.count === 1
+                    ? t("profile.contribution")
+                    : t("profile.contributions")
+                } ${t("common.on")} ${new Date(day.date).toLocaleDateString(
+                  "es-ES",
+                  {
+                    month: "short",
+                    day: "numeric",
+                  }
+                )}`}
                 position="top"
               >
                 <div
@@ -224,7 +231,7 @@ function ActivityGraph({
       {/* Legend */}
       <div className="flex items-center justify-end gap-1 mt-2">
         <span className="text-xs mr-1" style={{ color: "var(--muted)" }}>
-          Menos
+          {t("common.less")}
         </span>
         {[0, 1, 3, 6, 10].map((level) => (
           <div
@@ -234,7 +241,7 @@ function ActivityGraph({
           />
         ))}
         <span className="text-xs ml-1" style={{ color: "var(--muted)" }}>
-          Más
+          {t("common.more")}
         </span>
       </div>
     </div>
@@ -277,6 +284,7 @@ export default function ProfileContent({
   activityData = [],
   isOwnProfile = false,
 }: ProfileContentProps) {
+  const { t } = useTranslations();
   const [activeTab, setActiveTab] = useState<TabType>("threads");
 
   const karma = profile.karma || profile.reputation || 0;
@@ -309,10 +317,16 @@ export default function ProfileContent({
   ];
 
   const tabs: { id: TabType; label: string; count: number }[] = [
-    { id: "threads", label: "Hilos", count: threadCount },
-    { id: "comments", label: "Comentarios", count: commentCount },
+    { id: "threads", label: t("profile.threads"), count: threadCount },
+    { id: "comments", label: t("profile.comments"), count: commentCount },
     ...(isOwnProfile
-      ? [{ id: "saved" as TabType, label: "Guardados", count: bookmarkCount }]
+      ? [
+          {
+            id: "saved" as TabType,
+            label: t("profile.saved"),
+            count: bookmarkCount,
+          },
+        ]
       : []),
   ];
 
@@ -501,7 +515,7 @@ export default function ProfileContent({
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                Miembro desde {memberSince}
+                {t("profile.memberSince")} {memberSince}
               </div>
             </div>
           </div>
@@ -512,14 +526,14 @@ export default function ProfileContent({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard
           icon="⭐"
-          label="Karma"
+          label={t("profile.karma")}
           value={karma}
           color={levelColors[level]}
         />
         <Link href={`/u/${profile.username}/followers`}>
           <StatCard
             icon="👥"
-            label="Seguidores"
+            label={t("user.followers")}
             value={profile.follower_count || 0}
             color="#8b5cf6"
           />
@@ -527,12 +541,17 @@ export default function ProfileContent({
         <Link href={`/u/${profile.username}/following`}>
           <StatCard
             icon="➕"
-            label="Siguiendo"
+            label={t("user.following_count")}
             value={profile.following_count || 0}
             color="#ec4899"
           />
         </Link>
-        <StatCard icon="📝" label="Hilos" value={threadCount} color="#60A5FA" />
+        <StatCard
+          icon="📝"
+          label={t("profile.threads")}
+          value={threadCount}
+          color="#60A5FA"
+        />
       </div>
 
       {/* Badges Section */}
@@ -542,7 +561,7 @@ export default function ProfileContent({
             className="text-sm font-semibold mb-3"
             style={{ color: "var(--foreground)" }}
           >
-            🏆 Logros
+            🏆 {t("profile.achievements")}
           </h3>
           <div className="flex flex-wrap gap-2">
             {badges.map((badge) => (
