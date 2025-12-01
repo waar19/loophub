@@ -110,6 +110,21 @@ export const translations = {
       errorVoting: "Error al votar. Por favor, intenta de nuevo.",
       mustLogin: "Debes iniciar sesión para votar",
     },
+    // Reactions
+    reactions: {
+      addReaction: "Agregar reacción",
+      removeReaction: "Quitar reacción",
+      loginToReact: "Debes iniciar sesión para reaccionar",
+      reacted: "Reaccionaste",
+      andMore: "y {count} más",
+      // Reaction type names
+      thumbsUp: "Me gusta",
+      heart: "Me encanta",
+      laugh: "Jaja",
+      fire: "Fuego",
+      lightbulb: "Idea",
+      party: "Celebración",
+    },
     // Forums
     forums: {
       forum: "Foro",
@@ -830,6 +845,21 @@ export const translations = {
       errorVoting: "Error voting. Please try again.",
       mustLogin: "You must log in to vote",
     },
+    // Reactions
+    reactions: {
+      addReaction: "Add reaction",
+      removeReaction: "Remove reaction",
+      loginToReact: "You must log in to react",
+      reacted: "You reacted",
+      andMore: "and {count} more",
+      // Reaction type names
+      thumbsUp: "Like",
+      heart: "Love",
+      laugh: "Haha",
+      fire: "Fire",
+      lightbulb: "Idea",
+      party: "Celebrate",
+    },
     // Forums
     forums: {
       forum: "Forum",
@@ -1546,6 +1576,21 @@ export const translations = {
       votes: "votos",
       errorVoting: "Erro ao votar. Por favor, tente novamente.",
       mustLogin: "Você deve fazer login para votar",
+    },
+    // Reactions
+    reactions: {
+      addReaction: "Adicionar reação",
+      removeReaction: "Remover reação",
+      loginToReact: "Você deve fazer login para reagir",
+      reacted: "Você reagiu",
+      andMore: "e mais {count}",
+      // Reaction type names
+      thumbsUp: "Curtir",
+      heart: "Amei",
+      laugh: "Haha",
+      fire: "Fogo",
+      lightbulb: "Ideia",
+      party: "Celebrar",
     },
     // Forums
     forums: {

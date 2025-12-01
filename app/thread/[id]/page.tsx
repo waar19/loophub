@@ -30,6 +30,7 @@ import { ThreadStructuredData } from "@/components/StructuredData";
 import ModeratorActions from "@/components/ModeratorActions";
 import Poll from "@/components/Poll";
 import PollCreator from "@/components/PollCreator";
+import ReactionDisplay from "@/components/ReactionDisplay";
 import { checkModeratorStatus } from "@/lib/actions/moderation";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
@@ -298,6 +299,15 @@ export default function ThreadPage({
 
                 <div className="leading-relaxed markdown-content text-base mb-8">
                   <MarkdownRenderer content={thread.content} />
+                </div>
+
+                {/* Reactions - in thread detail view (Requirement 1.1) */}
+                <div className="mb-6">
+                  <ReactionDisplay
+                    contentType="thread"
+                    contentId={thread.id}
+                    authorId={thread.user_id}
+                  />
                 </div>
 
                 {/* Share Buttons */}

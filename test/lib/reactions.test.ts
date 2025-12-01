@@ -3,6 +3,9 @@ import * as fc from 'fast-check';
 import {
   ReactionSummary,
   ReactorInfo,
+  ReactionRow,
+  ReactionType,
+  ContentType,
   REACTION_TYPES,
   CONTENT_TYPES,
   serializeReactionSummary,
@@ -12,6 +15,12 @@ import {
   isValidReactionType,
   isValidContentType,
   validateReactionRequest,
+  applyToggleReaction,
+  calculateReactionSummaries,
+  isDuplicateReaction,
+  addReactionToRows,
+  removeReactionFromRows,
+  orderReactors,
 } from '@/lib/reactions';
 
 /**

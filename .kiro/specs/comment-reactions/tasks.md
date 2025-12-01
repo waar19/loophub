@@ -75,25 +75,25 @@
     - Current user shown first
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [-] 4.5 Write property tests for reaction logic
+  - [x] 4.5 Write property tests for reaction logic
     - **Property 1: Toggle reaction is idempotent round-trip**
     - **Property 2: Reaction count accuracy**
     - **Property 3: No duplicate reactions**
     - **Property 4: Reactor list ordering**
     - **Validates: Requirements 1.1, 1.2, 1.4, 2.2, 2.3, 4.3**
 
-- [ ] 5. Integration with existing components
-  - [ ] 5.1 Integrate ReactionDisplay in CommentCard
+- [x] 5. Integration with existing components
+  - [x] 5.1 Integrate ReactionDisplay in CommentCard
     - Add below comment content, before actions
     - Pass comment.id and comment.user_id
     - _Requirements: 1.1_
 
-  - [ ] 5.2 Integrate ReactionDisplay in ThreadCard (optional)
+  - [x] 5.2 Integrate ReactionDisplay in ThreadCard (optional)
     - Add in thread detail view
     - Pass thread.id and thread.user_id
     - _Requirements: 1.1_
 
-  - [ ] 5.3 Add translations for reactions
+  - [x] 5.3 Add translations for reactions
     - Add keys to lib/i18n/translations.ts
     - ES, EN, PT translations for reaction names and UI text
     - _Requirements: 6.2_

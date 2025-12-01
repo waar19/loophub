@@ -203,3 +203,163 @@ export function deserializeReactorInfo(json: string): ReactorInfo {
     reactedAt: String(parsed.reactedAt),
   };
 }
+
+// ============================================================================
+// Reaction Logic Helpers (Pure Functions for Testing)
+// ============================================================================
+
+/**
+ * Applies a toggle reaction to a list of reaction summaries
+ * Returns the new state after toggling
+ * 
+ * Requirements: 1.1, 1.2
+ */
+export function applyToggleReaction(
+  reactions: ReactionSummary[],
+  type: ReactionType,
+  userHasReacted: boolean
+): ReactionSummary[] {
+  const existing = reactions.find(r => r.type === type);
+
+  if (userHasReacted) {
+    // User is removing their reaction
+    if (existing) {
+      if (existing.count === 1) {
+        // Remove the reaction type entirely
+        return reactions.filter(r => r.type !== type);
+      }
+      // Decrement count
+      return reactions.map(r =>
+        r.type === type
+          ? { ...r, count: r.count - 1, hasReacted: false }
+          : r
+      );
+    }
+    // Edge case: user claims to have reacted but no record exists
+    return reactions;
+  } else {
+    // User is adding a reaction
+    if (existing) {
+      // Increment count on existing type
+      return reactions.map(r =>
+        r.type === type
+          ? { ...r, count: r.count + 1, hasReacted: true }
+          : r
+      );
+    } else {
+      // New reaction type
+      return [...reactions, { type, count: 1, hasReacted: true }];
+    }
+  }
+}
+
+/**
+ * Calculates reaction summaries from a list of reaction rows
+ * 
+ * Requirements: 1.4, 4.3
+ */
+export function calculateReactionSummaries(
+  rows: ReactionRow[],
+  currentUserId?: string
+): ReactionSummary[] {
+  const summaryMap = new Map<ReactionType, { count: number; hasReacted: boolean }>();
+
+  for (const row of rows) {
+    const existing = summaryMap.get(row.reaction_type);
+    if (existing) {
+      existing.count += 1;
+      if (currentUserId && row.user_id === currentUserId) {
+        existing.hasReacted = true;
+      }
+    } else {
+      summaryMap.set(row.reaction_type, {
+        count: 1,
+        hasReacted: currentUserId ? row.user_id === currentUserId : false,
+      });
+    }
+  }
+
+  return Array.from(summaryMap.entries()).map(([type, data]) => ({
+    type,
+    count: data.count,
+    hasReacted: data.hasReacted,
+  }));
+}
+
+/**
+ * Checks if a reaction row would be a duplicate
+ * Returns true if a duplicate exists
+ * 
+ * Requirements: 4.3
+ */
+export function isDuplicateReaction(
+  existingRows: ReactionRow[],
+  newRow: Pick<ReactionRow, 'user_id' | 'content_type' | 'content_id' | 'reaction_type'>
+): boolean {
+  return existingRows.some(
+    row =>
+      row.user_id === newRow.user_id &&
+      row.content_type === newRow.content_type &&
+      row.content_id === newRow.content_id &&
+      row.reaction_type === newRow.reaction_type
+  );
+}
+
+/**
+ * Adds a reaction to a list of rows, preventing duplicates
+ * Returns the new list and whether the reaction was added
+ * 
+ * Requirements: 4.3
+ */
+export function addReactionToRows(
+  existingRows: ReactionRow[],
+  newRow: ReactionRow
+): { rows: ReactionRow[]; added: boolean } {
+  if (isDuplicateReaction(existingRows, newRow)) {
+    return { rows: existingRows, added: false };
+  }
+  return { rows: [...existingRows, newRow], added: true };
+}
+
+/**
+ * Removes a reaction from a list of rows
+ * Returns the new list and whether a reaction was removed
+ * 
+ * Requirements: 1.2
+ */
+export function removeReactionFromRows(
+  existingRows: ReactionRow[],
+  criteria: Pick<ReactionRow, 'user_id' | 'content_type' | 'content_id' | 'reaction_type'>
+): { rows: ReactionRow[]; removed: boolean } {
+  const initialLength = existingRows.length;
+  const newRows = existingRows.filter(
+    row =>
+      !(
+        row.user_id === criteria.user_id &&
+        row.content_type === criteria.content_type &&
+        row.content_id === criteria.content_id &&
+        row.reaction_type === criteria.reaction_type
+      )
+  );
+  return { rows: newRows, removed: newRows.length < initialLength };
+}
+
+/**
+ * Orders reactor list with current user first, then by timestamp descending
+ * 
+ * Requirements: 2.2, 2.3
+ */
+export function orderReactors(
+  reactors: ReactorInfo[],
+  currentUserId?: string
+): ReactorInfo[] {
+  return [...reactors].sort((a, b) => {
+    // Current user always first
+    if (currentUserId) {
+      if (a.userId === currentUserId && b.userId !== currentUserId) return -1;
+      if (b.userId === currentUserId && a.userId !== currentUserId) return 1;
+    }
+    // Then by timestamp descending (most recent first)
+    return new Date(b.reactedAt).getTime() - new Date(a.reactedAt).getTime();
+  });
+}
