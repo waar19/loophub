@@ -7,6 +7,7 @@ import DarkModeToggle from "./DarkModeToggle";
 import SearchBar from "./SearchBar";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "./NotificationBell";
+import OfflineQueueBadge from "./OfflineQueueBadge";
 import LanguageSelector from "./LanguageSelector";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
@@ -94,6 +95,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <LanguageSelector />
           {user && <NotificationBell />}
+          <OfflineQueueBadge />
           <DarkModeToggle />
           <AuthButton />
         </div>

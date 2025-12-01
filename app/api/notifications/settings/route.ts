@@ -10,6 +10,7 @@ const updateSettingsSchema = z.object({
   notify_upvotes: z.boolean().optional(),
   notify_downvotes: z.boolean().optional(),
   notify_milestones: z.boolean().optional(),
+  notify_reactions: z.boolean().optional(),
   browser_notifications: z.boolean().optional(),
   sound_enabled: z.boolean().optional(),
   email_digest: z.boolean().optional(),

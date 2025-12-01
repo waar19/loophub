@@ -110,6 +110,21 @@ export const translations = {
       errorVoting: "Error al votar. Por favor, intenta de nuevo.",
       mustLogin: "Debes iniciar sesión para votar",
     },
+    // Reactions
+    reactions: {
+      addReaction: "Agregar reacción",
+      removeReaction: "Quitar reacción",
+      loginToReact: "Debes iniciar sesión para reaccionar",
+      reacted: "Reaccionaste",
+      andMore: "y {count} más",
+      // Reaction type names
+      thumbsUp: "Me gusta",
+      heart: "Me encanta",
+      laugh: "Jaja",
+      fire: "Fuego",
+      lightbulb: "Idea",
+      party: "Celebración",
+    },
     // Forums
     forums: {
       forum: "Foro",
@@ -202,6 +217,10 @@ export const translations = {
       loginRequired: "Debes iniciar sesión",
       loadMore: "Cargar más",
       creating: "Creando...",
+      on: "el",
+      less: "Menos",
+      more: "Más",
+      re: "Re:",
       // Drafts
       draftFound: "Borrador encontrado",
       draftFoundMessage: "Tienes un borrador sin publicar",
@@ -356,7 +375,8 @@ export const translations = {
       loginToJoin: "Inicia sesión para unirte",
       signedInAs: "Conectado como",
       // Settings/Management
-      confirmDelete: "¿Estás seguro de que quieres eliminar esta comunidad? Esta acción no se puede deshacer.",
+      confirmDelete:
+        "¿Estás seguro de que quieres eliminar esta comunidad? Esta acción no se puede deshacer.",
       copy: "Copiar",
       copied: "¡Copiado!",
       revoke: "Revocar",
@@ -372,10 +392,12 @@ export const translations = {
       advancedOptions: "Opciones avanzadas",
       autoDetect: "Automático",
       customCss: "CSS personalizado",
-      customCssHint: "Máximo 5000 caracteres. Algunos estilos pueden estar restringidos.",
+      customCssHint:
+        "Máximo 5000 caracteres. Algunos estilos pueden estar restringidos.",
       // Rules
       communityRules: "Reglas de la Comunidad",
-      rulesDescription: "Define las reglas para los miembros. Arrastra para reordenar.",
+      rulesDescription:
+        "Define las reglas para los miembros. Arrastra para reordenar.",
       ruleTitle: "Título de la regla",
       ruleDescription: "Descripción",
       ruleDescriptionOptional: "Descripción (opcional)",
@@ -507,6 +529,8 @@ export const translations = {
         downvotesDesc: "Cuando recibes un voto negativo",
         milestones: "Hitos",
         milestonesDesc: "Cuando alcanzas hitos de votos (5, 10, 25...)",
+        reactions: "Reacciones",
+        reactionsDesc: "Cuando alguien reacciona a tu contenido",
         browserSound: "Navegador y Sonido",
         browser: "Notificaciones del navegador",
         browserDesc: "Recibir notificaciones push del navegador",
@@ -556,7 +580,8 @@ export const translations = {
       errorCreatingForum: "Error al crear el foro",
       errorUpdatingForum: "Error al actualizar el foro",
       errorDeletingForum: "Error al eliminar el foro",
-      cannotDeleteForumWithThreads: "No se puede eliminar un foro que tiene hilos",
+      cannotDeleteForumWithThreads:
+        "No se puede eliminar un foro que tiene hilos",
       // Moderators
       moderators: "Moderadores",
       moderatorsDescription: "Gestiona los moderadores de los foros",
@@ -588,6 +613,20 @@ export const translations = {
       joined: "Se unió",
       admin: "Administrador",
       author: "Autor",
+      activity: "Actividad",
+      contributionsLastYear: "contribuciones en el último año",
+      contribution: "contribución",
+      contributions: "contribuciones",
+      achievements: "Logros",
+      saved: "Guardados",
+      memberSince: "Miembro desde",
+    },
+    user: {
+      follow: "Seguir",
+      following: "Siguiendo",
+      unfollow: "Dejar de seguir",
+      followers: "Seguidores",
+      following_count: "Siguiendo",
     },
     // Settings
     settings: {
@@ -701,6 +740,61 @@ export const translations = {
         "Minimalismo Digital • Organización Personal • Productividad Realista",
       rights: "Todos los derechos reservados.",
     },
+    // Offline/PWA
+    offline: {
+      status: "Sin conexión",
+      reconnecting: "Conexión restaurada",
+      pending: "pendiente",
+      pendingPlural: "pendientes",
+      syncing: "Sincronizando",
+      syncingItems: "elemento",
+      syncingItemsPlural: "elementos",
+      queueTitle: "Cola de sincronización",
+      queueEmpty: "No hay acciones pendientes",
+      queueAutoSync: "Se sincronizará automáticamente al conectar",
+      newComment: "Nuevo comentario",
+      editComment: "Editar comentario",
+      deleteComment: "Eliminar comentario",
+      vote: "Voto",
+      changeVote: "Cambiar voto",
+      removeVote: "Quitar voto",
+      reaction: "Reacción",
+      changeReaction: "Cambiar reacción",
+      removeReaction: "Quitar reacción",
+      failed: "Fallido",
+      attempt: "Intento",
+      cancel: "Cancelar",
+      justNow: "Hace un momento",
+      minutesAgo: "min",
+      hoursAgo: "h",
+      // PWA Settings
+      storageTitle: "Almacenamiento Offline",
+      storageNotSupported: "Tu navegador no soporta almacenamiento offline.",
+      cacheSize: "Tamaño de caché",
+      cacheSizeDesc: "Contenido guardado para uso offline",
+      clearCache: "Limpiar caché",
+      clearing: "Limpiando...",
+      clearCacheConfirm: "¿Estás seguro de que quieres limpiar la caché? Se eliminarán todos los datos guardados offline.",
+      pushTitle: "Notificaciones Push",
+      pushNotSupported: "Tu navegador no soporta notificaciones push.",
+      pushBlocked: "Las notificaciones están bloqueadas.",
+      pushBlockedHint: "Habilítalas en la configuración de tu navegador.",
+      pushReceive: "Recibir notificaciones",
+      pushReceiveDesc: "Recibe alertas de comentarios, menciones y más",
+      queueSettingsTitle: "Cola de sincronización",
+      queueNoPending: "No hay acciones pendientes de sincronizar.",
+      queueShowDetails: "Ver detalles",
+      queueHideDetails: "Ocultar detalles",
+      loading: "Cargando configuración...",
+      // Offline page
+      offlineTitle: "Sin conexión",
+      offlineMessage: "No tienes conexión a internet",
+      offlineSuggestion: "Puedes ver contenido guardado mientras tanto",
+      viewCached: "Ver contenido guardado",
+      cachedContent: "Contenido guardado",
+      noCachedContent: "No hay contenido guardado",
+      cachedOn: "Guardado el",
+    },
   },
   en: {
     // Navigation
@@ -808,6 +902,21 @@ export const translations = {
       errorVoting: "Error voting. Please try again.",
       mustLogin: "You must log in to vote",
     },
+    // Reactions
+    reactions: {
+      addReaction: "Add reaction",
+      removeReaction: "Remove reaction",
+      loginToReact: "You must log in to react",
+      reacted: "You reacted",
+      andMore: "and {count} more",
+      // Reaction type names
+      thumbsUp: "Like",
+      heart: "Love",
+      laugh: "Haha",
+      fire: "Fire",
+      lightbulb: "Idea",
+      party: "Celebrate",
+    },
     // Forums
     forums: {
       forum: "Forum",
@@ -854,6 +963,10 @@ export const translations = {
     // Common
     common: {
       loading: "Loading...",
+      on: "on",
+      less: "Less",
+      more: "More",
+      re: "Re:",
       error: "Error",
       success: "Success",
       save: "Save",
@@ -916,7 +1029,8 @@ export const translations = {
       // Settings tabs
       general: "General",
       dangerZone: "Danger Zone",
-      deleteWarning: "Once deleted, you won't be able to recover this community.",
+      deleteWarning:
+        "Once deleted, you won't be able to recover this community.",
     },
     // Search
     search: {
@@ -1053,7 +1167,8 @@ export const translations = {
       loginToJoin: "Log in to join",
       signedInAs: "Signed in as",
       // Settings/Management
-      confirmDelete: "Are you sure you want to delete this community? This action cannot be undone.",
+      confirmDelete:
+        "Are you sure you want to delete this community? This action cannot be undone.",
       copy: "Copy",
       copied: "Copied!",
       revoke: "Revoke",
@@ -1205,6 +1320,8 @@ export const translations = {
         downvotesDesc: "When you receive a downvote",
         milestones: "Milestones",
         milestonesDesc: "When you reach vote milestones (5, 10, 25...)",
+        reactions: "Reactions",
+        reactionsDesc: "When someone reacts to your content",
         browserSound: "Browser & Sound",
         browser: "Browser notifications",
         browserDesc: "Receive browser push notifications",
@@ -1286,7 +1403,22 @@ export const translations = {
       joined: "Joined",
       admin: "Admin",
       author: "Author",
+      activity: "Activity",
+      contributionsLastYear: "contributions in the last year",
+      contribution: "contribution",
+      contributions: "contributions",
+      achievements: "Achievements",
+      saved: "Saved",
+      memberSince: "Member since",
     },
+    user: {
+      follow: "Follow",
+      following: "Following",
+      unfollow: "Unfollow",
+      followers: "Followers",
+      following_count: "Following",
+    },
+
     // Settings
     settings: {
       title: "Profile Settings",
@@ -1396,6 +1528,61 @@ export const translations = {
         "Digital Minimalism • Personal Organization • Realistic Productivity",
       rights: "All rights reserved.",
     },
+    // Offline/PWA
+    offline: {
+      status: "Offline",
+      reconnecting: "Connection restored",
+      pending: "pending",
+      pendingPlural: "pending",
+      syncing: "Syncing",
+      syncingItems: "item",
+      syncingItemsPlural: "items",
+      queueTitle: "Sync queue",
+      queueEmpty: "No pending actions",
+      queueAutoSync: "Will sync automatically when connected",
+      newComment: "New comment",
+      editComment: "Edit comment",
+      deleteComment: "Delete comment",
+      vote: "Vote",
+      changeVote: "Change vote",
+      removeVote: "Remove vote",
+      reaction: "Reaction",
+      changeReaction: "Change reaction",
+      removeReaction: "Remove reaction",
+      failed: "Failed",
+      attempt: "Attempt",
+      cancel: "Cancel",
+      justNow: "Just now",
+      minutesAgo: "min",
+      hoursAgo: "h",
+      // PWA Settings
+      storageTitle: "Offline Storage",
+      storageNotSupported: "Your browser does not support offline storage.",
+      cacheSize: "Cache size",
+      cacheSizeDesc: "Content saved for offline use",
+      clearCache: "Clear cache",
+      clearing: "Clearing...",
+      clearCacheConfirm: "Are you sure you want to clear the cache? All offline data will be deleted.",
+      pushTitle: "Push Notifications",
+      pushNotSupported: "Your browser does not support push notifications.",
+      pushBlocked: "Notifications are blocked.",
+      pushBlockedHint: "Enable them in your browser settings.",
+      pushReceive: "Receive notifications",
+      pushReceiveDesc: "Get alerts for comments, mentions and more",
+      queueSettingsTitle: "Sync queue",
+      queueNoPending: "No pending actions to sync.",
+      queueShowDetails: "Show details",
+      queueHideDetails: "Hide details",
+      loading: "Loading settings...",
+      // Offline page
+      offlineTitle: "Offline",
+      offlineMessage: "You are not connected to the internet",
+      offlineSuggestion: "You can view saved content in the meantime",
+      viewCached: "View saved content",
+      cachedContent: "Saved content",
+      noCachedContent: "No saved content",
+      cachedOn: "Saved on",
+    },
   },
   pt: {
     // Navigation
@@ -1503,6 +1690,21 @@ export const translations = {
       votes: "votos",
       errorVoting: "Erro ao votar. Por favor, tente novamente.",
       mustLogin: "Você deve fazer login para votar",
+    },
+    // Reactions
+    reactions: {
+      addReaction: "Adicionar reação",
+      removeReaction: "Remover reação",
+      loginToReact: "Você deve fazer login para reagir",
+      reacted: "Você reagiu",
+      andMore: "e mais {count}",
+      // Reaction type names
+      thumbsUp: "Curtir",
+      heart: "Amei",
+      laugh: "Haha",
+      fire: "Fogo",
+      lightbulb: "Ideia",
+      party: "Celebrar",
     },
     // Forums
     forums: {
@@ -1613,7 +1815,8 @@ export const translations = {
       // Settings tabs
       general: "Geral",
       dangerZone: "Zona de Perigo",
-      deleteWarning: "Uma vez excluída, você não poderá recuperar esta comunidade.",
+      deleteWarning:
+        "Uma vez excluída, você não poderá recuperar esta comunidade.",
     },
     // Search
     search: {
@@ -1710,7 +1913,8 @@ export const translations = {
       about: "Sobre",
       createdOn: "Criada em",
       noThreads: "Ainda não há publicações",
-      levelRequired: "Você precisa de nível 3 ou superior para criar comunidades",
+      levelRequired:
+        "Você precisa de nível 3 ou superior para criar comunidades",
       currentLevel: "Seu nível atual",
       // Membership
       role: {
@@ -1750,7 +1954,8 @@ export const translations = {
       loginToJoin: "Faça login para participar",
       signedInAs: "Conectado como",
       // Settings/Management
-      confirmDelete: "Tem certeza que deseja excluir esta comunidade? Esta ação não pode ser desfeita.",
+      confirmDelete:
+        "Tem certeza que deseja excluir esta comunidade? Esta ação não pode ser desfeita.",
       copy: "Copiar",
       copied: "Copiado!",
       revoke: "Revogar",
@@ -1766,10 +1971,12 @@ export const translations = {
       advancedOptions: "Opções avançadas",
       autoDetect: "Automático",
       customCss: "CSS personalizado",
-      customCssHint: "Máximo 5000 caracteres. Alguns estilos podem ser restritos.",
+      customCssHint:
+        "Máximo 5000 caracteres. Alguns estilos podem ser restritos.",
       // Rules
       communityRules: "Regras da Comunidade",
-      rulesDescription: "Defina regras para os membros. Arraste para reordenar.",
+      rulesDescription:
+        "Defina regras para os membros. Arraste para reordenar.",
       ruleTitle: "Título da regra",
       ruleDescription: "Descrição",
       ruleDescriptionOptional: "Descrição (opcional)",
@@ -1901,6 +2108,8 @@ export const translations = {
         downvotesDesc: "Quando você recebe um voto negativo",
         milestones: "Marcos",
         milestonesDesc: "Quando você alcança marcos de votos (5, 10, 25...)",
+        reactions: "Reações",
+        reactionsDesc: "Quando alguém reage ao seu conteúdo",
         browserSound: "Navegador e Som",
         browser: "Notificações do navegador",
         browserDesc: "Receber notificações push do navegador",
@@ -1950,7 +2159,8 @@ export const translations = {
       errorCreatingForum: "Erro ao criar fórum",
       errorUpdatingForum: "Erro ao atualizar fórum",
       errorDeletingForum: "Erro ao excluir fórum",
-      cannotDeleteForumWithThreads: "Não é possível excluir um fórum que possui tópicos",
+      cannotDeleteForumWithThreads:
+        "Não é possível excluir um fórum que possui tópicos",
       // Moderators
       moderators: "Moderadores",
       moderatorsDescription: "Gerencie os moderadores dos fóruns",
@@ -2094,6 +2304,61 @@ export const translations = {
       tagline:
         "Minimalismo Digital • Organização Pessoal • Produtividade Realista",
       rights: "Todos os direitos reservados.",
+    },
+    // Offline/PWA
+    offline: {
+      status: "Sem conexão",
+      reconnecting: "Conexão restaurada",
+      pending: "pendente",
+      pendingPlural: "pendentes",
+      syncing: "Sincronizando",
+      syncingItems: "item",
+      syncingItemsPlural: "itens",
+      queueTitle: "Fila de sincronização",
+      queueEmpty: "Não há ações pendentes",
+      queueAutoSync: "Será sincronizado automaticamente ao conectar",
+      newComment: "Novo comentário",
+      editComment: "Editar comentário",
+      deleteComment: "Excluir comentário",
+      vote: "Voto",
+      changeVote: "Alterar voto",
+      removeVote: "Remover voto",
+      reaction: "Reação",
+      changeReaction: "Alterar reação",
+      removeReaction: "Remover reação",
+      failed: "Falhou",
+      attempt: "Tentativa",
+      cancel: "Cancelar",
+      justNow: "Agora mesmo",
+      minutesAgo: "min",
+      hoursAgo: "h",
+      // PWA Settings
+      storageTitle: "Armazenamento Offline",
+      storageNotSupported: "Seu navegador não suporta armazenamento offline.",
+      cacheSize: "Tamanho do cache",
+      cacheSizeDesc: "Conteúdo salvo para uso offline",
+      clearCache: "Limpar cache",
+      clearing: "Limpando...",
+      clearCacheConfirm: "Tem certeza de que deseja limpar o cache? Todos os dados offline serão excluídos.",
+      pushTitle: "Notificações Push",
+      pushNotSupported: "Seu navegador não suporta notificações push.",
+      pushBlocked: "As notificações estão bloqueadas.",
+      pushBlockedHint: "Habilite-as nas configurações do seu navegador.",
+      pushReceive: "Receber notificações",
+      pushReceiveDesc: "Receba alertas de comentários, menções e mais",
+      queueSettingsTitle: "Fila de sincronização",
+      queueNoPending: "Não há ações pendentes para sincronizar.",
+      queueShowDetails: "Ver detalhes",
+      queueHideDetails: "Ocultar detalhes",
+      loading: "Carregando configurações...",
+      // Offline page
+      offlineTitle: "Sem conexão",
+      offlineMessage: "Você não está conectado à internet",
+      offlineSuggestion: "Você pode ver o conteúdo salvo enquanto isso",
+      viewCached: "Ver conteúdo salvo",
+      cachedContent: "Conteúdo salvo",
+      noCachedContent: "Nenhum conteúdo salvo",
+      cachedOn: "Salvo em",
     },
   },
 } as const;

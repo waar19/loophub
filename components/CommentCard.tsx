@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import DeleteCommentButton from "@/components/DeleteCommentButton";
 import Link from "next/link";
 import VoteButtons from "./VoteButtons";
+import ReactionDisplay from "./ReactionDisplay";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "./TranslationsProvider";
 import { useToast } from "@/contexts/ToastContext";
@@ -166,6 +167,15 @@ export default function CommentCard({
         {/* Comment content - compact prose */}
         <div className="prose prose-sm max-w-none text-sm leading-relaxed mb-4">
           <MarkdownRenderer content={comment.content} />
+        </div>
+
+        {/* Reactions - below content, before actions (Requirement 1.1) */}
+        <div className="mb-3">
+          <ReactionDisplay
+            contentType="comment"
+            contentId={comment.id}
+            authorId={comment.user_id}
+          />
         </div>
 
         {/* Action buttons - compact horizontal list */}
