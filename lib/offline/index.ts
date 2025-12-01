@@ -39,3 +39,19 @@ export {
   getStaleComments,
   getStaleItems,
 } from './cache';
+
+// Queue operations
+export {
+  queueAction,
+  getQueuedActions,
+  cancelQueuedAction,
+  getQueueCount,
+  updateQueueItemStatus,
+  calculateRetryDelay,
+  shouldRetry,
+  markForRetry,
+  markAsFailed,
+  removeOnSuccess,
+  getItemsReadyForSync,
+  markAsSyncing,
+} from './queue';

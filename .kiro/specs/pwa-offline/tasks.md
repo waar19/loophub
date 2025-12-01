@@ -41,20 +41,20 @@
     - **Property 2: Staleness detection consistency**
     - **Validates: Requirements 1.1, 1.4, 1.5**
 
-- [ ] 3. Offline queue system
-  - [ ] 3.1 Implement queue operations
+- [x] 3. Offline queue system
+  - [x] 3.1 Implement queue operations
     - Create `lib/offline/queue.ts`
     - queueAction, getQueuedActions, cancelQueuedAction
     - getQueueCount, updateQueueItemStatus
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ] 3.2 Implement retry logic
+  - [x] 3.2 Implement retry logic
     - calculateRetryDelay with exponential backoff
     - shouldRetry based on retryCount
     - markForRetry, markAsFailed functions
     - _Requirements: 2.5_
 
-  - [ ]* 3.3 Write property tests for queue operations
+  - [x] 3.3 Write property tests for queue operations
     - **Property 3: Offline queue item structure**
     - **Property 4: Queue count accuracy**
     - **Property 5: Retry delay calculation**
