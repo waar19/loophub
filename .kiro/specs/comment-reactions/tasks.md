@@ -108,5 +108,5 @@
     - **Property 8: No self-notifications**
     - **Validates: Requirements 5.3**
 
-- [-] 7. Final Checkpoint - Ensure all tests pass
+- [x] 7. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
