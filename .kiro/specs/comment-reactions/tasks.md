@@ -40,7 +40,7 @@
     - Order by timestamp, current user first
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ]* 2.4 Write property tests for API validation
+  - [x] 2.4 Write property tests for API validation
     - **Property 5: Reaction type validation**
     - **Property 7: Authentication required**
     - **Validates: Requirements 1.3, 6.1**
