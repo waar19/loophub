@@ -363,3 +363,29 @@ export function orderReactors(
     return new Date(b.reactedAt).getTime() - new Date(a.reactedAt).getTime();
   });
 }
+
+// ============================================================================
+// Notification Logic Helpers (Pure Functions for Testing)
+// ============================================================================
+
+/**
+ * Determines if a notification should be created for a reaction
+ * Returns true if notification should be created, false otherwise
+ * 
+ * Requirements: 5.1, 5.3
+ * - Notification should be created on first reaction (5.1)
+ * - No notification for self-reactions (5.3)
+ */
+export function shouldCreateReactionNotification(
+  reactorUserId: string,
+  contentAuthorId: string,
+  isFirstReaction: boolean
+): boolean {
+  // Don't notify if reacting to own content (Requirement 5.3)
+  if (reactorUserId === contentAuthorId) {
+    return false;
+  }
+  
+  // Only notify on first reaction (Requirement 5.1)
+  return isFirstReaction;
+}

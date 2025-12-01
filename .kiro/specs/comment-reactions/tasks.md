@@ -104,9 +104,9 @@
     - Create notification on first reaction (via DB trigger)
     - _Requirements: 5.1, 5.2_
 
-  - [ ]* 6.2 Write property test for no self-notifications
+  - [x] 6.2 Write property test for no self-notifications
     - **Property 8: No self-notifications**
     - **Validates: Requirements 5.3**
 
-- [ ] 7. Final Checkpoint - Ensure all tests pass
+- [-] 7. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.

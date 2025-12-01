@@ -21,6 +21,7 @@ import {
   addReactionToRows,
   removeReactionFromRows,
   orderReactors,
+  shouldCreateReactionNotification,
 } from '@/lib/reactions';
 
 /**
@@ -285,5 +286,102 @@ describe('Authentication Error Handling', () => {
       }),
       { numRuns: 100 }
     );
+  });
+});
+
+
+/**
+ * Property-Based Tests for Notification Logic
+ * 
+ * **Feature: comment-reactions, Property 8: No self-notifications**
+ * **Validates: Requirements 5.3**
+ */
+describe('Reaction Notification Logic', () => {
+  describe('No self-notifications', () => {
+    /**
+     * **Feature: comment-reactions, Property 8: No self-notifications**
+     * **Validates: Requirements 5.3**
+     * 
+     * For any reaction added by the content author to their own content,
+     * no notification should be created.
+     */
+    it('should never create notification when reactor is the content author', () => {
+      fc.assert(
+        fc.property(
+          fc.uuid(), // userId (same for reactor and author)
+          fc.boolean(), // isFirstReaction
+          (userId, isFirstReaction) => {
+            // When reactor and author are the same person (self-reaction)
+            const shouldNotify = shouldCreateReactionNotification(
+              userId, // reactorUserId
+              userId, // contentAuthorId (same as reactor)
+              isFirstReaction
+            );
+            
+            // Should never create notification for self-reactions
+            expect(shouldNotify).toBe(false);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: comment-reactions, Property 8: No self-notifications**
+     * **Validates: Requirements 5.3**
+     * 
+     * For any first reaction by a different user, notification should be created.
+     */
+    it('should create notification for first reaction by different user', () => {
+      fc.assert(
+        fc.property(
+          fc.uuid(), // reactorUserId
+          fc.uuid(), // contentAuthorId
+          (reactorUserId, contentAuthorId) => {
+            // Skip if UUIDs happen to be the same (self-reaction case)
+            fc.pre(reactorUserId !== contentAuthorId);
+            
+            const shouldNotify = shouldCreateReactionNotification(
+              reactorUserId,
+              contentAuthorId,
+              true // isFirstReaction
+            );
+            
+            // Should create notification for first reaction by different user
+            expect(shouldNotify).toBe(true);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: comment-reactions, Property 8: No self-notifications**
+     * **Validates: Requirements 5.1, 5.3**
+     * 
+     * For any non-first reaction (even by different user), no notification should be created.
+     */
+    it('should not create notification for non-first reactions', () => {
+      fc.assert(
+        fc.property(
+          fc.uuid(), // reactorUserId
+          fc.uuid(), // contentAuthorId
+          (reactorUserId, contentAuthorId) => {
+            // Skip if UUIDs happen to be the same (self-reaction case)
+            fc.pre(reactorUserId !== contentAuthorId);
+            
+            const shouldNotify = shouldCreateReactionNotification(
+              reactorUserId,
+              contentAuthorId,
+              false // isFirstReaction = false
+            );
+            
+            // Should not create notification for non-first reactions
+            expect(shouldNotify).toBe(false);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
   });
 });
