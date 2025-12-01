@@ -50,7 +50,9 @@ export async function generateMetadata({
 
   return {
     title: `@${profile.username} - Loophub`,
-    description: `Perfil de ${profile.username} en Loophub. Nivel ${profile.level || 0} con ${profile.karma || 0} karma.`,
+    description: `Perfil de ${profile.username} en Loophub. Nivel ${
+      profile.level || 0
+    } con ${profile.karma || 0} karma.`,
     openGraph: {
       title: `@${profile.username} - Loophub`,
       description: `Perfil de ${profile.username} en Loophub`,
@@ -76,6 +78,14 @@ export default async function UserProfilePage({
     .select("*")
     .eq("username", username)
     .single();
+
+  // Get follower and following counts
+  const [{ data: followerCount }, { data: followingCount }] = await Promise.all(
+    [
+      supabase.rpc("get_follower_count", { p_user_id: profile?.id }),
+      supabase.rpc("get_following_count", { p_user_id: profile?.id }),
+    ]
+  );
 
   if (profileError || !profile) {
     notFound();
@@ -122,14 +132,17 @@ export default async function UserProfilePage({
     .limit(20);
 
   // Get user's bookmarked threads (only if viewing own profile)
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let bookmarkedData: any[] = [];
-  
+
   if (user?.id === profile.id) {
     const { data: bookmarkedThreads } = await supabase
       .from("bookmarks")
-      .select(`
+      .select(
+        `
         thread:threads(
           id,
           title,
@@ -143,74 +156,89 @@ export default async function UserProfilePage({
           comments(count),
           profiles(username)
         )
-      `)
+      `
+      )
       .eq("user_id", profile.id)
       .order("created_at", { ascending: false })
       .limit(20);
-    
+
     // Extract threads from bookmark relations
-    bookmarkedData = bookmarkedThreads?.map(b => b.thread).filter(Boolean) || [];
+    bookmarkedData =
+      bookmarkedThreads?.map((b) => b.thread).filter(Boolean) || [];
   }
 
   // Get activity data (threads and comments by date for the last year)
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  
-  const [{ data: threadActivity }, { data: commentActivity }] = await Promise.all([
-    supabase
-      .from("threads")
-      .select("created_at")
-      .eq("user_id", profile.id)
-      .gte("created_at", oneYearAgo.toISOString()),
-    supabase
-      .from("comments")
-      .select("created_at")
-      .eq("user_id", profile.id)
-      .gte("created_at", oneYearAgo.toISOString()),
-  ]);
+
+  const [{ data: threadActivity }, { data: commentActivity }] =
+    await Promise.all([
+      supabase
+        .from("threads")
+        .select("created_at")
+        .eq("user_id", profile.id)
+        .gte("created_at", oneYearAgo.toISOString()),
+      supabase
+        .from("comments")
+        .select("created_at")
+        .eq("user_id", profile.id)
+        .gte("created_at", oneYearAgo.toISOString()),
+    ]);
 
   // Aggregate activity by date
   const activityMap = new Map<string, number>();
-  
-  threadActivity?.forEach(t => {
-    const date = t.created_at.split('T')[0];
-    activityMap.set(date, (activityMap.get(date) || 0) + 1);
-  });
-  
-  commentActivity?.forEach(c => {
-    const date = c.created_at.split('T')[0];
+
+  threadActivity?.forEach((t) => {
+    const date = t.created_at.split("T")[0];
     activityMap.set(date, (activityMap.get(date) || 0) + 1);
   });
 
-  const activityData = Array.from(activityMap.entries()).map(([date, count]) => ({
-    date,
-    count
-  }));
+  commentActivity?.forEach((c) => {
+    const date = c.created_at.split("T")[0];
+    activityMap.set(date, (activityMap.get(date) || 0) + 1);
+  });
+
+  const activityData = Array.from(activityMap.entries()).map(
+    ([date, count]) => ({
+      date,
+      count,
+    })
+  );
 
   // Get user badges (if table exists)
-  let badges: Array<{ id: string; name: string; description: string; icon: string; earned_at: string }> = [];
+  let badges: Array<{
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    earned_at: string;
+  }> = [];
   try {
     const { data: userBadges } = await supabase
       .from("user_badges")
-      .select(`
+      .select(
+        `
         earned_at,
         badge:badges(id, name, description, icon)
-      `)
+      `
+      )
       .eq("user_id", profile.id)
       .order("earned_at", { ascending: false });
-    
+
     if (userBadges) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      badges = userBadges.map((ub: any) => {
-        const badge = Array.isArray(ub.badge) ? ub.badge[0] : ub.badge;
-        return {
-          id: badge?.id || '',
-          name: badge?.name || '',
-          description: badge?.description || '',
-          icon: badge?.icon || '🏆',
-          earned_at: ub.earned_at
-        };
-      }).filter(b => b.id);
+      badges = userBadges
+        .map((ub: any) => {
+          const badge = Array.isArray(ub.badge) ? ub.badge[0] : ub.badge;
+          return {
+            id: badge?.id || "",
+            name: badge?.name || "",
+            description: badge?.description || "",
+            icon: badge?.icon || "🏆",
+            earned_at: ub.earned_at,
+          };
+        })
+        .filter((b) => b.id);
     }
   } catch {
     // Badges table doesn't exist yet, ignore
@@ -219,42 +247,62 @@ export default async function UserProfilePage({
   // Check if current user is viewing their own profile
   const isOwnProfile = user?.id === profile.id;
 
-  // Format data for ProfileContent
-  const formattedThreads = threads?.map(t => ({
-    id: t.id,
-    title: t.title,
-    content: t.content,
-    score: t.score || 0,
-    created_at: t.created_at,
-    comment_count: Array.isArray(t.comments) ? t.comments.length : ((t.comments as { count?: number })?.count || 0),
-    forum: t.forums && Array.isArray(t.forums) && t.forums[0] 
-      ? { name: t.forums[0].name, slug: t.forums[0].slug }
-      : undefined
-  })) || [];
+  // Check if current user is following this profile
+  let isFollowing = false;
+  if (user && !isOwnProfile) {
+    const { data: followData } = await supabase.rpc("is_following", {
+      p_follower_id: user.id,
+      p_following_id: profile.id,
+    });
+    isFollowing = followData || false;
+  }
 
-  const formattedComments = comments?.map(c => ({
-    id: c.id,
-    content: c.content,
-    score: c.score || 0,
-    created_at: c.created_at,
-    thread: c.thread && Array.isArray(c.thread) && c.thread[0]
-      ? { id: c.thread[0].id, title: c.thread[0].title }
-      : undefined
-  })) || [];
+  // Format data for ProfileContent
+  const formattedThreads =
+    threads?.map((t) => ({
+      id: t.id,
+      title: t.title,
+      content: t.content,
+      score: t.score || 0,
+      created_at: t.created_at,
+      comment_count: Array.isArray(t.comments)
+        ? t.comments.length
+        : (t.comments as { count?: number })?.count || 0,
+      forum:
+        t.forums && Array.isArray(t.forums) && t.forums[0]
+          ? { name: t.forums[0].name, slug: t.forums[0].slug }
+          : undefined,
+    })) || [];
+
+  const formattedComments =
+    comments?.map((c) => ({
+      id: c.id,
+      content: c.content,
+      score: c.score || 0,
+      created_at: c.created_at,
+      thread:
+        c.thread && Array.isArray(c.thread) && c.thread[0]
+          ? { id: c.thread[0].id, title: c.thread[0].title }
+          : undefined,
+    })) || [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const formattedBookmarks = bookmarkedData?.map((t: any) => ({
-    id: t.id,
-    title: t.title,
-    content: t.content,
-    score: t.score || 0,
-    created_at: t.created_at,
-    comment_count: Array.isArray(t.comments) ? t.comments.length : (t.comments?.count || 0),
-    forum: t.forums && Array.isArray(t.forums) && t.forums[0]
-      ? { name: t.forums[0].name, slug: t.forums[0].slug }
-      : undefined,
-    author: t.profiles?.username
-  })) || [];
+  const formattedBookmarks =
+    bookmarkedData?.map((t: any) => ({
+      id: t.id,
+      title: t.title,
+      content: t.content,
+      score: t.score || 0,
+      created_at: t.created_at,
+      comment_count: Array.isArray(t.comments)
+        ? t.comments.length
+        : t.comments?.count || 0,
+      forum:
+        t.forums && Array.isArray(t.forums) && t.forums[0]
+          ? { name: t.forums[0].name, slug: t.forums[0].slug }
+          : undefined,
+      author: t.profiles?.username,
+    })) || [];
 
   const profileData = {
     id: profile.id,
@@ -270,7 +318,10 @@ export default async function UserProfilePage({
     is_admin: profile.is_admin,
     created_at: profile.created_at,
     thread_count: threads?.length || 0,
-    comment_count: comments?.length || 0
+    comment_count: comments?.length || 0,
+    follower_count: followerCount || 0,
+    following_count: followingCount || 0,
+    is_following: isFollowing,
   };
 
   return (
