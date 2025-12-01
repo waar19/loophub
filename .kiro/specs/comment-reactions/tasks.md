@@ -20,21 +20,21 @@
     - **Property 6: Serialization round-trip**
     - **Validates: Requirements 6.3, 6.4**
 
-- [ ] 2. API endpoints
-  - [ ] 2.1 Create POST /api/reactions endpoint
+- [x] 2. API endpoints
+  - [x] 2.1 Create POST /api/reactions endpoint
     - Toggle reaction (add if not exists, remove if exists)
     - Validate reaction_type against enum
     - Return updated reaction summaries
     - Handle authentication check
     - _Requirements: 1.1, 1.2, 1.3, 6.1_
 
-  - [ ] 2.2 Create GET /api/reactions endpoint
+  - [x] 2.2 Create GET /api/reactions endpoint
     - Query params: contentType, contentId
     - Return aggregated reactions with counts
     - Include hasReacted flag for current user
     - _Requirements: 1.4, 2.1_
 
-  - [ ] 2.3 Create GET /api/reactions/users endpoint
+  - [x] 2.3 Create GET /api/reactions/users endpoint
     - Query params: contentType, contentId, reactionType
     - Return list of users who reacted (max 10)
     - Order by timestamp, current user first
