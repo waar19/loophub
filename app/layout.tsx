@@ -8,6 +8,7 @@ import { TranslationsProvider } from "@/components/TranslationsProvider";
 import { WebsiteStructuredData } from "@/components/StructuredData";
 import { getBaseUrl, getFullUrl } from "@/lib/url-helpers";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import OfflineIndicator from "@/components/OfflineIndicator";
 import { QueryProvider } from "@/lib/query-provider";
 
 const inter = Inter({
@@ -138,6 +139,7 @@ export default function RootLayout({
           <TranslationsProvider>
             <ToastProvider>
               <OnboardingGuard>
+                <OfflineIndicator />
                 <AppLayout>{children}</AppLayout>
                 <PWAInstallPrompt />
               </OnboardingGuard>

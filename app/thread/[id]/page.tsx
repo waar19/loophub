@@ -32,6 +32,7 @@ import Poll from "@/components/Poll";
 import PollCreator from "@/components/PollCreator";
 import ReactionDisplay from "@/components/ReactionDisplay";
 import { checkModeratorStatus } from "@/lib/actions/moderation";
+import { useOfflineStore } from "@/hooks/useOfflineStore";
 
 import { Thread, Comment, Forum } from "@/lib/supabase";
 
@@ -71,6 +72,7 @@ export default function ThreadPage({
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const { t } = useTranslations();
+  const { cacheThread, cacheComments, isSupported: offlineSupported } = useOfflineStore();
 
   const fetchData = useCallback(
     async (pageNum: number = 1, append: boolean = false) => {
@@ -117,6 +119,49 @@ export default function ThreadPage({
       });
     }
   }, [data?.thread?.forum_id, user]);
+
+  // Cache thread and comments for offline access (Requirement 1.1)
+  useEffect(() => {
+    if (data?.thread && offlineSupported) {
+      // Transform thread to ThreadData format for caching
+      const threadData = {
+        id: data.thread.id,
+        title: data.thread.title,
+        content: data.thread.content,
+        authorId: data.thread.user_id || 'unknown',
+        authorName: data.thread.profile?.username,
+        forumId: data.thread.forum_id,
+        forumSlug: data.thread.forum?.slug,
+        createdAt: data.thread.created_at,
+        voteCount: (data.thread.upvote_count || 0) - (data.thread.downvote_count || 0),
+        commentCount: data.pagination?.total || data.comments.length,
+        isPinned: data.thread.is_pinned,
+      };
+      
+      cacheThread(threadData).catch((err) => {
+        console.error('[ThreadPage] Error caching thread:', err);
+      });
+      
+      // Cache comments if available - transform to CommentData format
+      if (data.comments && data.comments.length > 0) {
+        const commentsData = data.comments.map((comment) => ({
+          id: comment.id,
+          content: comment.content,
+          authorId: comment.user_id || 'unknown',
+          authorName: comment.profile?.username,
+          threadId: comment.thread_id,
+          parentId: comment.parent_id,
+          createdAt: comment.created_at,
+          updatedAt: comment.updated_at,
+          voteCount: (comment.upvote_count || 0) - (comment.downvote_count || 0),
+        }));
+        
+        cacheComments(id, commentsData).catch((err) => {
+          console.error('[ThreadPage] Error caching comments:', err);
+        });
+      }
+    }
+  }, [data?.thread, data?.comments, data?.pagination?.total, id, offlineSupported, cacheThread, cacheComments]);
 
   // Check for existing poll and user permissions
   useEffect(() => {

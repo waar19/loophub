@@ -8,6 +8,7 @@ import { useTranslations } from "@/components/TranslationsProvider";
 import KarmaProgress from "@/components/KarmaProgress";
 import UsernameChange from "@/components/UsernameChange";
 import NotificationSettings from "@/components/NotificationSettings";
+import PWASettings from "@/components/PWASettings";
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -306,6 +307,7 @@ export default function SettingsPage() {
             />
             <KarmaProgress />
             <NotificationSettings />
+            <PWASettings />
           </div>
         </div>
       </div>

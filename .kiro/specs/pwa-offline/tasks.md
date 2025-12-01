@@ -174,27 +174,27 @@
     - Show offline queue status
     - _Requirements: 1.3_
 
-- [ ] 11. Integration
-  - [ ] 11.1 Integrate OfflineIndicator in layout
+- [x] 11. Integration
+  - [x] 11.1 Integrate OfflineIndicator in layout
     - Add to `app/layout.tsx`
     - Position at top of viewport
     - _Requirements: 1.2_
 
-  - [ ] 11.2 Integrate OfflineQueueBadge in header
+  - [x] 11.2 Integrate OfflineQueueBadge in header
     - Add to `components/Header.tsx`
     - Show next to notifications
     - _Requirements: 2.3_
 
-  - [ ] 11.3 Integrate PWASettings in settings page
+  - [x] 11.3 Integrate PWASettings in settings page
     - Add section to `app/settings/page.tsx`
     - _Requirements: 5.1_
 
-  - [ ] 11.4 Add cache-on-view to thread page
+  - [x] 11.4 Add cache-on-view to thread page
     - Modify `app/thread/[id]/page.tsx`
     - Cache thread and comments on view
     - _Requirements: 1.1_
 
-  - [ ] 11.5 Add translations for offline features
+  - [x] 11.5 Add translations for offline features
     - Add keys to `lib/i18n/translations.ts`
     - ES, EN, PT translations
     - _Requirements: 1.2, 1.3, 2.3_
