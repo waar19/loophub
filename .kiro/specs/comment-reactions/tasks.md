@@ -48,34 +48,34 @@
 - [x] 3. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. React hook and components
-  - [ ] 4.1 Create useReactions hook
+- [x] 4. React hook and components
+  - [x] 4.1 Create useReactions hook
     - Fetch initial reactions
     - toggleReaction with optimistic update
     - getReactors for tooltip data
     - Handle loading and error states
     - _Requirements: 1.1, 1.2, 1.5_
 
-  - [ ] 4.2 Create ReactionPicker component
+  - [x] 4.2 Create ReactionPicker component
     - Display 6 emoji options in a popup
     - Handle click outside to close
     - Position to avoid viewport overflow
     - Keyboard navigation support
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-  - [ ] 4.3 Create ReactionDisplay component
+  - [x] 4.3 Create ReactionDisplay component
     - Show reactions with counts (only non-zero)
     - Highlight user's own reactions
     - Add reaction button to open picker
     - _Requirements: 1.4, 1.5_
 
-  - [ ] 4.4 Create ReactionTooltip component
+  - [x] 4.4 Create ReactionTooltip component
     - Show list of usernames on hover
     - Max 10 users with "+X more" indicator
     - Current user shown first
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ]* 4.5 Write property tests for reaction logic
+  - [-] 4.5 Write property tests for reaction logic
     - **Property 1: Toggle reaction is idempotent round-trip**
     - **Property 2: Reaction count accuracy**
     - **Property 3: No duplicate reactions**
