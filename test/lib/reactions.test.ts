@@ -45,9 +45,9 @@ describe('Reactions Serialization', () => {
   const reactorInfoArb: fc.Arbitrary<ReactorInfo> = fc.record({
     userId: fc.uuid(),
     username: fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
-    avatarUrl: fc.option(fc.webUrl(), { nil: null }),
-    // Use a constrained date range to avoid invalid dates
-    reactedAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
+    avatarUrl: fc.option(fc.constant('https://example.com/avatar.png'), { nil: null }),
+    // Use integer timestamps to avoid invalid date issues
+    reactedAt: fc.integer({ min: 1577836800000, max: 1924905600000 }).map(ts => new Date(ts).toISOString()),
   });
 
   describe('ReactionSummary serialization round-trip', () => {

@@ -199,5 +199,5 @@
     - ES, EN, PT translations
     - _Requirements: 1.2, 1.3, 2.3_
 
-- [ ] 12. Final Checkpoint - Ensure all tests pass
+- [x] 12. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
