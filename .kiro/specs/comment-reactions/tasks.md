@@ -45,7 +45,7 @@
     - **Property 7: Authentication required**
     - **Validates: Requirements 1.3, 6.1**
 
-- [ ] 3. Checkpoint - Ensure all tests pass
+- [x] 3. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 4. React hook and components
