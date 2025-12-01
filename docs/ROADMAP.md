@@ -5,8 +5,9 @@
 ### Funcionalidades Core
 - ✅ Sistema de foros completo
 - ✅ Threads y comentarios
+- ✅ Comentarios anidados (respuestas a comentarios)
 - ✅ Autenticación (email + Google OAuth)
-- ✅ Búsqueda
+- ✅ Búsqueda básica y avanzada (filtros por fecha, autor, foro)
 - ✅ Modo oscuro
 - ✅ Diseño profesional y moderno
 - ✅ SEO optimizado
@@ -14,7 +15,7 @@
 - ✅ Structured data (JSON-LD)
 - ✅ Tooltips
 - ✅ Sistema de reportes
-- ✅ Panel de administración básico
+- ✅ Panel de administración completo
 
 ### UX/UI
 - ✅ Navegación completa (Header, Sidebar, Breadcrumbs)
@@ -24,212 +25,202 @@
 - ✅ Error handling
 - ✅ Toast notifications
 
+### Sistema de Notificaciones
+- ✅ Notificaciones persistentes en base de datos
+- ✅ Notificaciones en tiempo real (Supabase Realtime)
+- ✅ Notificaciones cuando alguien comenta en tus threads
+- ✅ Notificaciones cuando alguien responde a tus comentarios
+- ✅ Notificaciones de menciones (@username)
+- ✅ Notificaciones de reacciones
+- ✅ Badge de notificaciones no leídas en el header
+- ✅ Página de notificaciones (`/notifications`)
+- ✅ Configuración de notificaciones por usuario
+
+### Imágenes OG Dinámicas
+- ✅ Endpoint `/api/og` para generar imágenes Open Graph
+- ✅ Imágenes personalizadas por thread/foro
+
+### Bookmarks / Favoritos
+- ✅ Guardar threads favoritos
+- ✅ Página "Mis Favoritos" (`/bookmarks`)
+- ✅ Botón de bookmark en threads
+
+### Seguir Threads (Subscriptions)
+- ✅ Seguir threads para recibir notificaciones
+- ✅ Notificaciones cuando hay nuevos comentarios
+
+### Tags/Categorías
+- ✅ Sistema de tags en threads
+- ✅ Filtrado por tags
+- ✅ Tags sugeridos
+
+### Perfiles de Usuario
+- ✅ Página de perfil pública (`/u/[username]`)
+- ✅ Bio/descripción del usuario
+- ✅ Estadísticas (threads, comentarios, karma)
+- ✅ Sistema de followers/following
+- ✅ Configuración de perfil
+- ✅ Cambio de username
+
+### Rate Limiting y Protección
+- ✅ Rate limiting en API endpoints
+- ✅ Protección contra spam
+
+### Analytics
+- ✅ Tracking de vistas de threads
+- ✅ Dashboard de métricas (`/admin/analytics`)
+
+### Gamification
+- ✅ Sistema de karma/reputación
+- ✅ Niveles de usuario
+- ✅ Badges/logros
+
+### Comunidades
+- ✅ Crear comunidades personalizadas
+- ✅ Diseño personalizable por comunidad
+- ✅ Sistema de invitaciones
+- ✅ Solicitudes de membresía
+- ✅ Reglas de comunidad
+
+### Moderación
+- ✅ Moderadores por foro
+- ✅ Sticky/pinned threads
+- ✅ Acciones de moderación (ocultar, eliminar)
+
+### Polls/Encuestas
+- ✅ Crear encuestas en threads
+- ✅ Votar en encuestas
+- ✅ Resultados en tiempo real
+
+### Email
+- ✅ Email digest (resumen periódico)
+- ✅ Integración con Resend
+
+### Internacionalización (i18n)
+- ✅ Soporte multi-idioma (ES, EN, PT)
+- ✅ Selector de idioma
+
+### Reacciones con Emojis
+- ✅ Reacciones en comentarios y threads (👍❤️😂🔥💡🎉)
+- ✅ Toggle de reacciones
+- ✅ Tooltip con lista de usuarios que reaccionaron
+- ✅ Notificaciones de reacciones
+
+### Sistema de Votos
+- ✅ Upvote/downvote en threads
+- ✅ Upvote/downvote en comentarios
+- ✅ Superlike para contenido destacado
+
+### Menciones
+- ✅ Menciones de usuarios (@username)
+- ✅ Autocompletado de menciones
+- ✅ Notificaciones de menciones
+
+### Imágenes
+- ✅ Upload de imágenes en threads
+- ✅ Storage en Supabase
+
 ---
 
-## 🚀 Mejoras Sugeridas (Prioridad Alta)
+## 🚀 Ideas Futuras (Por Implementar)
 
-### 1. Sistema de Notificaciones en Tiempo Real
-**Estado**: Solo hay toasts del lado del cliente
+### 🔴 Alta Prioridad
+
+#### 1. PWA Completa (Offline Mode)
+**Estado**: Parcialmente implementado (manifest.json, sw.js básico)
 
 **Qué falta**:
-- Notificaciones persistentes en base de datos
-- Notificaciones cuando alguien comenta en tus threads
-- Notificaciones cuando alguien responde a tus comentarios
-- Badge de notificaciones no leídas en el header
-- Página de notificaciones
-- Opciones de configuración (email, push, etc.)
+- Service Worker completo con cache de contenido
+- Modo offline funcional
+- Sincronización cuando vuelve la conexión
+- Push notifications nativas
 
-**Implementación sugerida**:
-- Tabla `notifications` en Supabase
-- Supabase Realtime para actualizaciones en vivo
-- Componente `NotificationBell` en header
-- Página `/notifications`
-
-**Prioridad**: 🔴 Alta (mejora mucho la experiencia)
+**Prioridad**: 🔴 Alta
 
 ---
 
-### 2. Imágenes OG Dinámicas
-**Estado**: URLs preparadas pero endpoint no implementado
+### 🟡 Media Prioridad
 
-**Qué falta**:
-- Endpoint `/api/og` para generar imágenes Open Graph
-- Imágenes personalizadas por thread/foro
-
-**Implementación sugerida**:
-- Usar `@vercel/og` o `satori` para generar imágenes
-- Template con título, foro, logo de LoopHub
-- Cache de imágenes generadas
-
-**Prioridad**: 🟡 Media (mejora SEO y compartir)
-
----
-
-### 3. Bookmarks / Favoritos
+#### 2. Direct Messages (DMs)
 **Estado**: No implementado
 
 **Qué falta**:
-- Guardar threads favoritos
-- Página "Mis Favoritos"
-- Botón de bookmark en threads
+- Mensajes privados entre usuarios
+- Bandeja de entrada
+- Notificaciones de nuevos mensajes
+- Conversaciones en tiempo real
 
-**Implementación sugerida**:
-- Tabla `bookmarks` en Supabase
-- API endpoints para agregar/eliminar bookmarks
-- Componente `BookmarkButton`
-- Página `/bookmarks`
+**Prioridad**: 🟡 Media
 
-**Prioridad**: 🟡 Media (feature útil pero no crítica)
-
----
-
-### 4. Seguir Threads
+#### 3. Exportar Datos del Usuario
 **Estado**: No implementado
 
 **Qué falta**:
-- Seguir threads para recibir notificaciones
-- Lista de threads seguidos
-- Notificaciones cuando hay nuevos comentarios
+- Descargar threads propios
+- Descargar comentarios propios
+- Formato JSON/CSV
+- Cumplimiento GDPR
 
-**Implementación sugerida**:
-- Tabla `thread_subscriptions` en Supabase
-- Integración con sistema de notificaciones
-- Botón "Seguir thread" en página de thread
-
-**Prioridad**: 🟡 Media (complementa notificaciones)
+**Prioridad**: 🟡 Media
 
 ---
 
-## 🎨 Mejoras de UX (Prioridad Media)
+### 🟢 Baja Prioridad
 
-### 5. Perfiles de Usuario Mejorados
-**Estado**: Básico (solo username y avatar)
+#### 4. Temas Personalizados Adicionales
+**Estado**: Solo modo claro/oscuro
 
 **Qué falta**:
-- Página de perfil pública (`/user/[username]`)
-- Bio/descripción del usuario
-- Estadísticas (threads creados, comentarios, karma)
-- Historial de actividad
-- Configuración de perfil
-
-**Prioridad**: 🟢 Baja (nice to have)
-
----
-
-### 6. Rate Limiting y Protección Anti-Spam
-**Estado**: No implementado
-
-**Qué falta**:
-- Rate limiting en API endpoints
-- Protección contra spam de comentarios
-- Validación de contenido (palabras prohibidas)
-- CAPTCHA para acciones sospechosas
-
-**Implementación sugerida**:
-- Middleware de rate limiting
-- Tabla de `rate_limits` o usar servicio externo
-- Lista de palabras prohibidas/configurable
-
-**Prioridad**: 🟡 Media (importante para producción)
-
----
-
-### 7. Analytics Básicos
-**Estado**: No implementado
-
-**Qué falta**:
-- Tracking de vistas de threads
-- Estadísticas de participación
-- Dashboard básico de métricas
-
-**Implementación sugerida**:
-- Tabla `thread_views` en Supabase
-- Endpoint para registrar vistas
-- Dashboard simple en `/admin/analytics`
-
-**Prioridad**: 🟢 Baja (útil pero no crítico)
-
----
-
-## 🔧 Mejoras Técnicas (Prioridad Baja)
-
-### 8. Optimización de Performance
-- ✅ Caching ya implementado (lib/cache.ts)
-- Lazy loading de imágenes
-- Optimización de queries de Supabase
-- Service Worker para offline (PWA)
+- Más opciones de colores
+- Temas por comunidad
+- Tema personalizado por usuario
 
 **Prioridad**: 🟢 Baja
 
----
+#### 5. Modo Lectura
+**Estado**: No implementado
 
-### 9. Testing
-- Unit tests para componentes críticos
-- Integration tests para API routes
+**Qué falta**:
+- Vista sin distracciones
+- Tipografía optimizada para lectura
+- Ocultar sidebar y elementos UI
+
+**Prioridad**: 🟢 Baja
+
+#### 6. Testing Completo
+**Estado**: Tests básicos implementados
+
+**Qué falta**:
+- Más unit tests
+- Integration tests completos
 - E2E tests para flujos principales
 
 **Prioridad**: 🟢 Baja (pero importante a largo plazo)
 
 ---
 
-### 10. Internacionalización (i18n)
-**Estado**: Solo español
+## 📊 Resumen
 
-**Qué falta**:
-- Soporte multi-idioma
-- Traducciones
-- Detección de idioma del navegador
-
-**Prioridad**: 🟢 Baja (depende del alcance)
-
----
-
-## 📊 Resumen de Prioridades
-
-### 🔴 Alta Prioridad
-1. **Sistema de Notificaciones en Tiempo Real** - Mejora significativa la experiencia
-
-### 🟡 Media Prioridad
-2. **Imágenes OG Dinámicas** - Mejora SEO y compartir
-3. **Bookmarks/Favoritos** - Feature útil
-4. **Seguir Threads** - Complementa notificaciones
-5. **Rate Limiting** - Importante para producción
-
-### 🟢 Baja Prioridad
-6. **Perfiles Mejorados** - Nice to have
-7. **Analytics** - Útil pero no crítico
-8. **Optimización** - Ya está bastante optimizado
-9. **Testing** - Importante a largo plazo
-10. **i18n** - Depende del alcance
+| Categoría | Estado |
+|-----------|--------|
+| Core Features | ✅ 100% |
+| Notificaciones | ✅ 100% |
+| Social Features | ✅ 100% |
+| Moderación | ✅ 100% |
+| Gamification | ✅ 100% |
+| i18n | ✅ 100% |
+| PWA | 🟡 50% |
+| DMs | ❌ 0% |
 
 ---
 
-## 🎯 Recomendación
+## 🎯 Próximos Pasos Recomendados
 
-**Para producción mínima viable (MVP)**:
-- ✅ Ya tienes todo lo esencial
-- 🔴 Agregar: Sistema de Notificaciones
-- 🟡 Agregar: Rate Limiting
-- 🟡 Agregar: Imágenes OG Dinámicas
-
-**Para versión completa**:
-- Todo lo anterior +
-- Bookmarks
-- Seguir Threads
-- Perfiles mejorados
-- Analytics básicos
+1. **PWA Offline** - Mejorar experiencia móvil
+2. **Direct Messages** - Feature social muy solicitada
+3. **Exportar datos** - Cumplimiento GDPR
+4. **Testing E2E** - Estabilidad a largo plazo
 
 ---
 
-## 💡 Ideas Adicionales (Futuro)
-
-- **Tags/Categorías** en threads
-- **Votos/Likes** en threads y comentarios
-- **Respuestas anidadas** (comentarios dentro de comentarios)
-- **Menciones** de usuarios (@username)
-- **Búsqueda avanzada** (filtros por fecha, autor, foro)
-- **Exportar datos** (descargar tus threads/comentarios)
-- **Temas personalizados** (más opciones de color)
-- **Modo lectura** (sin distracciones)
-- **PWA completa** (instalable, offline)
-
+*Última actualización: Diciembre 2024*
