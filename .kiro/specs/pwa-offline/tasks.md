@@ -112,32 +112,32 @@
     - **Property 7: Notification URL extraction**
     - **Validates: Requirements 3.5**
 
-- [-] 7. React hooks
-  - [ ] 7.1 Create useOfflineStore hook
+- [x] 7. React hooks
+  - [x] 7.1 Create useOfflineStore hook
     - Create `hooks/useOfflineStore.ts`
     - Expose cache and queue operations
     - Handle initialization and online/offline status
     - _Requirements: 1.1, 1.2, 2.1, 2.2_
 
-  - [ ] 7.2 Create usePushNotifications hook
+  - [x] 7.2 Create usePushNotifications hook
     - Create `hooks/usePushNotifications.ts`
     - Permission management
     - Subscribe/unsubscribe functions
     - _Requirements: 3.1, 3.2_
 
-  - [ ] 7.3 Update existing hooks for offline support
+  - [x] 7.3 Update existing hooks for offline support
     - Modify comment creation to use queue when offline
     - Modify vote actions to use queue when offline
     - _Requirements: 2.1, 2.2_
 
-- [ ] 8. Push notification API
-  - [ ] 8.1 Create push subscription endpoints
+- [x] 8. Push notification API
+  - [x] 8.1 Create push subscription endpoints
     - Create `app/api/push/subscribe/route.ts`
     - POST to store subscription
     - DELETE to remove subscription
     - _Requirements: 3.1, 3.2, 5.3_
 
-  - [ ] 8.2 Create push send utility
+  - [x] 8.2 Create push send utility
     - Create `lib/push.ts` with web-push integration
     - sendPushNotification function
     - Integration with notification triggers
