@@ -259,3 +259,41 @@ export interface CacheOperationResult {
   success: boolean;
   error?: string;
 }
+
+// ============================================================================
+// Serialization Functions
+// ============================================================================
+
+/**
+ * Serializes an OfflineQueueItem to a SerializedQueueItem for JSON storage.
+ * The payload is converted to a JSON string for consistent storage.
+ */
+export function serializeQueueItem(item: OfflineQueueItem): SerializedQueueItem {
+  return {
+    id: item.id,
+    type: item.type,
+    action: item.action,
+    payload: JSON.stringify(item.payload),
+    createdAt: item.createdAt,
+    retryCount: item.retryCount,
+    lastRetryAt: item.lastRetryAt,
+    status: item.status,
+  };
+}
+
+/**
+ * Deserializes a SerializedQueueItem back to an OfflineQueueItem.
+ * The payload JSON string is parsed back to an object.
+ */
+export function deserializeQueueItem(serialized: SerializedQueueItem): OfflineQueueItem {
+  return {
+    id: serialized.id,
+    type: serialized.type as OfflineActionType,
+    action: serialized.action as OfflineActionOperation,
+    payload: JSON.parse(serialized.payload) as Record<string, unknown>,
+    createdAt: serialized.createdAt,
+    retryCount: serialized.retryCount,
+    lastRetryAt: serialized.lastRetryAt,
+    status: serialized.status as OfflineQueueStatus,
+  };
+}

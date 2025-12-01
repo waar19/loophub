@@ -8,8 +8,9 @@
  * - Cache management utilities
  */
 
-// Types
+// Types and serialization functions
 export * from './types';
+export { serializeQueueItem, deserializeQueueItem } from './types';
 
 // Database utilities
 export {
@@ -25,3 +26,16 @@ export {
   estimateStorageSize,
   healthCheck,
 } from './db';
+
+// Cache operations
+export {
+  cacheThread,
+  getCachedThread,
+  getCachedThreads,
+  cacheComments,
+  getCachedComments,
+  isStale,
+  getStaleThreads,
+  getStaleComments,
+  getStaleItems,
+} from './cache';

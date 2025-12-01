@@ -15,28 +15,28 @@
     - CACHE_CONFIG constants
     - _Requirements: 6.1, 6.2_
 
-  - [ ]* 1.3 Write property test for serialization round-trip
+  - [x] 1.3 Write property test for serialization round-trip
     - **Property 10: Queue item serialization round-trip**
     - **Validates: Requirements 6.2, 6.3**
 
-- [ ] 2. Cache operations
-  - [ ] 2.1 Implement thread caching functions
+- [x] 2. Cache operations
+  - [x] 2.1 Implement thread caching functions
     - Create `lib/offline/cache.ts`
     - cacheThread, getCachedThread, getCachedThreads
     - Automatic TTL calculation on cache
     - _Requirements: 1.1, 1.4_
 
-  - [ ] 2.2 Implement comment caching functions
+  - [x] 2.2 Implement comment caching functions
     - cacheComments, getCachedComments for thread
     - Link comments to parent thread
     - _Requirements: 1.1_
 
-  - [ ] 2.3 Implement staleness detection
+  - [x] 2.3 Implement staleness detection
     - isStale function based on cachedAt and threshold
     - getStaleItems for background refresh
     - _Requirements: 1.5_
 
-  - [ ]* 2.4 Write property tests for cache operations
+  - [x] 2.4 Write property tests for cache operations
     - **Property 1: Cache timestamp validity**
     - **Property 2: Staleness detection consistency**
     - **Validates: Requirements 1.1, 1.4, 1.5**
