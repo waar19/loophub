@@ -17,7 +17,7 @@ interface Category {
 
 export default function CreateCommunityPage() {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { t } = useTranslations();
   const { showSuccess, showError } = useToast();
 
@@ -34,13 +34,13 @@ export default function CreateCommunityPage() {
   >("public");
   const [memberLimit, setMemberLimit] = useState("");
   const [rules, setRules] = useState("");
-
-  // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const canCreateCommunity = profile?.is_admin || (profile?.level || 0) >= 3;
 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!user) {
       router.push("/login");
       return;
@@ -52,7 +52,7 @@ export default function CreateCommunityPage() {
     }
 
     fetchCategories();
-  }, [user, canCreateCommunity]);
+  }, [user, canCreateCommunity, router, authLoading, profile]);
 
   const fetchCategories = async () => {
     try {
@@ -127,7 +127,7 @@ export default function CreateCommunityPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="animate-pulse">
@@ -428,7 +428,7 @@ export default function CreateCommunityPage() {
           <button
             type="submit"
             disabled={isCreating}
-            className="btn-primary flex-1 sm:flex-none"
+            className="btn btn-primary flex-1 sm:flex-none"
           >
             {isCreating ? t("common.creating") : t("communities.createButton")}
           </button>
