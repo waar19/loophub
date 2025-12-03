@@ -17,7 +17,7 @@ interface Category {
 
 export default function CreateCommunityPage() {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { t } = useTranslations();
   const { showSuccess, showError } = useToast();
 
@@ -34,13 +34,13 @@ export default function CreateCommunityPage() {
   >("public");
   const [memberLimit, setMemberLimit] = useState("");
   const [rules, setRules] = useState("");
-
-  // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const canCreateCommunity = profile?.is_admin || (profile?.level || 0) >= 3;
 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!user) {
       router.push("/login");
       return;
@@ -52,7 +52,7 @@ export default function CreateCommunityPage() {
     }
 
     fetchCategories();
-  }, [user, canCreateCommunity]);
+  }, [user, canCreateCommunity, router, authLoading, profile]);
 
   const fetchCategories = async () => {
     try {
@@ -81,7 +81,7 @@ export default function CreateCommunityPage() {
     }
 
     if (memberLimit && parseInt(memberLimit) < 1) {
-      newErrors.memberLimit = "El límite debe ser mayor a 0";
+      newErrors.memberLimit = t("communities.memberLimitError");
     }
 
     setErrors(newErrors);
@@ -127,7 +127,7 @@ export default function CreateCommunityPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="animate-pulse">
@@ -160,7 +160,7 @@ export default function CreateCommunityPage() {
           {t("communities.create")}
         </h1>
         <p className="mt-2" style={{ color: "var(--muted)" }}>
-          Crea tu propia comunidad y construye un espacio para tu audiencia
+          {t("communities.createSubtitle")}
         </p>
       </div>
 
@@ -192,7 +192,7 @@ export default function CreateCommunityPage() {
             </p>
           )}
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            {name.length}/100 caracteres
+            {name.length}/100 {t("communities.charactersCount")}
           </p>
         </div>
 
@@ -218,7 +218,7 @@ export default function CreateCommunityPage() {
             maxLength={500}
           />
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            {description.length}/500 caracteres
+            {description.length}/500 {t("communities.charactersCount")}
           </p>
         </div>
 
@@ -415,8 +415,7 @@ export default function CreateCommunityPage() {
             rows={6}
           />
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            Markdown soportado. Podrás editar las reglas después de crear la
-            comunidad.
+            {t("communities.markdownSupported")}
           </p>
         </div>
 
@@ -428,7 +427,7 @@ export default function CreateCommunityPage() {
           <button
             type="submit"
             disabled={isCreating}
-            className="btn-primary flex-1 sm:flex-none"
+            className="btn btn-primary flex-1 sm:flex-none"
           >
             {isCreating ? t("common.creating") : t("communities.createButton")}
           </button>
@@ -457,14 +456,14 @@ export default function CreateCommunityPage() {
           className="font-semibold mb-2"
           style={{ color: "var(--foreground)" }}
         >
-          💡 Consejos para crear una comunidad exitosa
+          💡 {t("communities.tipsTitle")}
         </h3>
         <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
-          <li>• Elige un nombre claro y descriptivo</li>
-          <li>• Define reglas claras desde el principio</li>
-          <li>• Personaliza el diseño después de crear la comunidad</li>
-          <li>• Invita a moderadores para ayudarte a gestionar</li>
-          <li>• Puedes cambiar la visibilidad más tarde en configuración</li>
+          <li>• {t("communities.tip1")}</li>
+          <li>• {t("communities.tip2")}</li>
+          <li>• {t("communities.tip3")}</li>
+          <li>• {t("communities.tip4")}</li>
+          <li>• {t("communities.tip5")}</li>
         </ul>
       </div>
     </div>

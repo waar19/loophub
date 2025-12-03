@@ -287,6 +287,8 @@ export const translations = {
       subtitle: "Descubre y únete a comunidades de tu interés",
       create: "Crear Comunidad",
       createButton: "Crear Comunidad",
+      createSubtitle:
+        "Crea tu propia comunidad y construye un espacio para tu audiencia",
       createFirst: "Crea la primera comunidad",
       createThread: "Crear una publicación...",
       myCommunities: "Mis Comunidades",
@@ -320,8 +322,12 @@ export const translations = {
       memberLimit: "Límite de miembros",
       memberLimitPlaceholder: "Sin límite",
       memberLimitHint: "Deja vacío para ilimitado",
+      memberLimitError: "El límite debe ser mayor a 0",
       rules: "Reglas",
       rulesPlaceholder: "Escribe las reglas de tu comunidad...",
+      charactersCount: "caracteres",
+      markdownSupported:
+        "Markdown soportado. Podrás editar las reglas después de crear la comunidad.",
       created: "¡Comunidad creada!",
       join: "Unirse",
       joined: "¡Te has unido!",
@@ -337,6 +343,13 @@ export const translations = {
       noThreads: "No hay publicaciones aún",
       levelRequired: "Necesitas nivel 3 o superior para crear comunidades",
       currentLevel: "Tu nivel actual",
+      // Tips
+      tipsTitle: "Consejos para crear una comunidad exitosa",
+      tip1: "Elige un nombre claro y descriptivo",
+      tip2: "Define reglas claras desde el principio",
+      tip3: "Personaliza el diseño después de crear la comunidad",
+      tip4: "Invita a moderadores para ayudarte a gestionar",
+      tip5: "Puedes cambiar la visibilidad más tarde en configuración",
       // Membership
       role: {
         owner: "Propietario",
@@ -774,7 +787,8 @@ export const translations = {
       cacheSizeDesc: "Contenido guardado para uso offline",
       clearCache: "Limpiar caché",
       clearing: "Limpiando...",
-      clearCacheConfirm: "¿Estás seguro de que quieres limpiar la caché? Se eliminarán todos los datos guardados offline.",
+      clearCacheConfirm:
+        "¿Estás seguro de que quieres limpiar la caché? Se eliminarán todos los datos guardados offline.",
       pushTitle: "Notificaciones Push",
       pushNotSupported: "Tu navegador no soporta notificaciones push.",
       pushBlocked: "Las notificaciones están bloqueadas.",
@@ -1079,6 +1093,8 @@ export const translations = {
       subtitle: "Discover and join communities that interest you",
       create: "Create Community",
       createButton: "Create Community",
+      createSubtitle:
+        "Create your own community and build a space for your audience",
       createFirst: "Create the first community",
       createThread: "Create a post...",
       myCommunities: "My Communities",
@@ -1112,8 +1128,12 @@ export const translations = {
       memberLimit: "Member limit",
       memberLimitPlaceholder: "No limit",
       memberLimitHint: "Leave empty for unlimited",
+      memberLimitError: "Limit must be greater than 0",
       rules: "Rules",
       rulesPlaceholder: "Write your community rules...",
+      charactersCount: "characters",
+      markdownSupported:
+        "Markdown supported. You can edit the rules after creating the community.",
       created: "Community created!",
       join: "Join",
       joined: "You've joined!",
@@ -1129,6 +1149,13 @@ export const translations = {
       noThreads: "No posts yet",
       levelRequired: "You need level 3 or higher to create communities",
       currentLevel: "Your current level",
+      // Tips
+      tipsTitle: "Tips for creating a successful community",
+      tip1: "Choose a clear and descriptive name",
+      tip2: "Define clear rules from the beginning",
+      tip3: "Customize the design after creating the community",
+      tip4: "Invite moderators to help you manage",
+      tip5: "You can change visibility later in settings",
       // Membership
       role: {
         owner: "Owner",
@@ -1562,7 +1589,8 @@ export const translations = {
       cacheSizeDesc: "Content saved for offline use",
       clearCache: "Clear cache",
       clearing: "Clearing...",
-      clearCacheConfirm: "Are you sure you want to clear the cache? All offline data will be deleted.",
+      clearCacheConfirm:
+        "Are you sure you want to clear the cache? All offline data will be deleted.",
       pushTitle: "Push Notifications",
       pushNotSupported: "Your browser does not support push notifications.",
       pushBlocked: "Notifications are blocked.",
@@ -1865,6 +1893,8 @@ export const translations = {
       subtitle: "Descubra e participe de comunidades do seu interesse",
       create: "Criar Comunidade",
       createButton: "Criar Comunidade",
+      createSubtitle:
+        "Crie sua própria comunidade e construa um espaço para seu público",
       createFirst: "Crie a primeira comunidade",
       createThread: "Criar uma publicação...",
       myCommunities: "Minhas Comunidades",
@@ -1898,8 +1928,12 @@ export const translations = {
       memberLimit: "Limite de membros",
       memberLimitPlaceholder: "Sem limite",
       memberLimitHint: "Deixe vazio para ilimitado",
+      memberLimitError: "O limite deve ser maior que 0",
       rules: "Regras",
       rulesPlaceholder: "Escreva as regras da sua comunidade...",
+      charactersCount: "caracteres",
+      markdownSupported:
+        "Markdown suportado. Você pode editar as regras depois de criar a comunidade.",
       created: "Comunidade criada!",
       join: "Participar",
       joined: "Você entrou!",
@@ -1916,6 +1950,13 @@ export const translations = {
       levelRequired:
         "Você precisa de nível 3 ou superior para criar comunidades",
       currentLevel: "Seu nível atual",
+      // Tips
+      tipsTitle: "Dicas para criar uma comunidade de sucesso",
+      tip1: "Escolha um nome claro e descritivo",
+      tip2: "Defina regras claras desde o início",
+      tip3: "Personalize o design depois de criar a comunidade",
+      tip4: "Convide moderadores para ajudá-lo a gerenciar",
+      tip5: "Você pode alterar a visibilidade mais tarde nas configurações",
       // Membership
       role: {
         owner: "Proprietário",
@@ -2339,7 +2380,8 @@ export const translations = {
       cacheSizeDesc: "Conteúdo salvo para uso offline",
       clearCache: "Limpar cache",
       clearing: "Limpando...",
-      clearCacheConfirm: "Tem certeza de que deseja limpar o cache? Todos os dados offline serão excluídos.",
+      clearCacheConfirm:
+        "Tem certeza de que deseja limpar o cache? Todos os dados offline serão excluídos.",
       pushTitle: "Notificações Push",
       pushNotSupported: "Seu navegador não suporta notificações push.",
       pushBlocked: "As notificações estão bloqueadas.",
