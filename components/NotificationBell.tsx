@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useTranslations } from "@/components/TranslationsProvider";
 
 export default function NotificationBell() {
@@ -11,7 +12,8 @@ export default function NotificationBell() {
   const { t } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+  const { permission, subscribe } = usePushNotifications();
+
   const {
     unreadCount,
     recentNotifications,
@@ -25,18 +27,25 @@ export default function NotificationBell() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isOpen]);
 
-  const handleNotificationClick = async (notificationId: string, isRead: boolean) => {
+  const handleNotificationClick = async (
+    notificationId: string,
+    isRead: boolean
+  ) => {
     if (!isRead) {
       await markAsRead(notificationId);
     }
@@ -45,22 +54,22 @@ export default function NotificationBell() {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'upvote':
-      case 'vote_milestone':
-        return '⬆️';
-      case 'downvote':
-        return '⬇️';
-      case 'comment':
-      case 'reply':
-        return '💬';
-      case 'mention':
-        return '@';
-      case 'thread_update':
-        return '📝';
-      case 'reaction':
-        return '😊';
+      case "upvote":
+      case "vote_milestone":
+        return "⬆️";
+      case "downvote":
+        return "⬇️";
+      case "comment":
+      case "reply":
+        return "💬";
+      case "mention":
+        return "@";
+      case "thread_update":
+        return "📝";
+      case "reaction":
+        return "😊";
       default:
-        return '🔔';
+        return "🔔";
     }
   };
 
@@ -69,14 +78,23 @@ export default function NotificationBell() {
     const now = new Date();
     const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (seconds < 60) return t('notifications.justNow') || 'Ahora';
+    if (seconds < 60) return t("notifications.justNow") || "Ahora";
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
     if (seconds < 604800) return `${Math.floor(seconds / 86400)}d`;
     return date.toLocaleDateString();
   };
 
-  const handleBellClick = () => {
+  const handleBellClick = async () => {
+    // Request notification permission if not yet requested
+    if (permission === "default" && "Notification" in window) {
+      try {
+        await subscribe();
+      } catch (error) {
+        console.error("Error requesting notification permission:", error);
+      }
+    }
+
     setIsOpen(!isOpen);
     if (hasNewNotification) {
       clearNewNotificationFlag();
@@ -90,17 +108,21 @@ export default function NotificationBell() {
       <button
         onClick={handleBellClick}
         className={`relative p-2 rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-gray-800 ${
-          hasNewNotification ? 'animate-bounce' : ''
+          hasNewNotification ? "animate-bounce" : ""
         }`}
         aria-label={t("notifications.title")}
         title={t("notifications.title")}
       >
         <svg
-          className={`w-6 h-6 transition-transform ${hasNewNotification ? 'scale-110' : ''}`}
+          className={`w-6 h-6 transition-transform ${
+            hasNewNotification ? "scale-110" : ""
+          }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          style={{ color: hasNewNotification ? "var(--brand)" : "var(--foreground)" }}
+          style={{
+            color: hasNewNotification ? "var(--brand)" : "var(--foreground)",
+          }}
         >
           <path
             strokeLinecap="round"
@@ -112,7 +134,7 @@ export default function NotificationBell() {
         {unreadCount > 0 && (
           <span
             className={`absolute top-0 right-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-              hasNewNotification ? 'animate-ping' : 'animate-pulse'
+              hasNewNotification ? "animate-ping" : "animate-pulse"
             }`}
             style={{ background: "var(--brand)" }}
           >
@@ -164,7 +186,10 @@ export default function NotificationBell() {
           <div className="overflow-y-auto flex-1">
             {isLoading ? (
               <div className="p-8 text-center">
-                <div className="animate-spin w-8 h-8 border-4 border-current border-t-transparent rounded-full mx-auto" style={{ color: "var(--brand)" }} />
+                <div
+                  className="animate-spin w-8 h-8 border-4 border-current border-t-transparent rounded-full mx-auto"
+                  style={{ color: "var(--brand)" }}
+                />
               </div>
             ) : recentNotifications.length === 0 ? (
               <div className="p-8 text-center">
@@ -179,25 +204,37 @@ export default function NotificationBell() {
                 </p>
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "var(--border)" }}>
+              <div
+                className="divide-y"
+                style={{ borderColor: "var(--border)" }}
+              >
                 {recentNotifications.map((notification) => {
                   return (
                     <Link
                       key={notification.id}
                       href={notification.link || "/notifications"}
-                      onClick={() => handleNotificationClick(notification.id, notification.read)}
+                      onClick={() =>
+                        handleNotificationClick(
+                          notification.id,
+                          notification.read
+                        )
+                      }
                       className="block p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
-                      style={!notification.read ? {
-                        background: "var(--brand-light)",
-                        borderLeft: "3px solid var(--brand)"
-                      } : {}}
+                      style={
+                        !notification.read
+                          ? {
+                              background: "var(--brand-light)",
+                              borderLeft: "3px solid var(--brand)",
+                            }
+                          : {}
+                      }
                     >
                       <div className="flex items-start gap-3">
                         {/* Icon based on notification type */}
                         <div className="text-2xl shrink-0">
                           {getNotificationIcon(notification.type)}
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             {!notification.read && (
@@ -210,20 +247,23 @@ export default function NotificationBell() {
                               className="font-semibold text-sm"
                               style={{ color: "var(--foreground)" }}
                             >
-                              {notification.title || 'Sin título'}
+                              {notification.title || "Sin título"}
                             </h4>
                           </div>
-                          
+
                           <p
                             className="text-sm mb-2 line-clamp-2"
                             style={{ color: "var(--muted)" }}
                           >
-                            {notification.message || 'Sin mensaje'}
+                            {notification.message || "Sin mensaje"}
                           </p>
-                          
+
                           <div className="flex items-center gap-2">
                             {notification.related_user_username && (
-                              <span className="text-xs font-medium" style={{ color: "var(--brand)" }}>
+                              <span
+                                className="text-xs font-medium"
+                                style={{ color: "var(--brand)" }}
+                              >
                                 @{notification.related_user_username}
                               </span>
                             )}
